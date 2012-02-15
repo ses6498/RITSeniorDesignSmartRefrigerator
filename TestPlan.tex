@@ -1,0 +1,150 @@
+\documentclass[11pt,letterpaper]{article}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{fullpage}
+\usepackage{graphicx}
+\usepackage[normalem]{ulem}
+\usepackage{url}
+
+\begin{document}
+
+\begin{center}
+\huge
+\textsc{Smart Refrigerator Proposal}\\
+\Large
+\textsc{Test Plan} \\
+\vspace{.20cm}
+\hrule
+\vspace{.40cm}
+\normalsize
+Steven Strapp, Ben Reeves, Dustin Stroup \\
+\today \\
+\vspace{1cm}
+\end{center}
+Testing of the Smart Refrigerator will be divided into unit testing of the various subsystem and then top-level integration testing once the sub-systems have been connected. Some components used within the system, such as the Angstrom operating system and SQL database implementation, have undergone extensive test prior to use in our system will only be tested to ensure proper configuration. The principle subsystems tested will be the base station user interface, mobile user interface and network connectivity, expiration date and shopping list prediction algorithms, and integration with the BeagleBoard.
+\newline \quad \newline
+
+\section{Subsystem Tests}
+\subsection{Base Station User Interface Testing}
+The main testing focus will be on the user application, both the software running on the base station as well as the web and Android interfaces.  Unit testing will be performed during development of each component, as well as integration testing of the final application.  Testing will focus on usability of the interface, accuracy of expiration date prediction and shopping list recommendations, and communication with the database. 
+
+
+The main testing focus will be on the user application, both the software running on the base station as well as the web and Android interfaces.  Unit testing will be performed during development of each component, as well as integration testing of the final application.  Testing will focus on usability of the interface, accuracy of expiration date prediction and shopping list recommendations, and communication with the database. 
+\newline \quad \newline
+As a final test, someone not involved in the project will test the system for usability as an end-user.
+
+\subsection{Mobile User Interface and Network Interface Testing}
+The web and mobile interfaces will have their own set of tests, focused on basic functionality and interoperability on various platforms.  The web interface will be tested on the most popular browsers (Google Chrome, Firefox, and Internet Explorer), as well as some of the most popular mobile platforms (Android, WebOS, and iOS).  The Android interface will need to be tested on various versions of the operating system.  At a minimum, major versions between 2.1 and 4.0 will be tested.  
+\subsection{Shopping List and Expiration Prediction Test}
+Testing of the expiration prediction and shopping list prediction subsystems will be difficult if the system's timing cannot be accelerated; testing should occur over a few minutes not a series of days. For expiration date testing a special set of UPC codes can be added with a fabricated GS1 category so they expire very quickly. The intelligence of the system can then be tested by providing feedback that these imaginary products expired more or less quickly than expected and evaluating the updated predictions. Similarly, the recommendation system will normally discretize purchase dates into intervals of days. A special mode should be added to this subsystem which will consider purchase intervals in the range of seconds; with this accelerated mode new products can be purchased every few minutes and the prediction algorithm can be verified quickly. A test sets are shown for this subsystem in Tables \ref{tab:pred} and \ref{tab:pred2}, below.
+\begin{table}[h!]
+\caption{Expiration Date Prediction Test Cases}
+\label{tab:pred}
+\begin{tabular}{|c|p{3cm}|p{6cm}|c|c|c|c|c|}
+\hline
+\multicolumn{8}{|l|}{Test Writer:Steven Strapp} \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Test Case Name:} & \multicolumn{4}{|l|}{Expiration Date Prediction System Unit Tests}& Test ID \#: & Pred-01 \\
+\hline
+\multicolumn{2}{|c|}{Description:}& \multicolumn{4}{|p{8cm}|}{Verify that expiration data prediction system makes recommendations within an acceptable margin of true expiration. Simulates expiration of products.}&Type:&White Box\\
+\hline
+\hline
+\multicolumn{8}{|l|}{Tester Information}\\
+\hline
+\multicolumn{2}{|c|}{Name of Tester:}&\multicolumn{4}{|c|}{}&Date: & \\
+\hline
+\multicolumn{2}{|c|}{Hardware Ver:}&\multicolumn{4}{|c|}{}&Time: & \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Setup:}&\multicolumn{6}{|p{8cm}|}{Develop fake product codes for quick testing of expiration. System should have no previous expiration date history} \\
+\hline
+\rotatebox{90}{Step \hspace{.2cm}}& Action& \multicolumn{1}{|p{6cm}|}{Expected Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} & \multicolumn{2}{|p{3cm}|}{Comments}\\
+\hline
+1 & Enter fake \newline product code & Expiration date should be initialized with recommended ``rule of thumb" value. & & & &\multicolumn{2}{|c|}{}\\
+\hline
+2 & Provide feedback the product expired before/after recommendation& Re-scan product and shelf-life estimate should decrease/increase. & & & &\multicolumn{2}{|c|}{}\\
+\hline
+3 & Enter fake product code and \newline allow to nearly\newline expire & Prior to expiration system indicates to the user product is nearing end of shelf-life. & & & &\multicolumn{2}{|c|}{}\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\caption{Shopping List Prediction Test Cases}
+\label{tab:pred2}
+\begin{tabular}{|c|p{3cm}|p{6cm}|c|c|c|c|c|}
+\hline
+\multicolumn{8}{|l|}{Test Writer:Steven Strapp} \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Test Case Name:} & \multicolumn{4}{|l|}{Shopping List Prediction System Unit Tests}& Test ID \#: & Pred-02 \\
+\hline
+\multicolumn{2}{|c|}{Description:}& \multicolumn{4}{|p{8cm}|}{Verify that shopping list recommendations are helpful, intuitive and reflect previous purchasing habits.}&Type:&White Box\\
+\hline
+\hline
+\multicolumn{8}{|l|}{Tester Information}\\
+\hline
+\multicolumn{2}{|c|}{Name of Tester:}&\multicolumn{4}{|c|}{}&Date: & \\
+\hline
+\multicolumn{2}{|c|}{Hardware Ver:}&\multicolumn{4}{|c|}{}&Time: & \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Setup:}&\multicolumn{6}{|p{8cm}|}{System should be placed in time accelerated mode to facilitate quick testing. System should have no previous shopping history.} \\
+\hline
+\rotatebox{90}{Step \hspace{.2cm}}& Action& \multicolumn{1}{|p{6cm}|}{Expected Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} & \multicolumn{2}{|p{3cm}|}{Comments}\\
+\hline
+1 & Enter fake products indicative of uni-modal shopping habit& System should recommend purchase again on this mode.& & & &\multicolumn{2}{|c|}{}\\
+\hline
+2 & Add outlier shopping habits & System should continue to recommend purchase again after mode value.& & & &\multicolumn{2}{|c|}{}\\
+\hline
+3 & Enter various \newline items with different buying habits & System should recommend products with highest probabilities. & & & &\multicolumn{2}{|c|}{}\\
+\hline
+4 & Begin with \newline uni-modal habit \newline only and add significant variation & System should attempt to track variation in habits.  & & & &\multicolumn{2}{|c|}{}\\ 
+\hline
+5 & Enter fake \newline products indicative of bi-modal shopping habits & System should recommend purchase again on each mode. & & & &\multicolumn{2}{|c|}{}\\ 
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Integration with BeagleBoard}
+Preliminary testing will focus on the BeagleBoard itself and its ability to interact with the desired peripherals.  The system will require an LCD screen, a USB barcode scanner, a network connection, and a keypad.  Basic functionality of these components will be tested thoroughly during development, as well as during final system testing. 
+\newline \quad \newline
+The SQL database used to store all data for the system will be tested once the core of the user application has been coded.  Test scripts will be written to populate the databases with fake data in order to ensure that the database is configured as desired, and to verify that the user application is properly communicating with the database alongside the web interface.
+
+\begin{table}[h!]
+\caption{Finite State Machine}
+\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\hline
+\multicolumn{8}{|l|}{Test Writer: Sue L. Engineer} \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Test Case Name:} & \multicolumn{4}{|l|}{Finite State Machine Path Test \# 1}& Test ID \#: & FSM-Path-01 \\
+\hline
+\multicolumn{2}{|c|}{Description:}& \multicolumn{4}{|p{8cm}|}{Simulate insertion of money with a mix of nickles and dimes. Verifies FSM, outputs candy in response to a total deposit of \$ 0.30.}&Type:&White Box\\
+\hline
+\hline
+\multicolumn{8}{|l|}{Tester Information}\\
+\hline
+\multicolumn{2}{|c|}{Name of Tester:}&\multicolumn{4}{|c|}{}&Date: & \\
+\hline
+\multicolumn{2}{|c|}{Hardware Ver:}&\multicolumn{4}{|c|}{}&Time: & \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Setup:}&\multicolumn{6}{|p{8cm}|}{Make sure that the system was reset sometime prior and is in state \$0.00} \\
+\hline
+\rotatebox{90}{Step \hspace{.2cm}}& Action& \multicolumn{1}{|p{6cm}|}{Expected Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} & \multicolumn{2}{|p{3cm}|}{Comments}\\
+\hline
+1 & Strobe Nickel & State should go to \$0.05 & & & &\multicolumn{2}{|c|}{}\\
+\hline
+2 & Strobe Dime & State should go to \$0.15 & & & &\multicolumn{2}{|c|}{}\\
+\hline
+3 & Wait & State should remain \$0.15 & & & &\multicolumn{2}{|c|}{}\\
+\hline
+\end{tabular}
+\end{table}
+\quad \newline
+
+
+\end{document}
