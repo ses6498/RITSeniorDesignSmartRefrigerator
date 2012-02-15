@@ -119,7 +119,7 @@ Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} &
 \hline
 \end{tabular}
 \end{table}
-\pagebreak
+\clearpage
 
 \begin{table}[h!]
 \caption{UI Usability Test}
@@ -155,7 +155,7 @@ Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} &
 \hline
 \end{tabular}
 \end{table}
-\pagebreak
+\clearpage
 
 \begin{table}[h!]
 \caption{UI Interoperability Test}
@@ -207,7 +207,7 @@ Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} &
 \hline
 \end{tabular}
 \end{table}
-\pagebreak
+\clearpage
 
 \subsection{Shopping List and Expiration Prediction Test}
 Testing of the expiration prediction and shopping list prediction subsystems will be difficult if the system's timing cannot be accelerated; testing should occur over a few minutes not a series of days. For expiration date testing a special set of UPC codes can be added with a fabricated GS1 category so they expire very quickly. The intelligence of the system can then be tested by providing feedback that these imaginary products expired more or less quickly than expected and evaluating the updated predictions. Similarly, the recommendation system will normally discretize purchase dates into intervals of days. A special mode should be added to this subsystem which will consider purchase intervals in the range of seconds; with this accelerated mode new products can be purchased every few minutes and the prediction algorithm can be verified quickly. A test sets are shown for this subsystem in Tables \ref{tab:pred} and \ref{tab:pred2}, below.
