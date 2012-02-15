@@ -1,0 +1,75 @@
+\usepackage{graphicx}
+
+%1 Exercise number
+%2 Exercise name
+%3 Date performed
+%4 Date submitted
+\newcommand{\coversheet}[4]{
+  \begin{titlepage}
+    \setlength\topmargin{2in}
+    \begin{center}
+      \Huge\textsc{Smart Refrigerator Proposal}\\
+      \vspace{.125in}
+      \hrule
+      \vspace{.125in}
+      \normalsize
+      \today \\
+      \vspace{.375in}
+      This project will develop a prototype “Smart Refrigerator” system, which will monitor grocery items purchased by the user in order to reduce food waste and facilitate efficient shopping habits. 
+
+    \end{center}
+    \vfill
+    \hspace{4.2in} Steven Strapp - ses6498@rit.edu
+    
+    \noindent \hspace{4.2in} Computer Engineering Year 4
+
+    \noindent \hspace{4.2in} 
+
+    \noindent \hspace{4.2in} Ben Reeves - bpr5171@rit.edu
+    
+    \noindent \hspace{4.2in} Computer Engineering Year 5
+
+    \noindent \hspace{4.2in} 
+
+    \noindent \hspace{4.2in} Dustin Stroup - dxs2857@rit.edu
+
+    \noindent \hspace{4.2in} Computer Engineering Year 5
+
+    \quad \newline \newline \newline \newline \newline \newline \newline \newline
+  \end{titlepage}
+}
+
+%1 label
+%2 number of variables
+%3 kmap label
+%4 variables
+%5 truth table
+%6 Marks
+%7 Prime implicants table
+%8 Final EQ
+\newcommand{\kmap}[8]{
+  \begin{center}
+    \begin{tabular}{l}
+      \multicolumn{2}{c}{\underline{#1}} \\  
+        \karnaughmap{#2}{#3}{#4}{#5}{
+		#6        
+        }
+      #8
+    \end{tabular}
+  \end{center}
+  }
+
+%1 figure position
+%2 figure scale
+%3 path to photo
+%4 Caption
+%5 reference lable
+\newcommand{\pic}[5]{
+\begin{figure}[#1]
+  \begin{center}
+    \includegraphics[scale=#2]{#3}
+    \caption{#4}
+    \label{#5}
+  \end{center}
+\end{figure}
+}
