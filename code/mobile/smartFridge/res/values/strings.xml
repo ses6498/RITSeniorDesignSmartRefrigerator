@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="hello">Hello World, SmartFridgeActivity!</string>
+    <string name="app_name">SmartFridge</string>
+    <string name="inventory_name">Inventory Tab</string>
+    <string name="shoppingList_name">Shopping List Tabs</string>
+    <string name="inet_addr">192.168.6.31</string>
+
+</resources>
