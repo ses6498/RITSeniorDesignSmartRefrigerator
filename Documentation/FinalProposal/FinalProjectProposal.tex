@@ -63,7 +63,9 @@
 \coversheet{V}{\textsc{Kinetis K60 Based Electrocardiogram}}{October 28, 2011}{November 11, 2011}
 \setcounter{page}{2}
 
+\addtolength{\topskip}{+0.5cm}
 \tableofcontents
+\addtolength{\topskip}{-0.5cm}
 \pagebreak
 \section{Overview}
 \subsection{Needs Statement}
@@ -78,7 +80,7 @@ A high level system diagram isolating components is shown in Figure \ref{fig:sys
 \begin{center}
 \vspace{0.5cm}
 \caption{High Level System Diagram}
-\includegraphics[scale=0.5]{SmartFridgeTopLevel}
+\includegraphics[scale=0.7]{HighestLevelDiagram}
 \label{fig:sysdiag}
 \end{center}
 \end{figure}
@@ -328,15 +330,279 @@ USB Keyboard/Keypad & \$10 & \$10 \\
 \end{table}
 
 \section{Testing Strategy}
-Preliminary testing will focus on the BeagleBoard itself and its ability to interact with the desired peripherals.  The system will require an LCD screen, a USB barcode scanner, a network connection, and a keypad.  Basic functionality of these components will be tested thoroughly during development, as well as during final system testing. 
-\newline \quad \newline
-The SQL database used to store all data for the system will be tested once the core of the user application has been coded.  Test scripts will be written to populate the databases with synthetic data in order to ensure that the database is configured as desired, and to verify that the user application is properly communicating with the database alongside the web interface.
-\newline \quad \newline
-The main testing focus will be on the user application, both the software running on the base station as well as the web and Android interfaces.  Unit testing will be performed during development of each component, as well as integration testing of the final application.  Testing will focus on usability of the interface, accuracy of expiration date prediction and shopping list recommendations, and communication with the database. 
-\newline \quad \newline
+Testing of the Smart Refrigerator will be divided into unit testing of the various subsystem and then top-level integration testing once the sub-systems have been connected. Some components used within the system, such as the Angstrom operating system and SQL database implementation, have undergone extensive test prior to use in our system will only be tested to ensure proper configuration. The principle subsystems tested will be the base station user interface, mobile user interface and network interface, expiration date and shopping list prediction algorithms, and integration with the BeagleBoard.
+
+\subsection{Base Station User Interface Testing}
+The main testing focus will be on the user application, both the software running on the base station as well as the web and Android interfaces.  Unit testing will be performed during development of each component, as well as integration testing of the final application. This subsection will focus on top-level testing of the base station user interface as a module, with tests particularly directed at the engineering specifications and user requirements. Tests directly motivated by the requirements specification and engineering specifications are listed below and a test procedure is tabulated in Table \ref{tab:gui}.
+\begin{itemize}
+\item The user interface is required to be easy to use and intuitive; in order to verify this someone not involved in the project should contribute to top-level testing of this sub-system. This also can be tested quantitatively, tests should be performed to ensure the most used items are presented on the default tab and are the most frequently used controls are the most accessible.
+\item The user interface will provide access to the current inventory, which will be stored using an SQL database. The principle test effort at this step will be verifying integration of the display with the database, not verifying the storage of items themselves.
+\item The user interface will provide both read and write access to shopping lists, also stored using an SQL database. Testing of this feature will again focus on the ability of the interface to query and modify database entries, not on the database implementation itself.
+\item The user interface must provide a method to update expiration estimates. Testing of this subsystem will not verify that the update is reasonable or correct but simply verify that this user interface action triggers an update from the expiration prediction subsystem.
+\item To achieve the principle goal of the system, the user interface must provide a notification of items about to expire. Testing of this subsystem will not verify that the expiration estimate is reasonable or correct, but simply that if triggered by the expiration prediction subsystem the user interface will display an indication.
+\end{itemize}
+
+\begin{table}[h!]
+\caption{Base Station User Interface Test Cases}
+\label{tab:gui}
+\begin{tabular}{|c|p{3cm}|p{6cm}|c|c|c|c|c|}
+\hline
+\multicolumn{8}{|l|}{Test Writer:Steven Strapp} \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Test Case Name:} & \multicolumn{4}{|l|}{Base Station Interface Top-Level Unit Tests}& Test ID \#: & Base-GUI-01 \\
+\hline
+\multicolumn{2}{|c|}{Description:}& \multicolumn{4}{|p{8cm}|}{Verify that the base station user interface meets the requirement and engineering specifications. Some, such as usability will be evaluated qualitatively and are difficult to outline in this way.}&Type:&White Box\\
+\hline
+\hline
+\multicolumn{8}{|l|}{Tester Information}\\
+\hline
+\multicolumn{2}{|c|}{Name of Tester:}&\multicolumn{4}{|c|}{}&Date: & \\
+\hline
+\multicolumn{2}{|c|}{Hardware Ver:}&\multicolumn{4}{|c|}{}&Time: & \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Setup:}&\multicolumn{6}{|p{12cm}|}{User interface subsystem should be entirely integrated with prediction subsystems and SQL databases. System should begin without shopping lists or inventory.} \\
+\hline
+\rotatebox{90}{Step \hspace{.2cm}}& Action& \multicolumn{1}{|p{6cm}|}{Expected Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} & \multicolumn{2}{|p{3cm}|}{Comments}\\
+\hline
+1 & Enter fake \newline product code & Switch to inventory tab,  entered product should be shown. Inventory should be otherwise empty. & & & &\multicolumn{2}{|c|}{}\\
+\hline
+2 & Wait for fake \newline product to nearly expire & Interface should display a notification indicating expiring item. & & & &\multicolumn{2}{|c|}{}\\
+\hline
+3 & Use interface to indicate product has not yet \newline expired & Verify that prediction sub-system is triggered to update its estimate. & & & &\multicolumn{2}{|c|}{}\\
+\hline
+4 & Create fake \newline shopping list & Verify that list becomes accessible through base station and Android interface & & & &\multicolumn{2}{|c|}{}\\
+\hline
+5 & Modify items on \newline fake shopping list & Verify that changes are retained and visible through base station or Android interface & & & &\multicolumn{2}{|c|}{}\\
+\hline
+\end{tabular}
+\end{table}
+
+\subsection{Mobile User Interface and Network Interface Testing}
 The web and mobile interfaces will have their own set of tests, focused on basic functionality and interoperability on various platforms.  The web interface will be tested on the most popular browsers (Google Chrome, Firefox, and Internet Explorer), as well as some of the most popular mobile platforms (Android, WebOS, and iOS).  The Android interface will need to be tested on various versions of the operating system.  At a minimum, major versions between 2.1 and 4.0 will be tested.  
+
+\begin{table}[h!]
+\caption{Mobile App Tests}
+\label{tab:mobApp}
+\begin{tabular}{|c|p{3cm}|p{6cm}|c|c|c|c|c|}
+\hline
+\multicolumn{8}{|l|}{Test Writer:Ben Reeves} \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Test Case Name:} & \multicolumn{4}{|p{8cm}|}{Downloading large database updates 
+over an \newline intermittent network connection}& Test ID \#: & MobApp-01 \\
+\hline
+\multicolumn{2}{|c|}{Description:}& \multicolumn{4}{|p{8cm}|}{Ensure that the database is correctly downloaded
+even if the device's network connection is interrupted. This could be due to 
+loss of service, a disabled network adapter, or the device powering down.}&Type:&White Box\\
+\hline
+\hline
+\multicolumn{8}{|l|}{Tester Information}\\
+\hline
+\multicolumn{2}{|c|}{Name of Tester:}&\multicolumn{4}{|c|}{}&Date: & \\
+\hline
+\multicolumn{2}{|c|}{Hardware Ver:}&\multicolumn{4}{|c|}{}&Time: & \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Setup:}&\multicolumn{6}{|p{12cm}|}{System should have a fresh 
+install of the application and no previous copies of the database downloaded.} \\
+\hline
+\rotatebox{90}{Step \hspace{.2cm}}& Action& \multicolumn{1}{|p{6cm}|}{Expected 
+Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} & 
+\multicolumn{2}{|p{3cm}|}{Comments}\\
+\hline
+1 & Initiate download \newline update of the \newline database & System should connect to the server 
+  and begin downloading. & & & &\multicolumn{2}{|c|}{}\\
+\hline
+2 & Sever device's \newline network \newline connection & System should pause the download upon sensing 
+  the interrupted connection. & & & &\multicolumn{2}{|c|}{}\\
+\hline
+3 & Reconnect device \newline to the network & System should resume download of the database 
+  & & & &\multicolumn{2}{|c|}{}\\
+\hline
+4 & Allow update to \newline complete & System should download the remaining portion of the 
+  database& & & &\multicolumn{2}{|c|}{}\\ 
+\hline
+\end{tabular}
+\end{table}
+\pagebreak
+
+\begin{table}[h!]
+\caption{UI Usability Test}
+\label{tab:usability}
+\begin{tabular}{|c|p{3cm}|p{6cm}|c|c|c|c|c|}
+\hline
+\multicolumn{8}{|l|}{Test Writer:Ben Reeves} \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Test Case Name:} & \multicolumn{4}{|l|}{UI Usability Test}& Test ID \#: & UI-01 \\
+\hline
+\multicolumn{2}{|c|}{Description:}& \multicolumn{4}{|p{8cm}|}{Ensure that the both the web and mobile 
+ versions of the User Interface are accessible and intuitive.}&Type:&White Box\\
+\hline
+\hline
+\multicolumn{8}{|l|}{Tester Information}\\
+\hline
+\multicolumn{2}{|c|}{Name of Tester:}&\multicolumn{4}{|c|}{}&Date: & \\
+\hline
+\multicolumn{2}{|c|}{Hardware Ver:}&\multicolumn{4}{|c|}{}&Time: & \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Setup:}&\multicolumn{6}{|p{12cm}|}{System should be representative of one which is in
+active use; that is, its database should contain both shopping lists and grocery items associated with them.} \\
+\hline
+\rotatebox{90}{Step \hspace{.2cm}}& Action& \multicolumn{1}{|p{6cm}|}{Expected 
+Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} & 
+\multicolumn{2}{|p{3cm}|}{Comments}\\
+\hline
+1 & System is given to a user unfamiliar with its operation and submitted to stress testing & 
+  User should experience little difficulty navigating the application and experience no bugs, freezes, or crashes. 
+  & & & &\multicolumn{2}{|c|}{}\\
+\hline
+\end{tabular}
+\end{table}
+\pagebreak
+
+\begin{table}[h!]
+\caption{UI Interoperability Test}
+\label{tab:interop}
+\begin{tabular}{|c|p{4.5cm}|p{5.5cm}|c|c|c|c|c|}
+\hline
+\multicolumn{8}{|l|}{Test Writer:Ben Reeves} \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Test Case Name:} & \multicolumn{4}{|l|}{UI Interoperability Test}& Test ID \#: & UI-02 \\
+\hline
+\multicolumn{2}{|c|}{Description:}& \multicolumn{4}{|p{7.5cm}|}{Ensure that the both the web and mobile \newline
+ versions of the User Interface are fully \newline compatible with popular browsers.}&Type:&\multicolumn{1}{|p{1cm}|}{White \newline Box}\\
+\hline
+\hline
+\multicolumn{8}{|l|}{Tester Information}\\
+\hline
+\multicolumn{2}{|c|}{Name of Tester:}&\multicolumn{4}{|c|}{}&Date: & \\
+\hline
+\multicolumn{2}{|c|}{Hardware Ver:}&\multicolumn{4}{|c|}{}&Time: & \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Setup:}&\multicolumn{6}{|p{11cm}|}{System should be representative of one which is in
+active use; that is, its database should contain both shopping lists and grocery items associated with them.} \\
+\hline
+\rotatebox{90}{Step \hspace{.2cm}}& Action& \multicolumn{1}{|p{6cm}|}{Expected 
+Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} & 
+\multicolumn{2}{|p{1cm}|}{Comments}\\
+\hline
+1 & Interface is accessed via Mozilla Firefox and subjected to stress testing 
+  & Interface is displayed properly, no artifacts or misplaced \newline elements apparent.
+  & & & &\multicolumn{2}{|c|}{}\\
+\hline
+2 & Interface is accessed via Google Chrome and subjected to stress testing 
+  & Interface is displayed properly, no artifacts or misplaced \newline elements apparent.
+  & & & &\multicolumn{2}{|c|}{}\\
+\hline
+3 & Interface is accessed via Microsoft Internet \newline Explorer and subjected to stress testing 
+  & Interface is displayed properly, no artifacts or misplaced \newline elements apparent.
+  & & & &\multicolumn{2}{|c|}{}\\
+\hline
+4 & Interface is accessed via Android 2.1 and subjected to stress testing 
+  & Interface is displayed properly, no artifacts or misplaced \newline elements apparent. 
+  & & & &\multicolumn{2}{|c|}{}\\
+\hline
+5 & Interface is accessed via Android 4.0 and subjected to stress testing 
+  & Interface is displayed properly, no artifacts or misplaced \newline elements apparent.
+  & & & &\multicolumn{2}{|c|}{}\\
+\hline
+\end{tabular}
+\end{table}
+\clearpage
+
+\subsection{Shopping List and Expiration Prediction Test}
+Testing of the expiration prediction and shopping list prediction subsystems will be difficult if the system's timing cannot be accelerated; testing should occur over a few minutes not a series of days. For expiration date testing a special set of UPC codes can be added with a fabricated GS1 category so they expire very quickly. The intelligence of the system can then be tested by providing feedback that these imaginary products expired more or less quickly than expected and evaluating the updated predictions. Similarly, the recommendation system will normally discretize purchase dates into intervals of days. A special mode should be added to this subsystem which will consider purchase intervals in the range of seconds; with this accelerated mode new products can be purchased every few minutes and the prediction algorithm can be verified quickly. A test sets are shown for this subsystem in Tables \ref{tab:pred} and \ref{tab:pred2}, below.
+\begin{table}[h!]
+\caption{Expiration Date Prediction Test Cases}
+\label{tab:pred}
+\begin{tabular}{|c|p{3cm}|p{6cm}|c|c|c|c|c|}
+\hline
+\multicolumn{8}{|l|}{Test Writer:Steven Strapp} \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Test Case Name:} & \multicolumn{4}{|l|}{Expiration Date Prediction System Unit Tests}& Test ID \#: & Pred-01 \\
+\hline
+\multicolumn{2}{|c|}{Description:}& \multicolumn{4}{|p{8cm}|}{Verify that expiration data prediction system makes recommendations within an acceptable margin of true expiration. Simulates expiration of products.}&Type:&White Box\\
+\hline
+\hline
+\multicolumn{8}{|l|}{Tester Information}\\
+\hline
+\multicolumn{2}{|c|}{Name of Tester:}&\multicolumn{4}{|c|}{}&Date: & \\
+\hline
+\multicolumn{2}{|c|}{Hardware Ver:}&\multicolumn{4}{|c|}{}&Time: & \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Setup:}&\multicolumn{6}{|p{8cm}|}{Develop fake product codes for quick testing of expiration. System should have no previous expiration date history} \\
+\hline
+\rotatebox{90}{Step \hspace{.2cm}}& Action& \multicolumn{1}{|p{6cm}|}{Expected Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} & \multicolumn{2}{|p{3cm}|}{Comments}\\
+\hline
+1 & Enter fake \newline product code & Expiration date should be initialized with recommended ``rule of thumb" value. & & & &\multicolumn{2}{|c|}{}\\
+\hline
+2 & Provide feedback the product expired before/after recommendation& Re-scan product and shelf-life \newline estimate should decrease/increase. & & & &\multicolumn{2}{|c|}{}\\
+\hline
+3 & Enter fake product code and \newline allow to nearly\newline expire & Prior to expiration system indicates to the user product is nearing end of shelf-life. & & & &\multicolumn{2}{|c|}{}\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{table}[h!]
+\vspace{0.5cm}
+\caption{Shopping List Prediction Test Cases}
+\label{tab:pred2}
+\begin{tabular}{|c|p{3cm}|p{6cm}|c|c|c|c|c|}
+\hline
+\multicolumn{8}{|l|}{Test Writer:Steven Strapp} \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Test Case Name:} & \multicolumn{4}{|l|}{Shopping List Prediction System Unit Tests}& Test ID \#: & Pred-02 \\
+\hline
+\multicolumn{2}{|c|}{Description:}& \multicolumn{4}{|p{8cm}|}{Verify that shopping list recommendations are helpful, intuitive and reflect previous purchasing habits.}&Type:&White Box\\
+\hline
+\hline
+\multicolumn{8}{|l|}{Tester Information}\\
+\hline
+\multicolumn{2}{|c|}{Name of Tester:}&\multicolumn{4}{|c|}{}&Date: & \\
+\hline
+\multicolumn{2}{|c|}{Hardware Ver:}&\multicolumn{4}{|c|}{}&Time: & \\
+\hline
+\hline
+\multicolumn{2}{|c|}{Setup:}&\multicolumn{6}{|p{8cm}|}{System should be placed in time accelerated mode to facilitate quick testing. System should have no previous shopping history.} \\
+\hline
+\rotatebox{90}{Step \hspace{.2cm}}& Action& \multicolumn{1}{|p{6cm}|}{Expected Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} & \multicolumn{2}{|p{3cm}|}{Comments}\\
+\hline
+1 & Enter fake \newline products indicative of uni-modal shopping habit& System should recommend purchase again on this mode.& & & &\multicolumn{2}{|c|}{}\\
+\hline
+2 & Add outlier \newline shopping habits & System should continue to recommend purchase again after mode value.& & & &\multicolumn{2}{|c|}{}\\
+\hline
+3 & Enter various \newline items with different buying habits & System should recommend products with highest probabilities. & & & &\multicolumn{2}{|c|}{}\\
+\hline
+4 & Begin with \newline uni-modal habit \newline only and add significant variation & System should attempt to track variation in habits.  & & & &\multicolumn{2}{|c|}{}\\ 
+\hline
+5 & Enter fake \newline products indicative of bi-modal shopping habits & System should recommend purchase again on each mode. & & & &\multicolumn{2}{|c|}{}\\ 
+\hline
+\end{tabular}
+\end{table}
+\pagebreak
+\subsection{Integration with BeagleBoard}
+Preliminary testing will focus on the BeagleBoard itself and its ability to interact with the desired peripherals.  The system will require an LCD screen, a USB barcode scanner, a network connection, a keypad, and temperature/humidity sensor.  Basic functionality of these components will be tested thoroughly during development, as well as during final system testing. 
 \newline \quad \newline
-As a final test, someone not involved in the project will test the system for usability as an end-user.
+The SQL database used to store all data for the system will be tested once the core of the user application has been coded.  Test scripts will be written to populate the databases with fake data in order to ensure that the database is configured as desired, and to verify that the user application is properly communicating with the database alongside the web interface.
+\newline \quad \newline
+It is difficult to outline exactly what testing will be required for the processing platform, since it is unclear what compatibility issues will arise that would not be presented by a conventional platform, where ideally the system would be entirely ``plug and play". However, listed below is a baseline sequence of tests.
+\begin{itemize}
+\item Verify that the BeagleBoard, with power adapter, can power all peripheral devices reliably. No sporadic failures occur, this will be performed as an endurance test.
+\item Verify that MAC address of Ethernet interface can be statically assigned and the BeagleBoard can be pinged reliably; this will be performed as an endurance test, cycling power or disconnecting the board multiple times.
+\item Verify that the BeagleBoard can reliably interface with the USB scanner and USB keypad, these tests should be performed by writing to a text editor or another program external to the user interface to isolate failures.
+\item Verify that the BeagleBoard's consistently receives accurate temperature and humidity measurements from the sensor, via the general purpose input/output pins. The measurements should be verified with an external sensor.
+\item Verify that the touchscreen display accurately records users clicks and controls the pointer; tested outside of the user interface to isolate failures.
+\item Verify that touchscreen accurately displays the graphical user interface without artifacts or distortion consistently, and ensure all controls on the display are accessible.
+\end{itemize}
 
 \section{Risks}
 \subsection{Potential Difficulties}
