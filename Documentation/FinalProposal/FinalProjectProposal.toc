@@ -1,7 +1,7 @@
 \contentsline {section}{\numberline {1}Overview}{3}
 \contentsline {subsection}{\numberline {1.1}Needs Statement}{3}
 \contentsline {subsection}{\numberline {1.2}Objective Statement}{3}
-\contentsline {subsection}{\numberline {1.3}Brief Description}{3}
+\contentsline {subsection}{\numberline {1.3}Description}{3}
 \contentsline {section}{\numberline {2}Requirements Specification}{4}
 \contentsline {subsection}{\numberline {2.1}Customer Needs}{4}
 \contentsline {subsection}{\numberline {2.2}Engineering Specifications}{5}
@@ -20,3 +20,4 @@
 \contentsline {subsection}{\numberline {8.4}Analysis}{13}
 \contentsline {section}{\numberline {9}Milestones}{14}
 \contentsline {section}{10\hspace {.090in} References}{15}
+\contentsline {section}{References}{15}

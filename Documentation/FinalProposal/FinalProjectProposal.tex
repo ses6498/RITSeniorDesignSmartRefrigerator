@@ -1,23 +1,62 @@
-\documentclass[11pt,letterpaper]{article}
-\usepackage{amsmath}
-\usepackage{amsfonts}
-\usepackage{amssymb}
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This is a simple template for a LaTeX document using the "article" class.
+% See "book", "report", "letter" for other types of document.
+
+\documentclass[11pt]{article} % use larger type; default would be 10pt
+
+\usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
+
+%%% Examples of Article customizations
+% These packages are optional, depending whether you want the features they provide.
+% See the LaTeX Companion or other references for full information.
+
+%%% PAGE DIMENSIONS
+\usepackage{geometry} % to change the page dimensions
+\geometry{a4paper} % or letterpaper (US) or a5paper or....
+% \geometry{margin=2in} % for example, change the margins to 2 inches all round
+% \geometry{landscape} % set up the page for landscape
+%   read geometry.pdf for detailed page layout information
+
+\usepackage{graphicx} % support the \includegraphics command and options
 \usepackage{fullpage}
-\usepackage{graphicx}
+
+% \usepackage[parfill]{parskip} % Activate to begin paragraphs with an empty line rather than an indent
+
+%%% PACKAGES
+\usepackage{booktabs} % for much better looking tables
+\usepackage{array} % for better arrays (eg matrices) in maths
+\usepackage{paralist} % very flexible & customisable lists (eg. enumerate/itemize, etc.)
+\usepackage{verbatim} % adds environment for commenting out blocks of text & for better verbatim
+\usepackage{subfig} % make it possible to include more than one captioned figure/table in a single float
+% These packages are all incorporated in the memoir class to one degree or another...
+
+%%% HEADERS & FOOTERS
+\usepackage{fancyhdr} % This should be set AFTER setting up the page geometry
+\pagestyle{fancy} % options: empty , plain , fancy
+\renewcommand{\headrulewidth}{0.5pt} % customise the layout...
+\lhead{}\chead{Smart Refrigerator Proposal}\rhead{}
+\lfoot{}\cfoot{\thepage}\rfoot{}
+\addtolength{\topskip}{+0.5cm}
+
+%%% SECTION TITLE APPEARANCE
+\usepackage{sectsty}
+%\allsectionsfont{\sffamily\mdseries\upshape} % (See the fntguide.pdf for font help)
+% (This matches ConTeXt defaults)
+
+%%% ToC (table of contents) APPEARANCE
+\usepackage[nottoc,notlof,notlot]{tocbibind} % Put the bibliography in the ToC
+\usepackage[titles,subfigure]{tocloft} % Alter the style of the Table of Contents
+%\renewcommand{\cftsecfont}{\rmfamily\mdseries\upshape}
+%\renewcommand{\cftsecpagefont}{\rmfamily\mdseries\upshape} % No bold!
+
+\usepackage{amsmath}
+%\usepackage{amsfonts}
+%\usepackage{amssymb}
 \usepackage[normalem]{ulem}
 \usepackage{url}
 \input{lab.tex}
-
-\usepackage{fancyhdr}
-\setlength{\headheight}{18.2pt}
-
-\fancypagestyle{plain}{ %
-\fancyhf{} % remove everything
-\renewcommand{\headrulewidth}{0pt} % remove lines as well
-\renewcommand{\footrulewidth}{0pt}
-\chead{Smart Refrigerator Proposal}}
-
-\pagestyle{plain}
 
 
 \begin{document}
@@ -31,16 +70,17 @@
 The New York Times reports that an average American family of four will account for over 120 pounds of food waste per month and that 27\% percent of all food available will be lost to waste \cite{times}. In addition, other resources are lost due to inefficient shopping practices; forgetting common items or special trips made for recipe ingredients waste time and fuel. A system is required for shoppers both to ensure their purchases are used before expiration and to assist in planning of grocery shopping trips.
 \subsection{Objective Statement}
 The objective of this project is to design a prototype that will allow a user to track food items in order to reduce waste and improve shopping efficiency. The system will remind the user about items nearing their expiration date and track the frequency of purchased items. From this frequency calculation the system will suggest typical shopping lists. A mobile phone application will provide an interface to the unit to view or create shopping lists and to query inventory.
-\subsection{Brief Description}
+\subsection{Description}
 A UPC scanner will be used to identify items added or removed from the refrigerator's inventory; a database of UPC codes will translate from the scanned code to an item description. Two databases will be maintained, one linking UPC codes to product descriptions and expiration dates and another to store items currently checked into the refrigerator. A central processing platform on the base station will be used to decode UPC information and to store and interact with the databases. This platform will provide a web interface accessible both via a large convenient display on the main unit and also using a mobile interface. The display on the main unit will allow a user both to check current inventory with expiration dates and to provide additional information when adding or removing items. Both the base station and mobile interfaces can also be used to display and modify suggested shopping lists. The mobile application will interact with the same web interface but will provide a graphical interface optimized for smaller displays. The system will continually estimate the frequency that particular items are purchased and will use this information combined with the expiration dates and purchase dates to suggest shopping lists.
 \newline \quad \newline
-A high level system diagram isolating components is shown below in Figure \ref{fig:sysdiag}.
-\begin{figure}[h!]
+A high level system diagram isolating components is shown in Figure \ref{fig:sysdiag}.
+\begin{figure}[h]
 \begin{center}
-\includegraphics[scale=0.5]{SmartFridgeTopLevel}
-\end{center}
+\vspace{0.5cm}
 \caption{High Level System Diagram}
+\includegraphics[scale=0.5]{SmartFridgeTopLevel}
 \label{fig:sysdiag}
+\end{center}
 \end{figure}
 \pagebreak
 \section{Requirements Specification}
@@ -91,15 +131,17 @@ Customer Need & Engineering Requirement & Justification \\
 \end{tabular}
 \end{center}
 \end{table}
+\pagebreak
 \section{Concept Selection}
 \subsection{Evaluation of Existing Systems}
 Many refrigerator systems are current available which offer integrated displays and internet connectivity. LG, Electrolux, and Samsung all offer refrigerators with large LCD displays that provide access to calendar applications, recipes, weather forecasts, and music and photo sharing services. The principle shortcoming of these devices is the elevated price and the need to completely replace existing appliances. As a more affordable alternative, tablet mounts are available for refrigerators as well.
 However, these systems do not offer tracking of the refrigerator's contents and do not attempt to reduce waste or improve efficiency. LG demonstrated in April 2011 a ``Smart Fridge" with goals closer to the proposed system. The sensors and algorithms used were not disclosed but the product objective is similar, tracking user purchases and providing a mobile interface to the refrigerator's contents while shopping \cite{lg}. Our system will provide a much more inexpensive alternative and will be more flexible; the system proposed will not be limited to strictly refrigerators and can be used as an add-on to an existing system.
 \newline \quad \newline
-Many patents exist on inventions related to the smart refrigerator system as a whole and its goal to reduce waste, but do not attempt to reduce user input. Patents 2004/0085225 A1 \emph{Methods and Apparatus to Monitor the Inventory of a Food Storage Unit}, 2010/0148958 A1 \emph{Expiration Warning Device of Refrigerator}, and 2011/0109453 A1 \emph{Apparatus for Warning of an Expiration Date} all treat the goals of the overall system but rely on the user to manually enter expiration dates. More advanced systems, as in Patents 7,861,542 B2 \emph{Refrigerator Including Food Product Management System} and 2011/016555 A1 \emph {Refrigerator and Control Method Thereof}, use radio frequency identification (RFID) tags attached to foods to read expiration dates, with user input as a fallback. The prototype designed will improve upon the simple user-intensive method of the first group but without the added scope of radio frequency identification used in the second group.
+Many patents exist on inventions related to the smart refrigerator system as a whole and its goal to reduce waste, but do not attempt to reduce user input. Patents 2004/0085225 A1 \emph{Methods and Apparatus to Monitor the Inventory of a Food Storage Unit}, 2010/0148958 A1 \emph{Expiration Warning Device of Refrigerator}, and 2011/0109453 A1 \emph{Apparatus for Warning of an Expiration Date} all treat the goals of the overall system but rely on the user to enter expiration dates manually. More advanced systems, as in Patents 7,861,542 B2 \emph{Refrigerator Including Food Product Management System} and 2011/016555 A1 \emph {Refrigerator and Control Method Thereof}, use radio frequency identification (RFID) tags attached to foods to read expiration dates, with user input as a fallback. The prototype designed will improve the simple user-intensive method of the first group but without the added scope of radio frequency identification used in the second group.
 \subsection{Concepts Considered and Chosen}
-Many of the system design choices are easily derived from the engineering requirements; a UPC scanner with a standard USB interface is a clear choice for input of product codes and a mobile application is an obvious interface choice for a system catering to an on-the-go shopper. However, the choices of implementation platform and main base station display present more alternatives. Expiration date recognition is also a potential shortcoming of the system; ideally image processing could be employed to read expiration dates. However, the difficulty and computational complexity of applying image processing significantly extends the scope of the project and places additional performance constraints on the processing platform used. An evaluation of different expiration date recognition systems is tabulated in Table \ref{tab:datesys}, below.
+Many of the system design choices are easily derived from the engineering requirements; a UPC scanner with a standard USB interface is a clear choice for input of product codes and a mobile application is an obvious interface choice for a system catering to an on-the-go shopper. However, the choices of implementation platform and main base station display present more alternatives. Expiration date recognition is also a potential shortcoming of the system; ideally image processing could be employed to read expiration dates. However, the difficulty and computational complexity of applying image processing significantly extends the scope of the project and places additional performance constraints on the processing platform used. An evaluation of different expiration date recognition systems is tabulated in Table \ref{tab:datesys}.
 \begin{table}[h!]
+\vspace{0.5cm}
 \caption{Comparison of Expiration Date Systems}
 \begin{tabular}{| p{1in} | p{1.15in} | p{1.15in} | p{1.15in} | p{1.15in}  | p{1.15in} |}
 \cline{2-5}
@@ -119,13 +161,13 @@ Total &2+ &0&4+&7+\\
 \label{tab:datesys}
 \end{table}
 \newline \quad \newline
-Ease of use is one of the most critical system requirements, a system relying completely on input from the user will not be acceptable to consumers. However, feasibility and limiting processing performance required are important secondary objectives. Accuracy is critical to the goal of reducing waste due to expiration, but there is inherently some variability even in reported expiration dates. Image processing presents too much additional scope and too many additional requirements in exchange for marginal gains. As long as the predictive system learns from user input and anticipates that items will be purchased in different conditions, this scheme should be sufficient. One additional risk posed by the predictive system, the problem of deciphering text descriptions in order to assign an appropriate prediction, has been mitigated by using the ItemMaster UPC database. Many websites, such as the Food and Drug Administration or community based resources like \url{www.stilltasty.com}, provide ``rule of thumb" style predictions for expiration dates. However, the system must associate a product description with a rule of thumb, which after investigation appears to be difficult classification problem. The ItemMaster UPC database provides not only an association between a UPC code and a text description but also provides a GS1 category. There are a modest number of GS1 categories applicable to this system, each of which can be assigned a rule of thumb to initialize the prediction system.
+Ease of use is one of the most critical system requirements; a system relying completely on input from the user will not be acceptable to consumers. However, feasibility and limiting processing performance required are important secondary objectives. Accuracy is critical to the goal of reducing waste due to expiration, but there is inherently some variability even in reported expiration dates. Image processing presents too much additional scope and too many additional requirements in exchange for marginal gains. As long as the predictive system learns from user input and anticipates that items will be purchased in different conditions, this scheme should be sufficient. One additional risk posed by the predictive system, the problem of deciphering text descriptions in order to assign an appropriate prediction, has been mitigated by using the ItemMaster UPC database. Many websites, such as the Food and Drug Administration or community based resources like \url{www.stilltasty.com}, provide ``rule of thumb" style predictions for expiration dates. However, the system must associate a product description with a rule of thumb, which after investigation appears to be difficult classification problem. The ItemMaster UPC database provides not only an association between a UPC code and a text description but also provides a GS1 category. There are a modest number of GS1 categories applicable to this system, each of which can be assigned a rule of thumb to initialize the prediction system.
 \newline \quad \newline
-The problem of predicting shopping habits will be formulated as a problem of predicting the probability that the user will purchase a product again after N days from the last purchase. A product will be added to the shopping suggestions at the peaks in the probability density function and this process will reset after every purchase. To evaluation modeling strategies, receipts were retrieved for a three month interval from a single user. An initial attempt was to assume that the large number of factors influencing shopping habits could be approximated as normally distributed. However, for the data tested this approximation was very poor; all data considered was either multi-modal or contained a single mode with outliers. In all cases considered, the distribution was shifted to the point where the most likely suggestion time was actually positioned in an interval not supported by any of the samples. A more advanced approach, a non-parametric distribution estimate, was considered next; this method outperformed the simple normal approximation, but appeared to interpolate more than necessary and was the most computationally complex method considered. A final approach clustered the data points, approximated each cluster with a normal distribution, and summed these distributions. With this strategy each mode can be captured without the influence of outliers. The accuracy of the methods considered were evaluated both qualitatively, by looking at the resulting probability density functions, and also quantitatively, by considering performance on the example sets. Overall, clustering to produce a sum of Guassians appears to be the optimal prediction strategy and the probability metrics used are tabulated in Table \ref{tab:pugh2}. 
+The problem of predicting shopping habits will be formulated as a problem of predicting the probability that the user will purchase a product again after N days from the last purchase. A product will be added to the shopping suggestions at the peaks in the probability density function, and this process will reset after every purchase. To evaluate modeling strategies, receipts were retrieved for a three month interval from a single user. An initial attempt was to assume that the large number of factors influencing shopping habits could be approximated as normally distributed. However, for the data tested this approximation was very poor; the data considered were either multi-modal or contained a single mode with outliers. In all cases considered, the distribution was shifted to the point where the most likely suggestion time was actually positioned in an interval not supported by any of the samples. A more advanced approach, a non-parametric distribution estimate, was considered next; this method outperformed the simple normal approximation, but appeared to interpolate more than necessary and was the most computationally complex method considered. A final approach clustered the data points, approximated each cluster with a normal distribution, and summed these distributions. With this strategy each mode can be captured without the influence of outliers. The accuracy of the methods considered were evaluated both qualitatively, by looking at the resulting probability density functions, and also quantitatively, by considering performance on the example sets. Overall, clustering to produce a sum of Guassians appears to be the optimal prediction strategy and the probability metrics used are tabulated in Table \ref{tab:pugh2}. 
 
 \pagebreak
-
 \begin{table}[h!]
+\vspace{0.5cm}
 \caption{Comparison of Distribution Estimate Performance Metrics}
 \begin{tabular}{| p{1.25in} | p{.25in} | p{1.25in} | p{1.25in} | p{1.25in} |}
 \cline{3-5}
@@ -185,6 +227,7 @@ Total &2-&5+&7+& 9+\\
 \end{table}
 
 \begin{table}[h!]
+\vspace{0.5cm}
 \caption{Comparison of Main User Interface Displays}
 \begin{tabular}{| p{2in} | p{1in} | p{1.5in} | p{1.5in} | p{1.5in} |}
 \cline{2-4}
@@ -212,48 +255,49 @@ Total&3+&12+&13+\\
 \section{Design}
 Consideration of the these concerns, as well as the high level system diagram presented in Figure \ref{fig:sysdiag}, clarifies the separation of tasks while implementing the project. One group of tasks will contain the mobile interface and also development of an Interface Control Document (ICD) to enumerate the commands provided over the web interface. A second task group will consist of developing the internal databases, the expiration date warning system, and shopping list suggestion algorithm. The final group of tasks will consist of interfacing the processing platform with the scanner, Ethernet interface, and with the main base station interface. The final task group will also contain development of the base station interface.
 \newline \quad \newline
-Further specification of the web interface can not be solidified without additional investigation into Android application development and a more detailed system design can not be accomplished without knowledge of the processing platform. The system architecture will change significantly depending on whether a BeagleBoard can be procured. Development with a BeagleBoard will occur on top of an existing Linux distribution, whereas a microcontroller based system would be designed from the ground up.
+Further specification of the web interface cannot be solidified without additional investigation into Android application development, and a more detailed system design can not be accomplished without knowledge of the processing platform. The system architecture will change significantly depending on whether a BeagleBoard can be procured. Development with a BeagleBoard will occur on top of an existing Linux distribution, whereas a microcontroller based system would be designed from the ground up.
 \subsection{User Interface Design}
-Some initial layouts for the graphical user interface have been designed and are shown in Figure \ref{mock1}, \ref{mock2}, \ref{mock3}, and \ref{mock4}. When designing the interface layouts the possibility of a touch screen interface was considered, all buttons and tabs are intentionally large and easy to click. The Product Entry tab will be the default, and will provide feedback to the user while scanning in items. The ``Check In" and ``Check Out" buttons will function as radio buttons to indicate whether the next scanned item will be interpreted as a new purchase or an item being removed from the current inventory. The shopping list tab will provide a straight-forward view of past shopping lists, organized by ascending creation dates. The ``Suggested List" button will produce a new recommended shopping list. The current inventory tab will simply list items currently checked in to the refrigerator and provide a reset functions to clear the current inventory. As shown in Figure \ref{mock4}, expiration warnings will be presented as pop-up windows. To prevent these warnings from becoming an annoyance to the user the system will attempt to group together multiple alerts.
+Some initial layouts for the graphical user interface have been designed and are shown in Figures \ref{mock1}, \ref{mock2}, \ref{mock3}, and \ref{mock4}. When designing the interface layouts the possibility of a touch screen interface was considered; all buttons and tabs are intentionally large and easy to click. The Product Entry tab will be the default, and will provide feedback to the user while scanning items. The ``Check In" and ``Check Out" buttons will function as radio buttons to indicate whether the next scanned item will be interpreted as a new purchase or an item being removed from the current inventory. The shopping list tab will provide a straight-forward view of past shopping lists, organized by ascending creation dates. The ``Suggested List" button will produce a new recommended shopping list. The current inventory tab will simply list items currently checked into the refrigerator and provide a reset function to clear the current inventory. As shown in Figure \ref{mock4}, expiration warnings will be presented as pop-up windows. To prevent these warnings from becoming an annoyance to the user the system will attempt to group together multiple alerts.
 
 \begin{figure}[h!]
 \begin{center}
-\caption{Product Entry Tab Layout}
 \includegraphics[scale=0.5]{MockUp1}
+\caption{Product Entry Tab Layout}
 \label{mock1}
 \end{center}
 \end{figure}
 
 \begin{figure}[h!]
 \begin{center}
-\caption{Shopping List Tab Layout}
 \includegraphics[scale=0.5]{MockUp2}
+\caption{Shopping List Tab Layout}
 \label{mock2}
 \end{center}
 \end{figure}
 
 \begin{figure}[h!]
+\vspace{0.5cm}
 \begin{center}
-\caption{Current Inventory Tab Layout}
 \includegraphics[scale=0.5]{MockUp3}
+\caption{Current Inventory Tab Layout}
 \label{mock3}
 \end{center}
 \end{figure}
 
 \begin{figure}[h!]
 \begin{center}
-\caption{Expiration Warning Pop-Up Layout}
 \includegraphics[scale=0.5]{MockUp4}
+\caption{Expiration Warning Pop-Up Layout}
 \label{mock4}
 \end{center}
 \end{figure}
 
 \pagebreak
 \section{Considerations}
-The Smart Refrigerator system proposed is a step toward promoting sustainability and good stewardship of natural resources. Both the New York Times article mentioned in the statement of needs, and other reports \cite{times}\cite{aol}, indicate that approximately 27\% of all food available for consumption is lost to waste. A study published by the UN Food and Agriculture Organization declares the global percentage is even higher, a  total 1.3 billion tons or 33\% overall \cite{dutch}. The system designed will increase awareness about expiring items, with the goal of reducing these figures. Hugh Collins from AOL News speculates that food waste is dismissed subconsciously; many foods are cheap and the average consumer does not think about the cost of these small wastes aggregated \cite{aol}. By providing reminders to the user the Smart Refrigerator can remedy this source of waste by keeping the user aware of all their purchases. Expiration of foods products themselves is not the only source of waste involved with grocery shopping. Making unnecessarily frequent trips to store for forgotten or unexpected items also wastes resources. The shopping list recommendations provided by the Smart Refrigerator will hopefully mitigate waste here as well. A final consideration of the system is health and safety, by providing reminders about expiring products the risk of eating expired products will hopefully be decreased. 
+The Smart Refrigerator system proposed is a step toward promoting sustainability and good stewardship of natural resources. Both the New York Times article mentioned in the statement of needs, and other reports \cite{times, aol}, indicate that approximately 27\% of all food available for consumption is lost to waste. A study published by the UN Food and Agriculture Organization declares the global percentage is even higher, totalling 1.3 billion tons or 33\% overall \cite{dutch}. The system designed will increase awareness about expiring items, with the goal of reducing these figures. Hugh Collins from AOL News speculates that food waste is dismissed subconsciously; many foods are cheap, and the average consumer does not think about the cost of these small wastes aggregated \cite{aol}. By providing reminders to the user the Smart Refrigerator can remedy this source of waste by keeping the user aware of all their purchases. Expiration of food products themselves is not the only source of waste involved with grocery shopping. Making unnecessarily frequent trips to a store for forgotten or unexpected items also wastes resources. The shopping list recommendations provided by the Smart Refrigerator will hopefully mitigate waste here as well. A final consideration of the system is health and safety, by providing reminders about expiring products the risk of eating expired products will hopefully be decreased. 
 
 \section{Cost Estimates}
-We have submitted a proposal to the ARM student design contest requesting a BeagleBoard-xM and power adapter. If our proposal is accepted we will be able to obtain these parts at no cost. We also already own many of the principle system components, the dorm room refrigerator, android smart phone, and LCD display will all not need to be purchased.
+We have submitted a proposal to the ARM student design contest requesting a BeagleBoard-xM and power adapter. If our proposal is accepted we will be able to obtain these parts at no cost. We also already own many of the principle system components; the dorm room refrigerator, android smart phone, and LCD display will not need to be purchased.
 \begin{table}[h!]
 \begin{center}
 \caption{Cost Table}
@@ -286,7 +330,7 @@ USB Keyboard/Keypad & \$10 & \$10 \\
 \section{Testing Strategy}
 Preliminary testing will focus on the BeagleBoard itself and its ability to interact with the desired peripherals.  The system will require an LCD screen, a USB barcode scanner, a network connection, and a keypad.  Basic functionality of these components will be tested thoroughly during development, as well as during final system testing. 
 \newline \quad \newline
-The SQL database used to store all data for the system will be tested once the core of the user application has been coded.  Test scripts will be written to populate the databases with fake data in order to ensure that the database is configured as desired, and to verify that the user application is properly communicating with the database alongside the web interface.
+The SQL database used to store all data for the system will be tested once the core of the user application has been coded.  Test scripts will be written to populate the databases with synthetic data in order to ensure that the database is configured as desired, and to verify that the user application is properly communicating with the database alongside the web interface.
 \newline \quad \newline
 The main testing focus will be on the user application, both the software running on the base station as well as the web and Android interfaces.  Unit testing will be performed during development of each component, as well as integration testing of the final application.  Testing will focus on usability of the interface, accuracy of expiration date prediction and shopping list recommendations, and communication with the database. 
 \newline \quad \newline
@@ -299,13 +343,13 @@ As a final test, someone not involved in the project will test the system for us
 \noindent There are a few things that could present difficulties as this project is implemented. The first is determining an accurate method to predict when a user is likely to purchase a food item. This requires statistical analysis of every food item which, in turn, requires a non-trivial amount of processing power. This brings us to the next challenge: finding an appropriate processing platform. It must be small, but have enough memory to store the product database, enough processing power to host the web service and calculate the product statistics, enough peripheral ports for the scanner and a small keypad, and have the ability to drive a display. The display is a third challenge, as it must be large enough to be useful, without increasing the power draw of the device or the overall cost. 
 
 \subsection{Sources of Failure}
-\noindent The three challenges listed above are also possible sources of failure. If the statistical analysis cannot be run on our platform, whether by processing power or other limitations, then there will be no way to know when to suggest that the user add an item to a grocery list. If the analysis is done improperly, the suggestions will not aid the user or improve shopping habits. If there is no feasible display to use with the system, then there would be no way for the user to receive any feedback when items were scanned in. If the bar code was misread, then the wrong item would be added to the database and the user would have no way of knowing. Finally, if there is not platform powerful enough or robust enough for the system, then the system would not be able to perform as required, and features and functionality would be severely limited.
+\noindent The three challenges listed above are also possible sources of failure. If the statistical analysis cannot be run on our platform, whether by processing power or other limitations, then there will be no way to know when to suggest that the user add an item to a grocery list. If the analysis is done improperly, the suggestions will not aid the user or improve shopping habits. If there is no feasible display to use with the system, then there would be no way for the user to receive any feedback when items were scanned. If the bar code was misread, then the wrong item would be added to the database and the user would have no way of knowing. Finally, if there were not platform powerful enough or robust enough for the system, then the system would not be able to perform as required, and features and functionality would be severely limited.
 
 \subsection {Contingency Plans}
-\noindent It is possible to limit or even eliminate the risks of such failures. The implementation of a web interface will allow a user to access the database and see what items have been scanned in, and make sure that no items were misread. Via this interface, the user will also be able to set default expiration dates and other information about the products they have purchased. That way, in case the display or statistical analysis are unavailable, some related but basic functionality will still be available to the user. To ensure that the processing platform is robust enough, various requirements were set which defined the number of peripheral ports, the processor power, and display capabilities.
+\noindent It is possible to limit or even eliminate the risks of such failures. The implementation of a web interface will allow a user to access the database and see what items have been scanned, and make sure that no items were misread. Via this interface, the user will also be able to set default expiration dates and other information about the products they have purchased. That way, in case the display or statistical analysis are unavailable, some related but basic functionality will still be available to the user. To ensure that the processing platform is robust enough, various requirements were set which defined the number of peripheral ports, the processor power, and display capabilities.
 
 \subsection {Analysis}
-\noindent In order to determine the best course of action in each case, analysis was done on each risk point. A number of display methods were investigated and compared, as well as a number of different processing platforms. Each comparison showcased the benefits and drawbacks of each item, and the best solution was decided upon in a way that was as empirical as possible. To determine the best method of statistical analysis, actual shopping data was collected and analyzed in a variety of different ways to find a model that matched, as closely as possible, the real world shopping habits of the user. With such methods implemented, the device will be able to accurately provide item suggestions.
+\noindent In order to determine the best course of action in each case, analysis was done on each risk point. A number of display methods were investigated and compared, as well as a number of different processing platforms. Each comparison showcased the benefits and drawbacks of each item, and the best solution was determined in a way that was as empirical as possible. To determine the best method of statistical analysis, actual shopping histories were collected and analyzed in a variety of different ways to find a model that matched, as closely as possible, the real world shopping habits of the user. With such methods implemented, the device will be able to provide item suggestions accurately.
 
 \section{Milestones}
 \begin{table}[h!]
@@ -347,7 +391,7 @@ Integration and System Testing & March 30, 2012 & Ben Reeves \\
 \addcontentsline{toc}{section}{10\hspace{.090in} References}
 \begin{thebibliography}{9}
 \bibitem{times}
-Martin, Andrew. ``One Country's Table Scraps, Another Countr'ys Meal." New York Times. N.p., 18 May 2008. Web. 26 Jan 2012. 
+Martin, Andrew. ``One Country's Table Scraps, Another Country's Meal." New York Times. N.p., 18 May 2008. Web. 26 Jan 2012. 
 \url{http://www.nytimes.com/2008/05/18/weekinreview/18martin.html?pagewanted=all}.
 \bibitem{lg}
 Ridden, Paul. ``LG launches first Smart-Grid appliance: the Smart Fridge." gizmag. N.p., 27 Apr 2011. Web. 29 Jan 2012. \url{<http://www.gizmag.com/lg-smart-fridge/18502/>}.
