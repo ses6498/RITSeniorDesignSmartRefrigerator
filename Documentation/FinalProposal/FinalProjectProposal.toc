@@ -10,13 +10,13 @@
 \contentsline {subsection}{\numberline {3.2}Concepts Considered and Chosen}{6}
 \contentsline {section}{\numberline {4}Design}{9}
 \contentsline {section}{\numberline {5}Considerations}{15}
-\contentsline {section}{\numberline {6}Cost Estimates}{15}
+\contentsline {section}{\numberline {6}Cost Estimates}{16}
 \contentsline {section}{\numberline {7}Testing Strategy}{16}
 \contentsline {subsection}{\numberline {7.1}Base Station User Interface Testing}{16}
 \contentsline {subsection}{\numberline {7.2}Mobile User Interface and Network Interface Testing}{18}
-\contentsline {subsection}{\numberline {7.3}Shopping List and Expiration Prediction Test}{21}
-\contentsline {subsection}{\numberline {7.4}Integration with BeagleBoard}{21}
-\contentsline {section}{\numberline {8}Risks}{22}
-\contentsline {section}{\numberline {9}Milestones}{24}
-\contentsline {section}{10\hspace {.090in} References}{25}
-\contentsline {section}{References}{25}
+\contentsline {subsection}{\numberline {7.3}Shopping List and Expiration Prediction Test}{22}
+\contentsline {subsection}{\numberline {7.4}Integration with BeagleBoard}{22}
+\contentsline {section}{\numberline {8}Risks}{23}
+\contentsline {section}{\numberline {9}Milestones}{25}
+\contentsline {section}{10\hspace {.090in} References}{26}
+\contentsline {section}{References}{26}
