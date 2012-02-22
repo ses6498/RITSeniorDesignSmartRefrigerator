@@ -268,6 +268,7 @@ The majority of software developed will run on the Beagleboard, which will be th
 \newline \indent \newline
 A more detailed explaination of the Beagleboard subsystem is shown in Figure \ref{fig:basecode}. The figure shows all external connections to the beaglboard as well as an internal seperation into sub-components. The base station code will be inspired by the Model, View, Controller paradigm. A distinct module of code will create the user interface displayed on the Beagleboard's touchpad and relay user interface to a seperate controller module. The controller module will coordinate the various input events generate by the system. Input from the UPC scanner and keyboard will pass through this module and then be transferred to the view. The controller is a necessary middleman in  this process so scanner UPC codes and user inputs can be shared with the model as well. The controller will also be responsible for handling input from the temperature and humidty sensor,  through a GPIO driver implemented. The controller must also interact with the databse structures and handle event from the network interface as well. The model itself will be distributed amoong the remaining modules; the content it needs will be contained within the databases, and the principle modeling task will occur with the expiration date and shopping list prediction algorithms. The two prediction algorithms will be seperated as a unique subsystem, since the prediction task is a unique portion of the system and also since it will belong to a different task group the the overall base station software application.
 \begin{figure}[h!]
+\vspace{0.5cm}
 \begin{center}
 \includegraphics[scale=0.8]{../Graphics/BaseStation}
 \caption{Beagleboard Subsystems}
@@ -276,6 +277,7 @@ A more detailed explaination of the Beagleboard subsystem is shown in Figure \re
 \end{figure}
 The base station application will be developed in C++, using the Qt user interface framework. Java was also given consideration as the primary language, since this could potentially increase consistancy with the mobile application. However, C++ appeared to be a much more common language accross the existing drivers and code examples provided for the Beagleboard. Effort will still be made to maintain consistancy between the two user interaces. To facilitate ease of use and a fluid user experiance between the two applications the layout should be preserved exactly, and aesthetic differances should be minimized. Some initial layouts for the graphical user interface have been designed and are shown in Figures \ref{mock1}, \ref{mock2}, \ref{mock3}, and \ref{mock4}. When designing the interface layouts the constraints of a touch screen interface was considered; all buttons and tabs are intentionally large and easy to click. The Product Entry tab will be the default, and will provide feedback to the user while scanning items. The ``Check In" and ``Check Out" buttons will function as radio buttons to indicate whether the next scanned item will be interpreted as a new purchase or an item being removed from the current inventory. The shopping list tab will provide a straight-forward view of past shopping lists, organized by ascending creation dates. The ``Suggested List" button will produce a new recommended shopping list. The current inventory tab will simply list items currently checked into the refrigerator and provide a reset function to clear the current inventory. As shown in Figure \ref{mock4}, expiration warnings will be presented as pop-up windows. To prevent these warnings from becoming an annoyance to the user the system will attempt to group together multiple alerts.
 \begin{figure}[h!]
+\vspace{0.5cm}
 \begin{center}
 \includegraphics[scale=0.5]{MockUp1}
 \caption{Product Entry Tab Layout}
@@ -307,10 +309,12 @@ The base station application will be developed in C++, using the Qt user interfa
 \label{mock4}
 \end{center}
 \end{figure}
+\quad \newline
 The mobile interface will be divided into similar tabs which potentially will limit the data usage requirements. The mobile application will be updated on a ``need to know" basis only. If additional items have been added to the inventory or new shopping lists have been created on the base station the mobile application will not be notified until the user has opened the application and navigated to the appropriate tab. It is anticipated that the largest data exchanges will need to occur for the shopping lists, since they will require information from multiple items and additional top-level information about the lists. The mobile application will further improve data efficiency by not loading actual shopping list items until a list has been selected. Navigation to the shopping list tab will query for the top-level information about new or updated shopping lists but not delve down into the lists themselves to retrieve item information. Only once a list has been selected will complete updated information about its items be retrieved. This implementation will add additional latency while using the application versus a large of all updated data upon launching the application or a background fetch of information while running the application. However, given the high costs of mobile data plans and  the lack of widespread WiFi at most grocery stores, limiting the amount of data passed across the interface is an important consideration for usability.
 \newline \quad \newline
 The mobile application should also be tolerant of interrupted connections, since telecommunication networks often have spotty coverage. To mitigate the impact of dropped connections updates should be transferred from the Beagleboard to the mobile application in a sequence of short communications; a large number of small messages will be more robust than a small number of large messages. This structure will also facilitate the ``need to know" distribution of information as well. The processes for handling updates to the current inventory and updates to shopping lists are conceptually similar and are illustrated with a common state machine in Figure \ref{fig:state}. Upon launching the application the update system will enter a waiting state until a tab is selected or some other actions is performed which requires a check for updates, such as expanding a shopping list to view the items within it. The mobile application will  then request the number of relevant updates from the base station software. The state machine will pend until the number of updates is returned and will then enter a state machine evaluates whether there are updates remaining. The system will alternate between pending to receive updates and checking whether additional updates are available. The system will return the waiting state when the ``need to know" information has been retrieved.
 \begin{figure}[h!]
+\vspace{0.5cm}
 \begin{center}
 \includegraphics[scale=0.8]{../Graphics/StateMachine}
 \caption{State Machine for Database Updates to Mobile Application}
@@ -320,7 +324,7 @@ The mobile application should also be tolerant of interrupted connections, since
 The various databases will be implemented as SQL databases on the Beagleboard. SQL databases will certainly be reliable, and testing will be reduced only to ensure correct interaction with the databases. Figure \ref{fig:databases} shows the division of the multiple databases stored on the Beagleboard. The most intuitive database is the Item Database which will store the total set of UPC codes and corresponding text description. A quantity field will provide not only the quantitiy information but also implicitly provide a check whether an item is in the current inventory or not. The item database will also store the most recent purchase data of an item. However, just the last purchase will not be sufficient for the shopping list prediction algorithm and a separate item history table will be created. The history table will be indexed by UPC, where each element is a list of purchase dates for a particular item. To store shopping lists a shopping list database will be created where each shopping list is given an identification number and name. The shopping lists will also include a flag to indicate whether this shopping list was manual generate or generated by the shopping list creation algorithm; the user may find this information useful in evaluating shopping habits. To coordinate between the list of items and shopping lists themselves and intermediate linking database will store the actual items included on a shopping list. This database will be indexed by the shopping list idea and each element will contain a list of item UPC codes.
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[scale=0.8]{../Graphics/Databases}
+\includegraphics[scale=1.0]{../Graphics/Databases}
 \caption{Separation of Information in Databases}
 \label{dig:databases}
 \end{center}
@@ -332,14 +336,13 @@ The various databases will be implemented as SQL databases on the Beagleboard. S
 \item[Background] -- Experience with Linux based operating systems in the computer science sequence has been helpful, as well as the introduction to user interface development. The project does not contain significant hardware design, though skills learned in Introduction to Digital Systems may be useful in interfacing with the temperature and humidity sensor.
 \item[Multidisciplinary Aspects] -- This prototype system requires coordination between hardware and software and requires a mixture of Computer Engineering and Software Engineering skills. However, multidisciplinary projects often carries a mechanical connotation and this system does not require integration of an mechanical components.
 \end{description}
-
-\pagebreak
 \section{Considerations}
 The Smart Refrigerator system proposed is a step toward promoting sustainability and good stewardship of natural resources. Both the New York Times article mentioned in the statement of needs, and other reports \cite{times, aol}, indicate that approximately 27\% of all food available for consumption is lost to waste. A study published by the UN Food and Agriculture Organization declares the global percentage is even higher, totalling 1.3 billion tons or 33\% overall \cite{dutch}. The system designed will increase awareness about expiring items, with the goal of reducing these figures. Hugh Collins from AOL News speculates that food waste is dismissed subconsciously; many foods are cheap, and the average consumer does not think about the cost of these small wastes aggregated \cite{aol}. By providing reminders to the user the Smart Refrigerator can remedy this source of waste by keeping the user aware of all their purchases. Expiration of food products themselves is not the only source of waste involved with grocery shopping. Making unnecessarily frequent trips to a store for forgotten or unexpected items also wastes resources. The shopping list recommendations provided by the Smart Refrigerator will hopefully mitigate waste here as well. A final consideration of the system is health and safety, by providing reminders about expiring products the risk of eating expired products will hopefully be decreased. 
 
 \section{Cost Estimates}
 We have submitted a proposal to the ARM student design contest requesting a BeagleBoard-xM and power adapter. If our proposal is accepted we will be able to obtain these parts at no cost. We also already own many of the principle system components; the dorm room refrigerator, android smart phone, and LCD display will not need to be purchased.
 \begin{table}[h!]
+\vspace{0.5cm}
 \begin{center}
 \caption{Cost Table}
 \label{tab:cost}
@@ -417,7 +420,7 @@ The main testing focus will be on the user application, both the software runnin
 \hline
 \end{tabular}
 \end{table}
-
+\pagebreak
 \subsection{Mobile User Interface and Network Interface Testing}
 The web and mobile interfaces will have their own set of tests, focused on basic functionality and interoperability on various platforms.  The web interface will be tested on the most popular browsers (Google Chrome, Firefox, and Internet Explorer), as well as some of the most popular mobile platforms (Android, WebOS, and iOS).  The Android interface will need to be tested on various versions of the operating system.  At a minimum, major versions between 2.1 and 4.0 will be tested.  
 
@@ -468,6 +471,7 @@ Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} &
 \pagebreak
 
 \begin{table}[h!]
+\vspace{0.5cm}
 \caption{UI Usability Test}
 \label{tab:usability}
 \begin{tabular}{|c|p{3cm}|p{6cm}|c|c|c|c|c|}
@@ -504,6 +508,7 @@ Result} & \rotatebox{90}{Pass}& \rotatebox{90}{Fail} & \rotatebox{90}{N/A} &
 \pagebreak
 
 \begin{table}[h!]
+\vspace{0.5cm}
 \caption{UI Interoperability Test}
 \label{tab:interop}
 \begin{tabular}{|c|p{4.5cm}|p{5.5cm}|c|c|c|c|c|}
@@ -585,25 +590,12 @@ It is difficult to outline exactly what testing will be required for the process
 \section{Risks}
 The risks unresolved in the prototype system are best grouped by subsystem. Some unresolved risks are simply due to unknown availability of parts, others require more explorations, and finally others are more fundamental risk.
 \begin{description}
-\item[Availability of LCD Display] -- The ULCD7 lite is the prefered choice for user interface to accompany the Beagleboard. The 7-inch resistive touchscreen is designed to work with the Beagleboard and has drivers built into the Angstrom Linux distribution used. However, the touchscreen does not seem to be stocked by an online suppliers and our request for 
-\item[Mobile Application Data Exchange] --
-\item[Practicality of Prediction Algorithms] --
-\item[Efficiency of Database Access] --
+\item[Availability of LCD Display] -- The ULCD7 lite is the prefered choice for user interface to accompany the Beagleboard. The 7-inch resistive touchscreen is designed to work with the Beagleboard and has drivers built into the Angstrom Linux distribution used. However, the touchscreen does not seem to be stocked by online suppliers and our request through the Arm Developer Day proposal process is still pending. Since the Beagleboard provides a DVI-D and S-video output this risk could be mitigated if the prefered touch screen is not available. The availability of these alternate interfaces also facilitates development while waiting for the desired part. However, since the base station display is a critical system component if this risk is not resolved shortly one of the less desirable alternatives will have to be selected.
+\item[Mobile Application Data Exchange] -- Exchanging inventory and shopping lists data with the mobile application presents two risk areas: the amount of data plan usage required and interrupted network connections. These risks are partially mitigated by the design, which exchanges data in small increments on a ``need to know" basis only, however the degree to which these risks are truely problematic is not know. For development the smart phone can be connected with WiFi instead of a costly data connection however, the data requirements should be tested early on in development to ensure this risk does not become a latent problem. The interrupt connection is considered in the design, but the effects of the design considerations made will be difficult to measure since it may be difficult to repeatedly interrupt the data connection.
+\item[Practicality of Prediction Algorithms] -- The shopping list prediction algorithm outlined appears optimal for the test data considered. However, the analysis performed did not consider a large sample of shoppers and the conclusions drawn may not be appropriate for a larger population. Also, the prediction algorithm outlined will not perform will with only a few samples and it is unclear how unacceptable this latency will appear to end users. The strategy presented is also quite heavy handed and may be over the top for this prototype system. The system will not serve as an effective shopping aid with an accurate prediction system, but a prototype may be acceptable with a much simpler system which will require significantly less effort.
+\item[Efficiency of Database Access] -- Efficient practices for database access were not known or considered when partitioning information into seperate databases and developing the schema for the databases. For example, using the same database to store all possible items and the current inventory may be an inefficient choice. This strategy requires looking over all elements and extracting only those with non-zero quantities. If the system was extended to large  commercial applications or if the Beagleboard was replaced with a more cost-efficient and less powerful alternative this organization may become a signiicant risk.
 \end{description}
-
-
-\subsection{Potential Difficulties}
-\noindent There are a few things that could present difficulties as this project is implemented. The first is determining an accurate method to predict when a user is likely to purchase a food item. This requires statistical analysis of every food item which, in turn, requires a non-trivial amount of processing power. This brings us to the next challenge: finding an appropriate processing platform. It must be small, but have enough memory to store the product database, enough processing power to host the web service and calculate the product statistics, enough peripheral ports for the scanner and a small keypad, and have the ability to drive a display. The display is a third challenge, as it must be large enough to be useful, without increasing the power draw of the device or the overall cost. 
-
-\subsection{Sources of Failure}
-\noindent The three challenges listed above are also possible sources of failure. If the statistical analysis cannot be run on our platform, whether by processing power or other limitations, then there will be no way to know when to suggest that the user add an item to a grocery list. If the analysis is done improperly, the suggestions will not aid the user or improve shopping habits. If there is no feasible display to use with the system, then there would be no way for the user to receive any feedback when items were scanned. If the bar code was misread, then the wrong item would be added to the database and the user would have no way of knowing. Finally, if there were not platform powerful enough or robust enough for the system, then the system would not be able to perform as required, and features and functionality would be severely limited.
-
-\subsection {Contingency Plans}
-\noindent It is possible to limit or even eliminate the risks of such failures. The implementation of a web interface will allow a user to access the database and see what items have been scanned, and make sure that no items were misread. Via this interface, the user will also be able to set default expiration dates and other information about the products they have purchased. That way, in case the display or statistical analysis are unavailable, some related but basic functionality will still be available to the user. To ensure that the processing platform is robust enough, various requirements were set which defined the number of peripheral ports, the processor power, and display capabilities.
-
-\subsection {Analysis}
-\noindent In order to determine the best course of action in each case, analysis was done on each risk point. A number of display methods were investigated and compared, as well as a number of different processing platforms. Each comparison showcased the benefits and drawbacks of each item, and the best solution was determined in a way that was as empirical as possible. To determine the best method of statistical analysis, actual shopping histories were collected and analyzed in a variety of different ways to find a model that matched, as closely as possible, the real world shopping habits of the user. With such methods implemented, the device will be able to provide item suggestions accurately.
-
+\pagebreak
 \section{Milestones}
 \begin{table}[h!]
 \caption{Table of Milestones}
