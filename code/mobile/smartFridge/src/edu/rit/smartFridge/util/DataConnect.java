@@ -10,5 +10,7 @@ public interface DataConnect
 	
 	ShoppingList getList(int listId);
 	
-	List<InventoryItem> getItems(ShoppingList list);
+	ShoppingList populateItems(ShoppingList list);
+	
+	List<InventoryItem> getInventory();
 }

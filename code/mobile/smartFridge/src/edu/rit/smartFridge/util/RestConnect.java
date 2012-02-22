@@ -18,7 +18,12 @@ public class RestConnect implements DataConnect
 		return null;
 	}
 
-	public List<InventoryItem> getItems(ShoppingList list) {
+	public ShoppingList populateItems(ShoppingList list) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<InventoryItem> getInventory() {
 		// TODO Auto-generated method stub
 		return null;
 	}
