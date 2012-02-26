@@ -45,6 +45,8 @@ public class ShoppingListActivity extends ListActivity {
         	{
         		// TODO: in here, make the listener open another activity that shows the 
         		// items contained in a list.
+        		// Intent intent = new Intent(this, [ActivityName].class)
+        		// startActivity(intent)
         		Toast.makeText(getApplicationContext(),((TextView) view).getText() , Toast.LENGTH_SHORT).show();
         	}
         });

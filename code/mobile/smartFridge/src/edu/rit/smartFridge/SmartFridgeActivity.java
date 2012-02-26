@@ -1,7 +1,5 @@
 package edu.rit.smartFridge;
 
-import java.net.*;
-
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -29,18 +27,18 @@ public class SmartFridgeActivity extends TabActivity {
         tabHost.addTab(spec);
         
         // some networking stuff
-        Socket s = new Socket();
-        InetSocketAddress addr = new InetSocketAddress("192.168.6.31", 22);
-        
-        try
-        {
-	        s.bind(null);
-	        s.connect(addr);
-        }
-        catch (Exception e)
-        {
-        	System.out.println(e.getMessage());
-        }
+//        Socket s = new Socket();
+//        InetSocketAddress addr = new InetSocketAddress("192.168.6.31", 22);
+//        
+//        try
+//        {
+//	        s.bind(null);
+//	        s.connect(addr);
+//        }
+//        catch (Exception e)
+//        {
+//        	System.out.println(e.getMessage());
+//        }
         
         tabHost.setCurrentTab(2);
     }
