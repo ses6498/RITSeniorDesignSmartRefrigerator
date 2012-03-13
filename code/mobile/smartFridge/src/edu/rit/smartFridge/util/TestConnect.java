@@ -11,6 +11,11 @@ import edu.rit.smartFridge.model.ShoppingList;
 
 public class TestConnect implements DataConnect {
 
+	/**
+	 * auto generated serial version UID
+	 */
+	private static final long serialVersionUID = 8958256739421033944L;
+	
 	ShoppingList list1 = new ShoppingList("List 1", 1);
 	ShoppingList list2 = new ShoppingList("List 2", 2);
 	ShoppingList list3 = new ShoppingList("List 3", 3);

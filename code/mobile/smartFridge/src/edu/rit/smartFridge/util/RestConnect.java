@@ -7,6 +7,10 @@ import edu.rit.smartFridge.model.ShoppingList;
 
 public class RestConnect implements DataConnect
 {
+	/**
+	 * auto generated serial version UID
+	 */
+	private static final long serialVersionUID = 8434711359880195332L;
 
 	public List<ShoppingList> getLists() {
 		// TODO Auto-generated method stub

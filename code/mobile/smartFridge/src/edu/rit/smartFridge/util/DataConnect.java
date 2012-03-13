@@ -1,10 +1,11 @@
 package edu.rit.smartFridge.util;
 
+import java.io.Serializable;
 import java.util.List;
 
 import edu.rit.smartFridge.model.*;
 
-public interface DataConnect 
+public interface DataConnect extends Serializable
 {
 	List<ShoppingList> getLists();
 	

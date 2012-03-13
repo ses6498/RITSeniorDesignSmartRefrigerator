@@ -15,13 +15,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 import edu.rit.smartFridge.model.ShoppingList;
 import edu.rit.smartFridge.util.DataConnect;
-import edu.rit.smartFridge.util.TestConnect;
 
 public class ShoppingListActivity extends ListActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
-        DataConnect connecter = new TestConnect();
+        DataConnect connecter = null;
+        Bundle extras = getIntent().getExtras();
+        if (extras != null)
+        {
+        	connecter = (DataConnect) extras.getSerializable(getString(R.string.dataConnecter));
+        }
         List<ShoppingList> lists = connecter.getLists();
         List<String> listNames = new ArrayList<String>();
         

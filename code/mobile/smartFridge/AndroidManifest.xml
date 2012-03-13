@@ -19,11 +19,14 @@
             </intent-filter>
         </activity>
         <activity 
-            android:name=".InventoryActivity"
+            android:name=".ItemListActivity"
             android:label="@string/inventory_name"></activity>
         <activity 
             android:name=".ShoppingListActivity"
             android:label="@string/shoppingList_name"></activity>
+        <activity 
+            android:name=".ItemDetailActivity"
+            android:label="Test"></activity>
     </application>
 
 </manifest>
