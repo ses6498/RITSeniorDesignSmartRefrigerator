@@ -1,0 +1,311 @@
+% !TEX TS-program = pdflatex
+% !TEX encoding = UTF-8 Unicode
+
+% This file is a template using the "beamer" package to create slides for a talk or presentation
+% - Giving a talk on some subject.
+% - The talk is between 15min and 45min long.
+% - Style is ornate.
+
+% MODIFIED by Jonathan Kew, 2008-07-06
+% The header comments and encoding in this file were modified for inclusion with TeXworks.
+% The content is otherwise unchanged from the original distributed with the beamer package.
+
+\documentclass{beamer}
+
+
+% Copyright 2004 by Till Tantau <tantau@users.sourceforge.net>.
+%
+% In principle, this file can be redistributed and/or modified under
+% the terms of the GNU Public License, version 2.
+%
+% However, this file is supposed to be a template to be modified
+% for your own needs. For this reason, if you use this file as a
+% template and not specifically distribute it as part of a another
+% package/program, I grant the extra permission to freely copy and
+% modify this file as you see fit and even to delete this copyright
+% notice. 
+
+
+\mode<presentation>
+{
+  \usetheme{CambridgeUS}
+  % or ...
+
+\setbeamertemplate{footline}
+	{
+	  \leavevmode%
+	  \hbox{%
+	  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{author in head/foot}%
+	    \usebeamerfont{author in head/foot}\insertshortauthor%~~\beamer@ifempty{\insertshortinstitute}{}{(\insertshortinstitute)}
+	  \end{beamercolorbox}%
+	  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,center]{title in head/foot}%
+	    \usebeamerfont{title in head/foot}\insertshorttitle
+	  \end{beamercolorbox}%
+	  \begin{beamercolorbox}[wd=.333333\paperwidth,ht=2.25ex,dp=1ex,right]{date in head/foot}%
+	    \usebeamerfont{date in head/foot}\insertshortdate{}\hspace*{2em}
+	    \insertframenumber{} / \inserttotalframenumber\hspace*{2ex} 
+	  \end{beamercolorbox}}%
+	  \vskip0pt%
+	}
+
+\setbeamertemplate{enumerate items}[square]
+\setbeamercolor{enumerate items}{fg=black}
+\setbeamertemplate{itemize item}[square]
+\setbeamercolor{itemize item}{fg=black}  
+  \setbeamercovered{transparent}
+}
+
+
+\usepackage[english]{babel}
+\usepackage[utf8]{inputenc}
+
+
+\title[Smart Refrigerator: Design Review] % (optional, use only with long paper titles)
+{Smart Refrigerator}
+
+\subtitle
+{Design Review} % (optional)
+
+\author[Steven Strapp, Ben Reeves, Dustin Stroup] % (optional, use only with lots of authors)
+{Steven Strapp \and Ben Reeves \and Dustin Stroup}
+
+\date[20 March, 2012] % (optional)
+{20 March, 2012}
+
+\begin{document}
+
+\begin{frame}
+  \titlepage
+\end{frame}
+
+\begin{frame}{Statement of Needs}
+\Large
+\begin{itemize}
+\item The New York Times reports that an average American family of four will account for over 120 pounds of food waste per month and that 27\% percent of all food available will be lost to waste \cite{times}. In addition, other resources are lost due to inefficient shopping practices; forgetting common items or special trips made for recipe ingredients waste time and fuel. A system is required for shoppers both to ensure their purchases are used before expiration and to assist in planning of grocery shopping trips.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Objective Statement}
+\Large
+\begin{itemize}
+\item The objective of this project is to design a prototype that will allow a user to track food items in order to reduce waste and improve shopping efficiency. The system will remind the user about items nearing their expiration date and track the frequency of purchased items. From this frequency calculation the system will suggest typical shopping lists. A mobile phone application will provide an interface to the unit to view or create shopping lists and to query inventory.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Customer Needs}
+\footnotesize
+\begin{itemize}
+\item The system should provide an intuitive, easy to use graphical interface.
+\item The system should require minimal user input.
+\item The system should be able to scan product codes and identify corresponding items quickly.
+\item The system should provide secure remote access.
+\item The system should report items nearing expiration.
+\item The system should provide access to the current inventory.
+\item The system should provide a method to create and edit shopping lists.
+\item The system should recommend shopping lists which accurately reflect buying habits.
+\item The system should function as an add-on to an existing refrigerator or pantry.
+\item The system should indicate if food products are stored safely.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Engineering Specifications}
+\footnotesize
+\begin{tabular}{| p{0.6in} | p{2in} |p{1.5in} |}
+\hline
+Customer Need & Engineering Requirement & Justification \\
+\hline
+2,3 &A. An off-the-shelf UPC scanner should be used to input items. & A UPC scanner can read product codes with a single click.\\
+\hline
+3 &B. An internal UPC code database should be used to associate codes with items.&An internal database will remove delays associated with an internet look-up.\\
+\hline
+1,4,6&C. The system should be internet enabled and provide a web interface.&By providing a web interface any other internet-connected device can access the system.\\
+\hline
+4&D. Remote access should be authenticated with user name and password.&User names and passwords are standard for access control.\\
+\hline
+\vdots & \vdots & \vdots \\
+\hline
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Engineering Specifications}
+\footnotesize
+\begin{tabular}{| p{0.6in} | p{2in} |p{1.5in} |}
+\hline
+Customer Need & Engineering Requirement & Justification \\
+\hline
+2,5&E. An internal database will store default recommended expiration estimates for common categories of items.&Inferring expiration dates based on item category helps minimizes user input. It is well known how long some products take to expire.\\
+\hline
+1,5&F. The user interface will provide a method for updating default expiration estimates.&Default estimates will not account for condition of product on arrival and may need to be updated.\\
+\hline
+1,5&G. Interface will provide a visual indication to the user when items are within a user-defined margin of expiration.&The goal of the system is to reduce waste due to expiration.\\
+\hline
+\vdots & \vdots & \vdots \\
+\hline
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Engineering Specifications}
+\footnotesize
+\begin{tabular}{| p{0.6in} | p{2in} |p{1.5in} |}
+\hline
+Customer Need & Engineering Requirement & Justification \\
+\hline
+1,6&H. From both the base station and mobile application the user will be able to view an inventory list.&The user needs access to the current inventory in order to use items and shop effectively.\\
+\hline
+7,8&I. A database will be devoted to storing recommend shopping lists produced by the system.&User may wish to retain generic shopping lists for future use.\\
+\hline
+8&J. Recommended shopping lists will reflect purchasing history and expiration dates of current inventory.&Recommendation policy must suggest items relevant to the user in order to be useful.\\
+\hline
+\vdots & \vdots & \vdots \\
+\hline
+
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Engineering Specifications}
+\footnotesize
+\begin{tabular}{| p{0.6in} | p{2in} |p{1.5in} |}
+\hline
+Customer Need & Engineering Requirement & Justification \\
+\hline
+7&K. Custom shopping lists, created either from the base station or the mobile interface, can be added to shopping list database.&Inefficient shopping practices can be prevented by storing shopping lists and the system can not anticipate all required items.\\
+\hline
+9&L. The system will be self-contained and no modifications will be required to existing appliances.&Similar systems are commercially available but require costly replacement of existing appliances.\\
+\hline
+10&M. The system should measure temperature and humidity within the refrigerator. & Temperature and humidity measurements will allow the user to determine if food storage conditions are safe. \\
+\hline
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Top Level System Diagram}
+\begin{center}
+\includegraphics[scale=.3]{../Graphics/FullSystemDiagram}
+\end{center}
+\end{frame}
+
+\begin{frame}{Concept Selection -- Processing Platform}
+\begin{itemize}
+\item Brief Point One
+\item Brief Point Two
+\end{itemize}
+\vspace{.5cm}
+\footnotesize
+\begin{tabular}{| p{.7in} | p{.7in} | p{1in} | p{0.7in} | p{.8in} | }
+\cline{2-5}
+\multicolumn{1}{c}{}&\multicolumn{4}{|c|}{Method} \\
+\cline{2-5}
+\multicolumn{1}{c|}{}&Personal \newline Computer&Tablet (Combined UI and Processing)&Micro-controller & Beagleboard-xM\\
+\hline
+Processing Resources&+ + + +&+ +&+&+ + +\\
+\hline
+Cost &- - -& + &+ + +&+ + +\\
+\hline
+Size&- - -&+ +&+ + +& + + +\\
+\hline
+\hline
+Total &2-&5+&7+& 9+\\
+\hline
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Concept Selection -- Display}
+\begin{itemize}
+\item Brief Point One
+\item Brief Point Two
+\end{itemize}
+\vspace{.5cm}
+\footnotesize
+\begin{tabular}{| p{1.3in} | p{.7in} | p{0.7in} | p{1.0in} | p{.8in} |}
+\cline{2-4}
+\multicolumn{1}{c}{}&\multicolumn{3}{|c|}{Method} \\
+\cline{2-4}
+\multicolumn{1}{c|}{}&LCD PC \newline Monitor&Tablet&LCD with \newline BeagleBoard-xM\\
+\hline
+Integration with Unit&- - -&-&+ + +\\
+\hline
+Ease of Use&+ + +&+ + +&+ +\\
+\hline
+Size of Display& + + + &+ + +&+ +\\
+\hline
+GUI Quality&+ + +&+ + +&+ + +\\
+\hline
+Size of Unit&- - -&+ + +&+ + +\\
+\hline
+\hline
+Total&3+&12+&13+\\
+\hline
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Concept Selection -- Expiration Date Prediction System}
+\begin{itemize}
+\item Brief Point One
+\item Brief Point Two
+\end{itemize}
+\vspace{.5cm}
+\footnotesize
+\begin{tabular}{| p{.7in} | p{.7in} | p{.8in} | p{.9in} | p{.8in} |}
+\cline{2-5}
+\multicolumn{1}{c}{}&\multicolumn{4}{|c|}{Method} \\
+\cline{2-5}
+\multicolumn{1}{c|}{}&User Input \newline of expiration \newline dates& Image to Text \newline Recognition & Predictive \newline Strategy without \newline itemMaster& Predictive \newline Strategy with \newline itemMaster \\
+\hline
+Ease of Use&- - -&+&+ + +&+ + +\\
+\hline
+Feasibility&+ + +&- - -&- - -&+ + +\\
+\hline
+Accuracy & + + & + + &+&+\\
+\hline \hline
+Total &2+ &0&4+&7+\\
+\hline
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Concept Selection -- Shopping List Prediction System}
+\footnotesize
+\begin{tabular}{| p{1.25in} | p{.2in} | p{.8in} | p{.8in} | p{.8in} |}
+\cline{3-5}
+\multicolumn{2}{c}{}&\multicolumn{3}{|c|}{Method} \\
+\cline{2-5}
+\multicolumn{1}{c|}{}&\multicolumn{1}{|c|}{Trial}&Normal \newline Approximation&Non-Parametric \newline Distribution&Clustering to\newline produce sum of\newline Gaussians\\
+\hline
+\multicolumn{1}{|c|}{$\sum$ Log Probability} &1&-38.3394&-35.9682&-34.7721 \\
+\cline{2-5}
+\multicolumn{1}{|c|}{Observed Habits} &2&-20.5647&-17.0897&-15.6641 \\
+\cline{2-5}
+\multicolumn{1}{|c|}{(Goal to Maximize)} &3&-47.8101&-44.9658&-43.9845 \\
+\cline{2-5}
+\multicolumn{1}{|c|}{} &4&-29.1931&-19.6762&-24.4915 \\
+\hline
+\multicolumn{1}{|c}{Evaluation}&&- - -&-&+ + +\\
+\hline
+\multicolumn{1}{|c|}{$\sum$ Log Probability} &1&-36.7898&-38.4187&-50.6578\\
+\cline{2-5}
+\multicolumn{1}{|c|}{Habits Not} &2&-188.514&-225.002&-318.926 \\
+\cline{2-5}
+\multicolumn{1}{|c|}{Observed} &3&-62.2909&-63.8609&-69.9759 \\
+\cline{2-5}
+\multicolumn{1}{|c|}{(Goal to Minimize)} &4&-29.6667&-$\infty$&-86.0767 \\
+\hline
+\multicolumn{1}{|c}{Evaluation}&&- - -&+&+ +\\
+\hline
+\multicolumn{2}{|c|}{Ease of Computation} &+ + + &- - -&-\\
+\hline \hline
+\multicolumn{1}{|c}{Total}& &3- &3-&4+\\
+\hline
+\end{tabular}
+\end{frame}
+
+\begin{frame}{Design Overview}
+\begin{itemize}
+\item Task groups etc.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Beagle Board Subsystems}
+\includegraphics[scale=0.5]{../Graphics/BaseStation}
+\end{frame}
+
+\end{document}
+
+
