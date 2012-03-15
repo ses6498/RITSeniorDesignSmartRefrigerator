@@ -1,8 +1,15 @@
 package edu.rit.smartFridge.model;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class InventoryItem {
+public class InventoryItem implements Serializable
+{
+	/**
+	 * auto generated serial version UID
+	 */
+	private static final long serialVersionUID = 2421444388805545429L;
+	
 	private int UPC;
 	private String itemName;
 	private String description;
