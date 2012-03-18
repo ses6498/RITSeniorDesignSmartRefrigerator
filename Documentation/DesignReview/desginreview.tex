@@ -10,7 +10,7 @@
 % The header comments and encoding in this file were modified for inclusion with TeXworks.
 % The content is otherwise unchanged from the original distributed with the beamer package.
 
-\documentclass{beamer}
+\documentclass[t]{beamer}
 
 
 % Copyright 2004 by Till Tantau <tantau@users.sourceforge.net>.
@@ -51,7 +51,9 @@
 \setbeamertemplate{enumerate items}[square]
 \setbeamercolor{enumerate items}{fg=black}
 \setbeamertemplate{itemize item}[square]
+\setbeamertemplate{itemize subitem}[square]
 \setbeamercolor{itemize item}{fg=black}  
+\setbeamercolor{itemize subitem}{fg=black}  
   \setbeamercovered{transparent}
 }
 
@@ -303,7 +305,169 @@ Total &2+ &0&4+&7+\\
 \end{frame}
 
 \begin{frame}{Beagle Board Subsystems}
-\includegraphics[scale=0.5]{../Graphics/BaseStation}
+\begin{center}
+\includegraphics[scale=0.65]{../Graphics/BaseStation}
+\end{center}
+\end{frame}
+
+\begin{frame}{Database Organization}
+\begin{center}
+\includegraphics[scale=1.0]{../Graphics/Databases}
+\end{center}
+\end{frame}
+
+\begin{frame}{Interface State Machine}
+\begin{center}
+\includegraphics[scale=0.7]{../Graphics/StateMachine}
+\end{center}
+\end{frame}
+
+\begin{frame}{Bill of Materials}
+\begin{itemize}
+\item BeagleBoard-xM provided through ARM Developer Day.
+\item ULCD7 Lite LCD Display hopefully will also be provided by ARM Developer Day,  though availability of this display is a significant unresolved risk.
+\end{itemize}
+\vspace{.5cm}
+\footnotesize
+\begin{center}
+\begin{tabular}{| p{2.0in} | p{.75in} |p{.75in} |}
+\hline
+Part & Retail Cost & Our Cost \\
+\hline
+BeagleBoard-xM & \$149 & \$0 \\
+\hline
+BeagleBoard-xM Power Adapter & \$14.87 & \$14.87 \\
+\hline
+Dorm Room Refrigerator & \$100 & \$0 \\
+\hline
+Android Smart Phone & \$100 & \$0  \\
+\hline
+LCD Display & \$80  & \$0 \\
+\hline
+UPC Barcode Scanner & \$35 & \$35 \\
+\hline
+USB Keyboard/Keypad & \$10 & \$10 \\
+\hline
+\hline
+\textbf{Total Cost} & \$488.87 & \$59.87 \\
+\hline
+\end{tabular}
+\end{center}
+\end{frame}
+
+\begin{frame}{Unresolved Risks -- Overview}
+\begin{itemize}
+\item Identified Unresolved Risks, ordered by severity:
+\begin{itemize}
+\item LCD Display Availability
+\item Practicality of Prediction Algorithm
+\item Mobile Application Data Exchange
+\item Efficiency of Database Access
+\end{itemize}
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Unresolved Risk -- LCD Display Availability}
+\begin{itemize}
+\item The ULCD7 Lite is the preferred choice for the display to accompany the Beagleboard. The 7-inch resistive touchscreen is designed to work with the Beagleboard and has drivers built into the Angstrom Linux distribution.
+\item However, the touchscreen does not seem to be stocked by online suppliers and our request through the Arm Developer Day proposal process is still pending.
+\item The BeagleBoard provides a DVI-D and S-video output, this risk could be mitigated using a traditional computer monitor if the preferred touch screen is not available.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Unresolved Risk -- Practicality of Prediction Algorithm}
+\begin{itemize}
+\item The shopping list prediction algorithm outlined appears optimal for the test data considered. However, the analysis performed did not consider a large sample of shoppers and the conclusions drawn may not be appropriate for a larger population.
+\item Also, the prediction algorithm outlined will not perform well with only a few samples; it is unclear how unacceptable this warm-up period will appear to end users.
+\item The strategy presented is also quite heavy-handed and may be superfluous for this prototype system. 
+\item The system will not serve as an effective shopping aid without an accurate prediction system, but a prototype may be acceptable with a much simpler system requiring significantly less effort.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Unresolved Risk -- Mobile Application Data Exchange}
+\begin{itemize}
+\item Exchanging inventory and shopping lists data with the mobile application presents two risk areas: the amount of data plan usage required and interrupted network connections.
+\item These risks are partially mitigated by the design, which exchanges data in small increments on a ``need to know" basis only, however the degree to which these risks are truly problematic is not know.
+\item Interrupted connections are considered in the design, but the effectiveness of the design will be difficult to measure since it may be difficult to repeatedly interrupt the data connection.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Efficiency of Database Access}
+\begin{itemize}
+\item Efficient practices for database access were not known or considered when partitioning information into separate tables.
+\item For example, using the same database to store all possible items and the current inventory may be an inefficient choice. This strategy requires looking over all elements and extracting only those with non-zero quantities.
+\item If the system was extended to large commercial applications, or if the Beagleboard was replaced with a more cost-efficient and less powerful alternative, this organization may become a significant risk.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Condensed Test Plan -- Overview}
+\begin{itemize}
+\item Test strategy organized by subsystem:
+\begin{itemize}
+\item Base Station User Interface
+\item Mobile User Interface and Network Interface
+\item Shopping List and Expiration Prediction
+\item Integration with BeagleBoard
+\end{itemize}
+\item Integration and System Testing
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Condensed Test Plan -- Base Station User Interface}
+\begin{itemize}
+\item The user interface is required to be easy to use and intuitive; in order to verify this someone not involved in the project should contribute to top-level testing of this sub-system.
+\item Current inventory will be stored using an SQL database, test effort at this step will be verifying integration, not the storage of items.
+\item The user interface must provide a notification of expiring items to the user, testing will not verify the estimate is correct, only that user interface will display notifications.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Condensed Test Plan -- Mobile User Interface}
+\begin{itemize}
+\item Shorten up tables
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Condensed Test Plan -- Shopping List and Expiration Prediction}
+\begin{itemize}
+\item Systems date must be adjustable to facilitate quick testing.
+\item Enter a product code and verify that the expiration date system is initialized with recommended ``rule of thumb" value.
+\item Provide feedback indicating that a product expired before estimate and validate that the estimate is decreased. Also validate the opposite case.
+\item Enter a product code and advance the system time until the product is nearly expired. Verify that the prediction subsystem has indicated to controller that the product is nearing expiration.
+\item Verify shoppings habits with outliers and multiple modes are modeled reasonably.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Condensed Test Plan -- Integration with BeagleBoard}
+\begin{itemize}
+\item Verify that the BeagleBoard, with power adapter, can power all peripheral devices reliably.
+\item Verify that MAC address of Ethernet interface can be statically assigned and the BeagleBoard can be pinged reliably.
+\item Verify that the BeagleBoard can reliably interface with the USB scanner and USB keypad.
+\item Verify that the BeagleBoard's consistently receives accurate temperature and humidity measurements from the sensor, via the general purpose input/output pins.
+\item Verify that the touchscreen display accurately records users clicks and controls the pointer.
+\item Verify that touchscreen accurately displays the graphical user interface without artifacts or distortion consistently, and ensure all controls on the display are accessible.
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Conclusion}
+\LARGE
+\begin{center}
+Questions or Feedback?
+\end{center}
+\end{frame}
+
+\begin{frame}{References}
+\footnotesize
+\begin{thebibliography}{9}
+\bibitem{times}
+Martin, Andrew. ``One Country's Table Scraps, Another Country's Meal." New York Times. N.p., 18 May 2008. Web. 26 Jan 2012. 
+\url{http://www.nytimes.com/2008/05/18/weekinreview/18martin.html?pagewanted=all}.
+\bibitem{lg}
+Ridden, Paul. ``LG launches first Smart-Grid appliance: the Smart Fridge." gizmag. N.p., 27 Apr 2011. Web. 29 Jan 2012. \url{<http://www.gizmag.com/lg-smart-fridge/18502/>}.
+\bibitem{aol}
+Collins, Hugh. ``Study: US Food Waste Is a Huge Energy Drain." AolNews. N.p., 02 Oct 2010. Web. 29 Jan 2012. \url{<http://www.aolnews.com/2010/10/02/study-american-food-waste-is-a-huge-energy-drain/>}.
+\bibitem{dutch}
+Ramaker, Rob. ``Food waste is hard to combat." Resource. N.p., 26 Jan 2012. Web. 29 Jan 2012. \url{<http://resource.wur.nl/en/wetenschap/detail/food_waste_is_hard_to_combat/>}.
+ \end{thebibliography}
 \end{frame}
 
 \end{document}
