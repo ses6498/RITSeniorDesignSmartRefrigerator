@@ -2,6 +2,7 @@ package edu.rit.smartFridge;
 
 import android.app.Activity;
 import android.os.Bundle;
+import edu.rit.smartFridge.model.InventoryItem;
 
 public class ItemDetailActivity extends Activity {
     /** Called when the activity is first created. */
@@ -11,11 +12,11 @@ public class ItemDetailActivity extends Activity {
         setContentView(R.layout.main);
         
         Bundle extras = getIntent().getExtras();
-        String name = null;
+        InventoryItem item = null;
         if (extras != null)
         {
-        	name = extras.getString("ITEM_NAME");
+        	item = (InventoryItem) extras.getSerializable(getString(R.string.current_item));
         }
-        this.setTitle(name);
+        this.setTitle(item.getName());
     }
 }
