@@ -334,7 +334,7 @@ Total &2+ &0&4+&7+\\
 \item Project divides evenly into three task groups: the mobile application and network interface, the base station user interface and prediction system, integration of Beagleboard with peripherals and databases.
 \item Base Station User Interface and Prediction System
 \begin{itemize}
-\item Develop Application (Python 2.7 + Tkinter)
+\item Develop GUI Application (Python 2.7 + Tkinter)
 \item Expiration Data Prediction Algorithm
 \item Shopping List Suggestion Algorithm
 \end{itemize}
@@ -347,7 +347,7 @@ Total &2+ &0&4+&7+\\
 \begin{itemize}
 \item Configure Angstrom OS Image
 \item Interface with Temperature Sensor with GPIO pins (Level Shifter)
-\item Scanner, keypad, display hopefully ``plug and play"
+\item Scanner, keypad, display ``plug and play"
 \end{itemize}
 \end{itemize}
 \end{frame}
@@ -360,16 +360,16 @@ Total &2+ &0&4+&7+\\
 
 \begin{frame}{Base Station Application}
 \begin{itemize}
-\item Base Station Application will be inspired by Model View Controller paradigm.
+\item Base Station Application will be inspired by Model View Controller paradigm
 \begin{itemize}
 \item Input handler will be the ``Controller"
 \item Combination of prediction algorithms and databases will constitute the ``Model"
 \item Independent ``View", created with TkInter GUI toolkit for Python
 \end{itemize}
-\item Python chosen for development speed and also due to familiarity.
-\item SciPy scientific computing libraries will also increase speed of shopping list algorithm development.
+\item Python chosen for development speed and also due to familiarity
+\item SciPy scientific computing libraries will also increase speed of shopping list algorithm development
 \item Will also interact with databases, some overlap of task groups will occur in this code project
-\item May also handle network interface, there is an unresolved design decision between using simple custom TCP interface and full web-server
+\item May also handle network interface, there is an unresolved design decision between using simple custom TCP interface and using a full web-server
 \end{itemize}
 \end{frame}
 
@@ -399,7 +399,7 @@ Total &2+ &0&4+&7+\\
 
 \begin{frame}{Mobile Interface}
 \begin{itemize}
-\item Mobile interface layout will be as consistent as possible with base station interface, usability benefits from consistency.
+\item Mobile interface layout will be as consistent as possible with base station interface, usability benefits from consistency
 \item Mobile application should limit data usage, information exchanged only on ``need to know" basis
 \item Updates will not occur until specific tabs / shoppings lists selected
 \item Mobile application should be tolerate of interrupted connections
@@ -428,8 +428,8 @@ Total &2+ &0&4+&7+\\
 
 \begin{frame}{Bill of Materials}
 \begin{itemize}
-\item BeagleBoard-xM provided through ARM Developer Day.
-\item ULCD7 Lite LCD Display hopefully will also be provided by ARM Developer Day,  though availability of this display is a significant unresolved risk.
+\item BeagleBoard-xM provided through ARM Developer Day
+\item ULCD7 Lite LCD Display hopefully will also be provided by ARM Developer Day,  though availability of this display is a significant unresolved risk
 \end{itemize}
 \vspace{.5cm}
 \footnotesize
