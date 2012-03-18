@@ -54,6 +54,7 @@
 \setbeamertemplate{itemize subitem}[square]
 \setbeamercolor{itemize item}{fg=black}  
 \setbeamercolor{itemize subitem}{fg=black}  
+\setbeamercolor{description item}{fg=red} 
   \setbeamercovered{transparent}
 }
 
@@ -187,8 +188,9 @@ Customer Need & Engineering Requirement & Justification \\
 
 \begin{frame}{Concept Selection -- Processing Platform}
 \begin{itemize}
-\item Brief Point One
-\item Brief Point Two
+\item Difficult to find Micro-controller with adequate peripherals / performance
+\item Personal computer implementation is too general, does not fit form factor well
+\item BeagleBoard offers flexibility of full Linux environment
 \end{itemize}
 \vspace{.5cm}
 \footnotesize
@@ -196,7 +198,7 @@ Customer Need & Engineering Requirement & Justification \\
 \cline{2-5}
 \multicolumn{1}{c}{}&\multicolumn{4}{|c|}{Method} \\
 \cline{2-5}
-\multicolumn{1}{c|}{}&Personal \newline Computer&Tablet (Combined UI and Processing)&Micro-controller & Beagleboard-xM\\
+\multicolumn{1}{c|}{}&Personal \newline Computer&Tablet (Combined UI and Processing)&Micro-controller & BeagleBoard-xM\\
 \hline
 Processing Resources&+ + + +&+ +&+&+ + +\\
 \hline
@@ -212,8 +214,8 @@ Total &2-&5+&7+& 9+\\
 
 \begin{frame}{Concept Selection -- Display}
 \begin{itemize}
-\item Brief Point One
-\item Brief Point Two
+\item Related to choice of processing platform
+\item Ideally,  ULCD7 Lite, Supported by BeagleBoard / Angstrom OS
 \end{itemize}
 \vspace{.5cm}
 \footnotesize
@@ -241,8 +243,8 @@ Total&3+&12+&13+\\
 
 \begin{frame}{Concept Selection -- Expiration Date Prediction System}
 \begin{itemize}
-\item Brief Point One
-\item Brief Point Two
+\item itemMaster UPC database provides GS1 catagory
+\item FDA and community resources like \url{www.stilltasty.com} provide ``rule of thumb" estimates
 \end{itemize}
 \vspace{.5cm}
 \footnotesize
@@ -300,7 +302,24 @@ Total &2+ &0&4+&7+\\
 
 \begin{frame}{Design Overview}
 \begin{itemize}
-\item Task groups etc.
+\item Project divides evenly into three task groups: the mobile application and network interface, the base station user interface and prediction system, integration of Beagleboard with peripherals and databases.
+\item Base Station User Interface and Prediction System
+\begin{itemize}
+\item Develop Application (Python 2.7 + Tkinter)
+\item Expiration Data Prediction Algorithm
+\item Shopping List Suggestion Algorithm
+\end{itemize}
+\item Mobile Application and Network Interface
+\begin{itemize}
+\item Develop Android Application (Java)
+\item Network Interface must be robust to interrupts, and minimize data usage
+\end{itemize}
+\item Integration of Beagleboard with Peripherals and Databases
+\begin{itemize}
+\item Configure Angstrom OS Image
+\item Interface with Temperature Sensor with GPIO pins (Level Shifter)
+\item Scanner, keypad, display hopefully ``plug and play"
+\end{itemize}
 \end{itemize}
 \end{frame}
 
@@ -310,16 +329,72 @@ Total &2+ &0&4+&7+\\
 \end{center}
 \end{frame}
 
+\begin{frame}{Base Station Application}
+\begin{itemize}
+\item Base Station Application will be inspired by Model View Controller paradigm.
+\begin{itemize}
+\item Input handler will be the ``Controller"
+\item Combination of prediction algorithms and databases will constitute the ``Model"
+\item Independent ``View", created with TkInter GUI toolkit for Python
+\end{itemize}
+\item Python chosen for development speed and also due to familiarity.
+\item SciPy scientific computing libraries will also increase speed of shopping list algorithm development.
+\item Will also interact with databases, some overlap of task groups will occur in this code project
+\item May also handle network interface, there is an unresolved design decision between using simple custom TCP interface and full web-server
+\end{itemize}
+\end{frame}
+
 \begin{frame}{Database Organization}
 \begin{center}
 \includegraphics[scale=1.0]{../Graphics/Databases}
 \end{center}
 \end{frame}
 
+\begin{frame}{User Interface Screen Captures -- Product Entry}
+\begin{center}
+\includegraphics[scale=0.40]{../Graphics/Screenshot1}
+\end{center}
+\end{frame}
+
+\begin{frame}{User Interface Screen Captures -- Shopping Lists}
+\begin{center}
+\includegraphics[scale=0.40]{../Graphics/Screenshot2}
+\end{center}
+\end{frame}
+
+\begin{frame}{User Interface Screen Captures -- Shopping Lists}
+\begin{center}
+\includegraphics[scale=0.40]{../Graphics/Screenshot3}
+\end{center}
+\end{frame}
+
+\begin{frame}{Mobile Interface}
+\begin{itemize}
+\item Mobile interface layout will be as consistent as possible with base station interface, usability benefits from consistency.
+\item Mobile application should limit data usage, information exchanged only on ``need to know" basis
+\item Updates will not occur until specific tabs / shoppings lists selected
+\item Mobile application should be tolerate of interrupted connections
+\item Impact of interruptions mitigated by changing many small messages instead of monolithic ones
+\end{itemize}
+\end{frame}
+
 \begin{frame}{Interface State Machine}
 \begin{center}
 \includegraphics[scale=0.7]{../Graphics/StateMachine}
 \end{center}
+\end{frame}
+
+\begin{frame}{Manufacturability, Reliability, and Background}
+\begin{description}
+\item[Manufacturability] - Smart Refrigerator system only a first step toward tackling food waste, could be extended to commercial systems. Prediction system could be improved by aggregating data from multiple users.
+\item[Reliability] - Some components tested externally (Angstrom OS, SQL Databases). Network interface and shopping list algorithms can not be verified for all scenarios. Errors most likely in integration.
+\item[Background] -
+\begin{itemize}
+\item Experience with Linux based operating systems critical
+\item GUI development experience provided by Computer Science sequence
+\item Interface to Digital Electronics useful for integrating temperature sensor
+\end{itemize}
+\end{description}
 \end{frame}
 
 \begin{frame}{Bill of Materials}
