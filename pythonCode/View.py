@@ -97,8 +97,12 @@ class View ():
         
         self.editState=False
         
-        self.checkIn = ttk.Button(leftFrame, text="Check In", width=20)
+        self.radioSty = ttk.Style()
+        self.radioSty.configure('Radio.TButton', background='blue', embossed=False)
+        
+        self.checkIn = ttk.Button(leftFrame, text="Check In", width=20, state='normal',style='Radio.TButton')
         self.checkIn.grid(column=0, row=0, pady=10)
+        
         checkOut = ttk.Button(leftFrame, text="Check Out", width=20, state='disabled')
         checkOut.grid(column=1, row=0, pady=10)
         
