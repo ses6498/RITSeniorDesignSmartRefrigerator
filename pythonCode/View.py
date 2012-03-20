@@ -35,24 +35,32 @@ class View ():
         self.productUPC.set("")
         self.upcLabel.config(text="Product UPC: Unknown UPC " + upc)
         
+    def missingUPC (self, upc):
+        self.productUPC.set("")
+        self.upcLabel.config(text="Product UPC: Item Not in Inventory " + upc)
+        
     def knownUPC (self, upc):
         self.productUPC.set("")
         self.upcLabel.config(text="Product UPC: " + upc)
 #        self.upcLabel.update(text="Product UPC: " + upc)
 
     def addInventoryItem (self, item):
-        self.inventoryTree.insert('', 0, 'item' + str(self.inventoryIdentifier), text=item[1][0], \
-                                  values=(str(time.strftime('%a,%d,%b', item[1][2]))))
+        identifier = 'item' + str(self.inventoryIdentifier)
+        self.inventoryTree.insert('', 0, identifier, text=item[1][0], \
+                                  values=(item[1][2].strftime('%a,%d,%b')))
         self.inventoryIdentifier = self.inventoryIdentifier+1
+        
+        return identifier
+        
+    def removeInventoryItem (self, item, identifier):
+        self.inventoryTree.delete(identifier)
         
     def showItemInfo (self, info):
         self.nameEn.set(info[0])
-        self.purEn.set(time.strftime('%a, %d %b', info[1]))
-        self.expEn.set(time.strftime('%a, %d %b', info[2]))
+        self.purEn.set(info[1].strftime('%a, %d %b'))
+        self.expEn.set(info[2].strftime('%a, %d %b'))
 
-    def editEntryHandler(self):
-        print self.editState
-        
+    def editEntryHandler (self):
         self.editState = not self.editState
         
         if self.editState:
@@ -73,6 +81,65 @@ class View ():
             self.purLabel.config(state='disabled')
             self.expEntry.config(state='readonly') 
             self.expLabel.config(state='disabled')
+            
+    def checkInHandler (self):
+        state = self.controlObj.checkInMode()
+        self.checkIn.config(state='disabled')
+        self.checkOut.config(state='normal')
+        self.markExp.config(state='disabled')
+        self.markCon.config(state='disabled')
+    
+    def checkOutHandler (self):
+        state = self.controlObj.checkOutMode()
+        self.checkIn.config(state='normal')
+        self.checkOut.config(state='disabled')
+        
+        if state:
+            self.markCon.config(state='normal')
+            self.markExp.config(state='normal')
+        else:
+            self.markCon.config(state='disabled')
+            self.markExp.config(state='disabled')
+            
+        
+    def clearHandler (self):
+        self.controlObj.clearInventory()
+        
+    def clearInventory (self):
+        children = self.inventoryTree.get_children()
+        
+        for child in children:
+            self.inventoryTree.delete(child)
+            
+    def markConsumedHandle (self):
+        self.controlObj.itemConsumed()
+        
+    def markExpiredHandle (self):
+        self.controlObj.itemExpired()
+    
+    def deleteLastHandle (self):
+        self.controlObj.removeLastItem()
+        
+    def clearLastItem (self):
+        self.delEntry.config(state='disabled')
+        self.editEntry.config(state='disabled')
+        self.markCon.config(state='disabled')
+        self.markExp.config(state='disabled')
+        self.upcLabel.config(text='Product UPC:')
+        self.nameEn.set('')
+        self.expEn.set('')
+        self.purEn.set('')
+        
+    def setLastItem (self, state):
+        self.delEntry.config(state='normal')
+        self.editEntry.config(state='normal')
+        
+        if state == self.controlObj.CHECK_OUT_MODE:
+            self.markCon.config(state='normal')
+            self.markExp.config(state='normal')
+        else:
+            self.markCon.config(state='disabled')
+            self.markExp.config(state='disabled')
     
     def ConstructProductEntry (self, productEntry):
         productEntry.grid(column=0, row=0)
@@ -86,25 +153,33 @@ class View ():
         leftFrame = ttk.Frame(PEframe)
         leftFrame.grid(column=0, row=0, columnspan=2, rowspan=9, sticky=('N','S'), padx=10, pady=10)
         
-        self.editEntry = ttk.Button(rightFrame, text="Edit Entry", width=20, command=self.editEntryHandler)
+        self.editEntry = ttk.Button(rightFrame, text="Edit Entry", width=20, state='disabled',\
+                                    command=self.editEntryHandler)
         self.editEntry.grid(column=0, row=0, rowspan=2, sticky=('E','N','S'), pady=(10,5))
-        delEntry = ttk.Button(rightFrame, text="Delete Entry", width=20)
-        delEntry.grid(column=0, row=2, rowspan=2, sticky=('E','N','S'), pady=5)
-        markCon = ttk.Button(rightFrame, text="Mark as Consumed", width=20)
-        markCon.grid(column=0, row=4, rowspan=2, sticky=('E','N','S'), pady=5)
-        markExp = ttk.Button(rightFrame, text="Mark as Expired", width=20)
-        markExp.grid(column=0, row=6, rowspan=2, sticky=('E','N','S'), pady=5)
+        self.delEntry = ttk.Button(rightFrame, text="Delete Entry", width=20, state='disabled',\
+                                   command=self.deleteLastHandle)
+        self.delEntry.grid(column=0, row=2, rowspan=2, sticky=('E','N','S'), pady=5)
+        self.markCon = ttk.Button(rightFrame, text="Mark as Consumed", width=20, state='disabled',\
+                                  command=self.markConsumedHandle)
+        self.markCon.grid(column=0, row=4, rowspan=2, sticky=('E','N','S'), pady=5)
+        self.markExp = ttk.Button(rightFrame, text="Mark as Expired", width=20, state='disabled',\
+                                  command=self.markExpiredHandle)
+        self.markExp.grid(column=0, row=6, rowspan=2, sticky=('E','N','S'), pady=5)
         
         self.editState=False
         
-        self.radioSty = ttk.Style()
-        self.radioSty.configure('Radio.TButton', background='blue', embossed=False)
+        self.radioOnSty = ttk.Style()
+        self.radioOnSty.configure('RadioOn.TButton', background='green')
+        self.radioOffSty = ttk.Style()
+        self.radioOffSty.configure('RadioOff.TButton', background='red', foreground='red')
         
-        self.checkIn = ttk.Button(leftFrame, text="Check In", width=20, state='normal',style='Radio.TButton')
+        self.checkIn = ttk.Button(leftFrame, text="Check In", width=20, state='disabled', \
+                                  command=self.checkInHandler)
         self.checkIn.grid(column=0, row=0, pady=10)
         
-        checkOut = ttk.Button(leftFrame, text="Check Out", width=20, state='disabled')
-        checkOut.grid(column=1, row=0, pady=10)
+        self.checkOut = ttk.Button(leftFrame, text="Check Out", width=20, state='normal', \
+                                   command=self.checkOutHandler)
+        self.checkOut.grid(column=1, row=0, pady=10)
         
         self.nameEn = tkinter.StringVar("")
         self.purEn = tkinter.StringVar("")
@@ -149,29 +224,11 @@ class View ():
         expScroll.grid(column=2, row=8, sticky=('W','N','S'))
         self.expTable['yscrollcommand'] = expScroll.set
         
-        self.expTable.insert('', 0, 'w1', text="Third Item Near Exp", values=("3Days"), tag='w1')
-        self.expTable.tag_configure('w1', foreground='green')
-        self.expTable.insert('', 0, 'w2', text="Second Item Near Exp ", values=("1Day"), tag='w2')
-        self.expTable.insert('', 0, 'w3', text="Third Item Near Exp", values=("1Day"), tag='w2')
-        self.expTable.tag_configure('w2', foreground='red')
-        
-#        tree = ttk.Treeview(CIframe, columns=('expiration'))
-#        tree.column('expiration', width=100, anchor='e')
-#        tree.column('#0', width=500, anchor='e')
-#        tree.heading('expiration',text='Expiration Date')
-#        tree.heading('#0', text='Items')
-#        tree.grid(column=0,row=0,padx=10,pady=10)
-#        
-#        tree.insert('', 0, 'item1', text='Maxwell House Coffee', values=('A_Week'))
-#        tree.insert('', 0, 'item2', text='Bacon', values=('Never'))
-#        
-#        clear = ttk.Button(CIframe, text="Clear Inventory", width=50)
-#        clear.grid(column=0, row=1, sticky=('E','S','W'), padx=10, pady=(0,10))        
-        
-#        listt=tkinter.StringVar(value=('this is item one', 'CROW I AM GOING TO EXPIRE TOO'))
-        
-#        self.expList = tkinter.Listbox(leftFrame, listvariable=listt, height=6)
-#        self.expList.grid(column=0, row=8, pady=(8,2), columnspan=2, sticky=('W','E','N'))
+#        self.expTable.insert('', 0, 'w1', text="Third Item Near Exp", values=("3Days"), tag='w1')
+#        self.expTable.tag_configure('w1', foreground='green')
+#        self.expTable.insert('', 0, 'w2', text="Second Item Near Exp ", values=("1Day"), tag='w2')
+#        self.expTable.insert('', 0, 'w3', text="Third Item Near Exp", values=("1Day"), tag='w2')
+#        self.expTable.tag_configure('w2', foreground='red')
         
     def ConstructShoppingList (self, shoppingLists):
         shoppingLists.grid(column=0, row=0)
@@ -192,13 +249,13 @@ class View ():
         tree.heading('#0', text='Shopping Lists')
         tree.grid(column=0,row=0)
         
-        tree.insert('', 0, 'test1', text='Shopping List 1', values=('03/18/12'))
-        tree.insert('', 1, 'test2', text='Shopping List 2', values=('03/14/12'))
+#        tree.insert('', 0, 'test1', text='Shopping List 1', values=('03/18/12'))
+#        tree.insert('', 1, 'test2', text='Shopping List 2', values=('03/14/12'))
         
-        tree.insert('test1',0,text='Shopping List 1 Item 2')
-        tree.insert('test1',0,text='Shopping List 1 Item 1')
-        tree.insert('test2',0,text='Shopping List 2 Item 2')
-        tree.insert('test2',0,text='Shopping List 2 Item 1')
+#        tree.insert('test1',0,text='Shopping List 1 Item 2')
+#        tree.insert('test1',0,text='Shopping List 1 Item 1')
+#        tree.insert('test2',0,text='Shopping List 2 Item 2')
+#        tree.insert('test2',0,text='Shopping List 2 Item 1')
         
         newList = ttk.Button(rightFrame, text="New List", width=20)
         newList.grid(column=0, row=0, sticky=('E','N','S'), pady=(10,5))
@@ -227,14 +284,26 @@ class View ():
         
         self.inventoryIdentifier=0
         
-        clear = ttk.Button(CIframe, text="Clear Inventory", width=50)
+        clear = ttk.Button(CIframe, text="Clear Inventory", width=50, command=self.clearHandler)
         clear.grid(column=0, row=1, sticky=('E','S','W'), padx=10, pady=(0,10))
+        
+    def TimeHandlers (self):
+        self.root.bind('<Key-F1>', self.key1)
+        self.root.bind('<Key-F2>', self.key2)
+        self.root.bind('<Key-F3>', self.key3)
+        self.root.bind('<Key-F4>', self.key4)
+        self.root.bind('<Key-F5>', self.key5)
+        self.root.bind('<Key-F6>', self.key6)
+        self.root.bind('<Key-F7>', self.key7)
+        self.root.bind('<Key-F8>', self.key8)
+        self.root.bind('<Key-F9>', self.key9)
+        self.root.bind('<Key-F10>', self.key0)
         
     def __init__ (self, controller):
         self.root = tkinter.Tk()
         self.root.title('Smart Refrigerator Application')
     
-        notebook = ttk.Notebook(self.root)
+        notebook = ttk.Notebook(self.root, width=800, height=480)
         
         productEntry = ttk.Frame(notebook)
         shoppingLists = ttk.Frame(notebook)
@@ -243,6 +312,8 @@ class View ():
         self.ConstructProductEntry(productEntry)
         self.ConstructShoppingList(shoppingLists)
         self.ConstructCurrentInventory(currentInventory)
+        
+        self.TimeHandlers()
         
         notebook.add(productEntry, text="Product Entry", state="normal")
         notebook.add(shoppingLists, text="Shopping Lists")
@@ -254,3 +325,32 @@ class View ():
     def mainLoop (self):
         self.root.mainloop()
         
+    def key1 (self, event):
+        self.controlObj.advanceHour(1)
+        
+    def key2 (self, event):
+        self.controlObj.advanceHour(2)
+        
+    def key3 (self, event):
+        self.controlObj.advanceHour(3)
+        
+    def key4 (self, event):
+        self.controlObj.advanceHour(4)
+        
+    def key5 (self, event):
+        self.controlObj.advanceHour(5)
+        
+    def key6 (self, event):
+        self.controlObj.advanceHour(6)
+        
+    def key7 (self, event):
+        self.controlObj.advanceHour(7)
+        
+    def key8 (self, event):
+        self.controlObj.advanceHour(8)
+        
+    def key9 (self, event):
+        self.controlObj.advanceHour(9)
+        
+    def key0 (self, event):
+        self.controlObj.advanceHour(10)
