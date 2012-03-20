@@ -326,31 +326,40 @@ class View ():
         self.root.mainloop()
         
     def key1 (self, event):
-        self.controlObj.advanceHour(1)
+        self.controlObj.advanceHour()
         
     def key2 (self, event):
-        self.controlObj.advanceHour(2)
+        for lcv in range(2):
+            self.controlObj.advanceHour()
         
     def key3 (self, event):
-        self.controlObj.advanceHour(3)
+        for lcv in range(3):
+            self.controlObj.advanceHour()
         
     def key4 (self, event):
-        self.controlObj.advanceHour(4)
+        for lcv in range(4):
+            self.controlObj.advanceHour()
         
     def key5 (self, event):
-        self.controlObj.advanceHour(5)
+        for lcv in range(5):
+            self.controlObj.advanceHour()
         
     def key6 (self, event):
-        self.controlObj.advanceHour(6)
+        for lcv in range(6):
+            self.controlObj.advanceHour()
         
     def key7 (self, event):
-        self.controlObj.advanceHour(7)
+        for lcv in range(7):
+            self.controlObj.advanceHour()
         
     def key8 (self, event):
-        self.controlObj.advanceHour(8)
+        for lcv in range(8):
+            self.controlObj.advanceHour()
         
     def key9 (self, event):
-        self.controlObj.advanceHour(9)
+        for lcv in range(9):
+            self.controlObj.advanceHour()
         
     def key0 (self, event):
-        self.controlObj.advanceHour(10)
+        for lcv in range(10):
+            self.controlObj.advanceHour()

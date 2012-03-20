@@ -59,8 +59,8 @@ class Model (threading.Thread):
         found = gs1Catagory in self.gs1LUT
         return found
     
-    def advanceHour (self, offset):
-        self.timeWrapper.advanceHour(offset)
+    def advanceHour (self):
+        self.timeWrapper.advanceHour()
         self.hourlyTasks.trigger()
     
     def addItem (self, upc, params=None):
@@ -74,8 +74,10 @@ class Model (threading.Thread):
                 expDate = self.timeWrapper.returnTime()
                 expDate = expDate + datetime.timedelta(days=self.gs1LUT[upcInfo[1]])
             
-            itemInfo = (upcInfo[0], self.timeWrapper.returnTime(), expDate)
+            purDate = self.timeWrapper.returnTime()
+            itemInfo = (upcInfo[0], purDate, expDate)
             self.currentInventory.addItem(upc, itemInfo)
+            self.hourlyTasks.registerItemTask(purDate.hour, upc)
             
             self.currentItem = upc
             self.controllerObj.setLastItem(self.mode)
@@ -103,16 +105,19 @@ class Model (threading.Thread):
         if self.currentItem:
             identifier = self.currentInventory.removeItem(self.currentItem)
             self.controllerObj.inventoryDeletion(self.currentItem, identifier[-1])
+            self.hourlyTasks.removeItemTask(identifier[1].hour, self.currentItem)
         
     def consumedItem (self):
         if self.currentItem:
             identifier = self.currentInventory.removeItem(self.currentItem)
             self.controllerObj.inventoryDeletion(self.currentItem, identifier[-1])
+            self.hourlyTasks.removeItemTask(identifier[1].hour, self.currentItem)
             
     def removeLastItem (self):
         if self.currentItem:
             identifier = self.currentInventory.removeItem(self.currentItem)
             self.controllerObj.inventoryDeletion(self.currentItem, identifier[-1])
+            self.hourlyTasks.removeItemTask(identifier[1].hour, self.currentItem)
             self.currentItem = None
             self.controllerObj.clearLastItem()
             
@@ -139,6 +144,22 @@ class Model (threading.Thread):
     def checkOutMode (self):
         self.mode = self.controllerObj.CHECK_OUT_MODE
         return self.currentItem
+    
+    def checkItemExpiration (self, upcs):
+        time = self.timeWrapper.returnTime()
+        
+        for upc in upcs:
+            info = self.currentInventory.returnItem(upc)
+            delta = info[2] - time
+            
+            if delta.days < 1:
+                print "RED"
+            elif delta.days < 2:
+                print "ORANGE"
+            elif delta.days < 3:
+                print "YELLOW"
+            elif delta.days < 5:
+                print "GREEN"
         
     def clearInventory (self):
         self.currentInventory.clear()

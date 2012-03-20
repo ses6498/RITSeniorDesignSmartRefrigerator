@@ -27,8 +27,8 @@ class Controller ():
         
         self.viewObj.mainLoop()
         
-    def advanceHour (self, offset):
-        self.modelObj.advanceHour(offset)
+    def advanceHour (self):
+        self.modelObj.advanceHour()
         
     def upcEntered (self, upc, valid=True):
         # Check with Model
