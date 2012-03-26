@@ -21,17 +21,17 @@ public class TestConnect implements DataConnect {
 	ShoppingList list3 = new ShoppingList("List 3", 3);
 	ShoppingList list4 = new ShoppingList("List 4", 4);
 	
-	InventoryItem milk 		= new InventoryItem("1% Milk", 10, "Tasty milk, from a cow", new Date("10/10/12"));
-	InventoryItem bread 	= new InventoryItem("Wheat Bread", 11, "Baked Fresh, sometimes", new Date("10/10/12"));
-	InventoryItem lemons 	= new InventoryItem("Lemons", 12, "Yellow and sour", new Date("10/10/12"));
-	InventoryItem limes 	= new InventoryItem("Limes", 13, "Like Lemons, only green", new Date("10/10/12"));
-	InventoryItem steak 	= new InventoryItem("T-Bone Steak", 14, "Tasty, made of meat", new Date("10/10/12"));
-	InventoryItem cheese 	= new InventoryItem("Cheddar Cheese", 15, "Happy cows make happy cheese!", new Date("10/10/12"));
-	InventoryItem pasta 	= new InventoryItem("Spaghetti", 16, "Long and thin", new Date("10/10/12"));
-	InventoryItem sauce 	= new InventoryItem("Pasta Sauce", 17, "To go with your favorite pasta", new Date("10/10/12"));
-	InventoryItem crackers 	= new InventoryItem("Ritz Crackers", 18, "For munching, possibly with cheese", new Date("10/10/12"));
-	InventoryItem cereal 	= new InventoryItem("Cereal", 19, "Tasty for breakfast with Milk", new Date("10/10/12"));
-	InventoryItem juice 	= new InventoryItem("Orange Juice", 20, "Tasty like milk, except from Oranges", new Date("10/10/12"));
+	InventoryItem milk 		= new InventoryItem("1% Milk", 10, "Tasty milk, from a cow", new Date("10/11/12"));
+	InventoryItem bread 	= new InventoryItem("Wheat Bread", 11, "Baked Fresh, sometimes", new Date("10/12/12"));
+	InventoryItem lemons 	= new InventoryItem("Lemons", 12, "Yellow and sour", new Date("10/13/12"));
+	InventoryItem limes 	= new InventoryItem("Limes", 13, "Like Lemons, only green", new Date("10/14/12"));
+	InventoryItem steak 	= new InventoryItem("T-Bone Steak", 14, "Tasty, made of meat", new Date("10/15/12"));
+	InventoryItem cheese 	= new InventoryItem("Cheddar Cheese", 15, "Happy cows make happy cheese!", new Date("10/16/12"));
+	InventoryItem pasta 	= new InventoryItem("Spaghetti", 16, "Long and thin", new Date("10/17/12"));
+	InventoryItem sauce 	= new InventoryItem("Pasta Sauce", 17, "To go with your favorite pasta", new Date("10/18/12"));
+	InventoryItem crackers 	= new InventoryItem("Ritz Crackers", 18, "For munching, possibly with cheese", new Date("10/19/12"));
+	InventoryItem cereal 	= new InventoryItem("Cereal", 19, "Tasty for breakfast with Milk", new Date("10/20/12"));
+	InventoryItem juice 	= new InventoryItem("Orange Juice", 20, "Tasty like milk, except from Oranges", new Date("10/21/12"));
 	
 	InventoryItem[] Inventory = new InventoryItem[] {milk, bread, lemons, limes, steak, cheese, pasta, sauce, crackers, cereal, juice};
 		
