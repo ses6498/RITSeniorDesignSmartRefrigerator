@@ -28,7 +28,7 @@ class HourlyTasks (threading.Thread):
     def run (self):
         while self.running:
             self.lock.wait(10.0)
-            self.model.echoTime ()
+#            self.model.echoTime ()
             self.checkExpiration()
             self.lock.clear()
             self.synch.set()
@@ -36,6 +36,7 @@ class HourlyTasks (threading.Thread):
     def checkExpiration (self):
         time = self.model.timeWrapper.returnTime()
         self.model.checkItemExpiration(self.expHourChecks[time.hour])
+#        print time.hour
        
     def trigger (self):
         self.lock.set()

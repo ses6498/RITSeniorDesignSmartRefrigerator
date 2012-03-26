@@ -22,8 +22,8 @@ class Controller ():
         self.CHECK_IN_MODE = 0
         self.CHECK_OUT_MODE = 1
         
-        self.modelObj = Model.Model(self)
         self.viewObj = View.View(self)
+        self.modelObj = Model.Model(self)
         
         self.viewObj.mainLoop()
         
@@ -50,6 +50,12 @@ class Controller ():
     def itemConsumed (self):
         self.modelObj.consumedItem()
         
+    def expirationWarning (self, upc, severity, update=False):
+        self.viewObj.expirationWarning(upc, severity, update)
+    
+    def removeExpirationWarning (self, upc):
+        self.viewObj.removeExpirationWarning(upc)
+        
     def removeLastItem (self):
         self.modelObj.removeLastItem()
         
@@ -67,12 +73,11 @@ class Controller ():
         state = self.modelObj.checkOutMode()
         return state
             
-    def updateItemInfo (self, info):
-        self.viewObj.showItemInfo(info)
+    def updateItemInfo (self, item):
+        self.viewObj.showItemInfo(item)
             
     def inventoryAddition (self, item):
-        identifier = self.viewObj.addInventoryItem(item)
-        self.modelObj.registerItemId (item, identifier)
+        return self.viewObj.addInventoryItem(item)
         
     def inventoryDeletion (self, item, identifier):
         self.viewObj.removeInventoryItem(item, identifier)

@@ -3,42 +3,82 @@ Created on Mar 18, 2012
 
 @author: Steven
 '''
+import sqlalchemy
+import sqlalchemy.orm
+from sqlalchemy.dialects import mysql
+
+class InventoryItem (object):
+    
+    def __init__(self, upc, upcString, name, purchaseDate, expirationDate):
+        self.upc = upc
+        self.upcString = upcString
+        self.name = name
+        self.purchaseDate = purchaseDate
+        self.expirationDate = expirationDate
+        self.identifier = None
+        
+    def __repr__(self):
+        return "<Item('%d', '%s')>" % (self.upc, self.name)
 
 class Inventory ():
     '''
     classdocs
     '''
 
-    def __init__(self):
+    def __init__(self, model):
         '''
         Constructor
         '''
-        self.currentInventory = dict()
+        self.model = model
         
-    def addItem (self, item, info):
-        self.currentInventory[item] = info
+        engine = sqlalchemy.create_engine('mysql://ses6498:seNi{}R1)esign@localhost/smartrefrigeratorDB')
+        metadata = sqlalchemy.MetaData()
         
-    def returnItem (self, item):
-        return self.currentInventory[item]
+        inventoryTable = sqlalchemy.Table('inventory', metadata, \
+            sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True), \
+            sqlalchemy.Column('upc', sqlalchemy.BigInteger), \
+            sqlalchemy.Column('upcString', sqlalchemy.String(16)), \
+            sqlalchemy.Column('name', sqlalchemy.String(128)), \
+            sqlalchemy.Column('purchaseDate', sqlalchemy.DateTime), \
+            sqlalchemy.Column('expirationDate', sqlalchemy.DateTime), \
+            sqlalchemy.Column('identifier', sqlalchemy.String(16)))
         
-    def removeItem (self, item):
-        returnValue = self.currentInventory[item]
-        del self.currentInventory[item]
+        metadata.create_all (engine)
+        sqlalchemy.orm.mapper(InventoryItem, inventoryTable)
         
-        return returnValue
+        Session = sqlalchemy.orm.sessionmaker(bind=engine)
+        self.session = Session()
+        
+        # Initial Inventory Addition
+        for item in self.session.query(InventoryItem).all():
+            model.controllerObj.inventoryAddition (item)
+        
+#        self.currentInventory = dict()
+        
+    def addItem (self, item):
+        self.session.add(item)
+        self.session.commit()
+        
+    def returnItem (self, upc):
+        retval = self.session.query(InventoryItem).filter(InventoryItem.upc==long(upc)).all()
+        return retval
+        
+    def removeItem (self, upc):
+        deletedItems = self.session.query(InventoryItem).filter(InventoryItem.upc==long(upc)).all()
+        for item in deletedItems:
+            self.session.delete(item)
+        
+        self.session.commit()
+        return deletedItems
     
-    def addIdentifier (self, item, identifier):
-        if item[0] in self.currentInventory:
-            info = self.currentInventory[item[0]]
-            info = info + (identifier,)
-            self.currentInventory[item[0]] = info
-    
-    def searchItem (self, item):
-        return item in self.currentInventory
+    def searchItem (self, upc):
+        return self.session.query(InventoryItem).filter(InventoryItem.upc==long(upc)).count() > 0
     
     def clear (self):
-        self.currentInventory.clear()
+        for item in self.session.query(InventoryItem):
+            self.session.delete(item)
+        self.session.commit()
     
     def size (self):
-        return len(self.currentInventory)
+        return self.session.quert(InventoryItem).count()
     

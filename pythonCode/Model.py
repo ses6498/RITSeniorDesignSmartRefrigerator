@@ -9,6 +9,7 @@ import datetime
 import Inventory
 import HourlyTasks
 import TimeWrapper
+import ExpirationDatePrediction
 
 class Model (threading.Thread):
     '''
@@ -27,11 +28,13 @@ class Model (threading.Thread):
         threading.Thread.__init__(self)
         self.start()
         
-        self.currentInventory = Inventory.Inventory()
+        self.currentInventory = Inventory.Inventory(self)
         self.timeWrapper = TimeWrapper.TimeWrapper()
         
         self.initializeUPCLUT()
-        self.initializeGS1LUT()
+        self.initializeExpirationWarningLUT()
+        
+        self.expirationDatePredictor = ExpirationDatePrediction.ExpirationDatePrediction()
         
         self.currentItem = None
         
@@ -50,18 +53,16 @@ class Model (threading.Thread):
         found = upc in self.upcLUT
         return found
     
-    def initializeGS1LUT (self):
-        self.gs1LUT = dict()
-        self.gs1LUT['GS1 Code 1'] = 5
-        self.gs1LUT['GS1 Code 2'] = 3
+    def initializeExpirationWarningLUT (self):
+        self.expirationWarningLUT = dict()
     
     def expirationDateLookup (self, gs1Catagory):
         found = gs1Catagory in self.gs1LUT
         return found
     
     def advanceHour (self):
-        self.timeWrapper.advanceHour()
         self.hourlyTasks.trigger()
+        self.timeWrapper.advanceHour()
     
     def addItem (self, upc, params=None):
         if params:
@@ -70,24 +71,29 @@ class Model (threading.Thread):
             upcInfo = self.upcLUT[upc]
             
             expDate = 'Unknown'
-            if self.expirationDateLookup(upcInfo[1]):
+            expData = self.expirationDatePredictor.expirationDateLookup(upcInfo[1])
+            if expData[0]:
                 expDate = self.timeWrapper.returnTime()
-                expDate = expDate + datetime.timedelta(days=self.gs1LUT[upcInfo[1]])
+                expDate = expDate + datetime.timedelta(days=expData[1])
             
             purDate = self.timeWrapper.returnTime()
-            itemInfo = (upcInfo[0], purDate, expDate)
-            self.currentInventory.addItem(upc, itemInfo)
+            item = Inventory.InventoryItem(upc=long(upc), upcString=upc, name=upcInfo[0], purchaseDate=purDate, \
+                                               expirationDate=expDate)
+#            itemInfo['name'] = upcInfo[0]
+#            itemInfo['upc'] = upc
+#            itemInfo['purchaseDate'] = purDate
+#            itemInfo['expirationDate'] = expDate
             self.hourlyTasks.registerItemTask(purDate.hour, upc)
             
             self.currentItem = upc
             self.controllerObj.setLastItem(self.mode)
             
-            self.controllerObj.updateItemInfo(itemInfo)
-            self.controllerObj.inventoryAddition((upc, itemInfo))
+            self.controllerObj.updateItemInfo(item)
+            item.identifier = self.controllerObj.inventoryAddition(item)
+            self.currentInventory.addItem(item)
             
-    def registerItemId (self, item, identifier):
-        self.currentInventory.addIdentifier(item, identifier)
-        
+            self.checkItemExpiration([upc])
+            
     def recallItem (self, upc, params=None):
         if params:
             print 'Not supported yet'
@@ -101,23 +107,29 @@ class Model (threading.Thread):
             else:
                 return False
             
-    def expiredItem (self):
+    def genericRemoveTasks (self):
         if self.currentItem:
-            identifier = self.currentInventory.removeItem(self.currentItem)
-            self.controllerObj.inventoryDeletion(self.currentItem, identifier[-1])
-            self.hourlyTasks.removeItemTask(identifier[1].hour, self.currentItem)
+            deletedItems = self.currentInventory.removeItem(self.currentItem)
+            
+            for item in deletedItems:
+                self.controllerObj.inventoryDeletion(item.upcString, item.identifier)
+                self.hourlyTasks.removeItemTask(item.purchaseDate.hour, item.upcString)
+                
+                if self.currentItem in self.expirationWarningLUT:
+                    del self.expirationWarningLUT[self.currentItem]
+                    self.controllerObj.removeExpirationWarning(self.currentItem)
+            
+    def expiredItem (self):
+        print self.currentInventory.returnItem(self.currentItem)
+#        self.expirationDatePredictor.earlyExpiration(self.currentItem, expirationDate)
+        self.genericRemoveTasks()
         
     def consumedItem (self):
-        if self.currentItem:
-            identifier = self.currentInventory.removeItem(self.currentItem)
-            self.controllerObj.inventoryDeletion(self.currentItem, identifier[-1])
-            self.hourlyTasks.removeItemTask(identifier[1].hour, self.currentItem)
+        self.genericRemoveTasks()
             
     def removeLastItem (self):
         if self.currentItem:
-            identifier = self.currentInventory.removeItem(self.currentItem)
-            self.controllerObj.inventoryDeletion(self.currentItem, identifier[-1])
-            self.hourlyTasks.removeItemTask(identifier[1].hour, self.currentItem)
+            self.genericRemoveTasks()
             self.currentItem = None
             self.controllerObj.clearLastItem()
             
@@ -149,20 +161,26 @@ class Model (threading.Thread):
         time = self.timeWrapper.returnTime()
         
         for upc in upcs:
-            info = self.currentInventory.returnItem(upc)
-            delta = info[2] - time
-            
-            if delta.days < 1:
-                print "RED"
-            elif delta.days < 2:
-                print "ORANGE"
-            elif delta.days < 3:
-                print "YELLOW"
-            elif delta.days < 5:
-                print "GREEN"
+            if self.currentInventory.searchItem(upc):
+                info = self.currentInventory.returnItem(upc)
+                
+                # THIS IS A HACK TODO TODO TODO FIX ME
+                info = info[0]
+                delta = info.expirationDate - time
+                update = upc in self.expirationWarningLUT
+                
+                if delta.days < 5:
+                    if update:
+                        if self.expirationWarningLUT[upc] != delta.days:
+                            self.expirationWarningLUT[upc] = delta.days
+                            self.controllerObj.expirationWarning(upc, delta.days, update)
+                    else:
+                        self.controllerObj.expirationWarning(upc, delta.days, update)
+                        self.expirationWarningLUT[upc] = delta.days
         
     def clearInventory (self):
         self.currentInventory.clear()
         
     def run(self):
-        print "hi this is the model thread"
+        a = 5
+#        print "hi this is the model thread"

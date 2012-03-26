@@ -29,7 +29,6 @@ class View ():
     def invalidUPC (self, upc):
         self.productUPC.set("")
         self.upcLabel.config(text="Product UPC: Invalid UPC " + upc)
-#        self.upcLabel.update(text="Product UPC: Invalid UPC" + upc)
             
     def unknownUPC (self, upc):
         self.productUPC.set("")
@@ -42,12 +41,11 @@ class View ():
     def knownUPC (self, upc):
         self.productUPC.set("")
         self.upcLabel.config(text="Product UPC: " + upc)
-#        self.upcLabel.update(text="Product UPC: " + upc)
 
     def addInventoryItem (self, item):
         identifier = 'item' + str(self.inventoryIdentifier)
-        self.inventoryTree.insert('', 0, identifier, text=item[1][0], \
-                                  values=(item[1][2].strftime('%a,%d,%b')))
+        self.inventoryTree.insert('', 0, identifier, text=item.name, \
+                                  values=item.expirationDate)
         self.inventoryIdentifier = self.inventoryIdentifier+1
         
         return identifier
@@ -55,10 +53,75 @@ class View ():
     def removeInventoryItem (self, item, identifier):
         self.inventoryTree.delete(identifier)
         
-    def showItemInfo (self, info):
-        self.nameEn.set(info[0])
-        self.purEn.set(info[1].strftime('%a, %d %b'))
-        self.expEn.set(info[2].strftime('%a, %d %b'))
+    def removeExpirationWarning (self, upc):
+        self.expTable.delete(upc)
+        
+    def expirationWarning (self, upc, severity, update):
+        
+#        self.expTable.insert('', 0, 'w1', text="Third Item Near Exp", values=("3Days"), tag='w1')
+#        self.expTable.tag_configure('w1', foreground='green')
+#        self.expTable.insert('', 0, 'w2', text="Second Item Near Exp ", values=("1Day"), tag='w2')
+#        self.expTable.insert('', 0, 'w3', text="Third Item Near Exp", values=("1Day"), tag='w2')
+#        self.expTable.tag_configure('w2', foreground='red')
+        color = 'gray'
+        if severity < 1:
+            color = 'red'
+        elif severity < 2:
+            color = 'orange'
+        elif severity < 3:
+            color = 'yellow'
+        elif severity < 5:
+            color = 'green'
+            
+        if not update:
+            if severity != 1 and severity != -1:
+                self.expTable.insert('', 0, str(upc), text=str(upc), values=[str(severity)+' Days'], tag=str(upc))
+            else:
+                self.expTable.insert('', 0, str(upc), text=str(upc), values=[str(severity)+' Day'], tag=str(upc))
+                
+            self.expTable.tag_configure(str(upc), foreground=color)
+            
+            positioned = False
+            index = 0
+            while not positioned:
+                nextItem = self.expTable.next(str(upc))
+                if nextItem and len(self.expTable.item(str(nextItem))['values']):
+                    expComp = int(self.expTable.item(str(nextItem))['values'][0].split(' ')[0])
+                    
+                    if expComp < severity:
+                        index += 1
+                        self.expTable.move(str(upc), '', index)
+                    else:
+                        positioned = True
+                else:
+                    positioned = True
+                
+        else:
+            self.expTable.tag_configure(str(upc), foreground=color)
+            if severity != 1 and severity != -1:
+                self.expTable.item(str(upc), values=[str(severity)+' Days'])
+            else:
+                self.expTable.item(str(upc), values=[str(severity)+' Day'])
+            
+            positioned = False
+            index = self.expTable.index(str(upc))
+            while not positioned:
+                prevItem = self.expTable.prev(str(upc))
+                if prevItem and len(self.expTable.item(str(prevItem))['values']):
+                    expComp = int(self.expTable.item(str(prevItem))['values'][0].split(' ')[0])
+                    
+                    if expComp > severity:
+                        index -= 1
+                        self.expTable.move(str(upc), '', index)
+                    else:
+                        positioned = True
+                else:
+                    positioned = True
+            
+    def showItemInfo (self, item):
+        self.nameEn.set(item.name)
+        self.purEn.set(item.purchaseDate.strftime('%a, %d %b'))
+        self.expEn.set(item.expirationDate.strftime('%a, %d %b'))
 
     def editEntryHandler (self):
         self.editState = not self.editState
@@ -100,7 +163,6 @@ class View ():
         else:
             self.markCon.config(state='disabled')
             self.markExp.config(state='disabled')
-            
         
     def clearHandler (self):
         self.controlObj.clearInventory()
@@ -110,6 +172,11 @@ class View ():
         
         for child in children:
             self.inventoryTree.delete(child)
+            
+        children = self.expTable.get_children()
+        
+        for child in children:
+            self.expTable.delete(child)
             
     def markConsumedHandle (self):
         self.controlObj.itemConsumed()
@@ -223,12 +290,6 @@ class View ():
         expScroll = ttk.Scrollbar(leftFrame, orient=tkinter.VERTICAL, command=self.expTable.yview)
         expScroll.grid(column=2, row=8, sticky=('W','N','S'))
         self.expTable['yscrollcommand'] = expScroll.set
-        
-#        self.expTable.insert('', 0, 'w1', text="Third Item Near Exp", values=("3Days"), tag='w1')
-#        self.expTable.tag_configure('w1', foreground='green')
-#        self.expTable.insert('', 0, 'w2', text="Second Item Near Exp ", values=("1Day"), tag='w2')
-#        self.expTable.insert('', 0, 'w3', text="Third Item Near Exp", values=("1Day"), tag='w2')
-#        self.expTable.tag_configure('w2', foreground='red')
         
     def ConstructShoppingList (self, shoppingLists):
         shoppingLists.grid(column=0, row=0)
