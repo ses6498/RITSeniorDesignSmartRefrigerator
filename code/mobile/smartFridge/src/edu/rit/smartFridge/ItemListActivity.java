@@ -1,6 +1,7 @@
 package edu.rit.smartFridge;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import edu.rit.smartFridge.model.InventoryItem;
+import edu.rit.smartFridge.model.ItemComparator;
 import edu.rit.smartFridge.model.ShoppingList;
 import edu.rit.smartFridge.util.DataConnect;
 
@@ -48,6 +50,10 @@ public class ItemListActivity extends ListActivity
 	        // set the list title, if there is one
 	        setTitle(list.getName());
         }
+        
+        // sort the item list by expiration date
+        ItemComparator comparator = new ItemComparator();
+        Collections.sort(inventory, comparator);
         
         // copy the item names into a list for display
 		Iterator<InventoryItem> iter = inventory.iterator();
