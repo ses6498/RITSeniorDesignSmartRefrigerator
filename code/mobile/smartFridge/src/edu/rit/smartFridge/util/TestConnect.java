@@ -1,8 +1,8 @@
 package edu.rit.smartFridge.util;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -70,14 +70,18 @@ public class TestConnect implements DataConnect {
 		int size = generator.nextInt(10);
 		for (int i = 0; i < size; i++)
 		{
-			list.addItem(Inventory[generator.nextInt(10)]);
+			list.addItem(Inventory[generator.nextInt(size)], 1);
 		}
 		return list;
 	}
 
-	public List<InventoryItem> getInventory() {
-		List<InventoryItem> retList = new ArrayList<InventoryItem>(Arrays.asList(Inventory));
-		return retList;
+	public HashMap<String, List<InventoryItem>> getInventory() {
+		HashMap<String, List<InventoryItem>> retMap = new HashMap<String, List<InventoryItem>>();
+		for (InventoryItem i : Inventory)
+		{
+			retMap.put(i.getName(), new ArrayList<InventoryItem>());
+			retMap.get(i.getName()).add(i);
+		}
+		return retMap;
 	}
-
 }

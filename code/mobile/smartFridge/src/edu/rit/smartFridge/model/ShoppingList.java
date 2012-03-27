@@ -2,7 +2,7 @@ package edu.rit.smartFridge.model;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 
 public class ShoppingList implements Serializable
@@ -13,7 +13,8 @@ public class ShoppingList implements Serializable
 	private static final long serialVersionUID = 7795007221701877658L;
 	
 	private int ID;
-	private List<InventoryItem> items;
+	//private List<ArrayList<InventoryItem>> items;
+	private HashMap<String, List<InventoryItem>> items;
 	private String name;
 	private boolean autoGen; // true if the list was created by the item suggester
 	
@@ -26,7 +27,8 @@ public class ShoppingList implements Serializable
 	{
 		this.name = name;
 		autoGen = false;
-		items = new ArrayList<InventoryItem>();
+		//items = new ArrayList<ArrayList<InventoryItem>>();
+		items = new HashMap<String, List<InventoryItem>>();
 	}
 	
 	/**
@@ -40,7 +42,7 @@ public class ShoppingList implements Serializable
 		this.name = name;
 		this.ID = id;
 		autoGen = false;
-		items = new ArrayList<InventoryItem>();
+		items = new HashMap<String, List<InventoryItem>>();
 	}
 	
 	/**
@@ -58,9 +60,17 @@ public class ShoppingList implements Serializable
 	 * 
 	 * @param item The item to add.
 	 */
-	public void addItem(InventoryItem item)
+	public void addItem(InventoryItem item, int count)
 	{
-		items.add(item);
+		if (!items.containsKey(item.getName()))
+		{
+			items.put(item.getName(), new ArrayList<InventoryItem>());
+		}
+		
+		for (int i = 0; i < count; i++)
+		{
+			items.get(item.getName()).add(item);
+		}
 	}
 	
 	/**
@@ -70,20 +80,16 @@ public class ShoppingList implements Serializable
 	 * @param name The name of the item to return.
 	 * @return The item with the given name.
 	 */
-	public InventoryItem getItemByName(String name)
+	public List<InventoryItem> getItemByName(String name)
 	{
-		Iterator<InventoryItem> iter = items.iterator();
-		InventoryItem temp;
-		
-		while (iter.hasNext())
+		if (items.containsKey(name))
 		{
-			temp = iter.next();
-			if (temp.getName().equals(name))
-			{
-				return temp;
-			}
+			return items.get(name);
 		}
-		return null;
+		else
+		{
+			return null;
+		}
 	}
 	
 	/**
@@ -95,17 +101,17 @@ public class ShoppingList implements Serializable
 	 */
 	public InventoryItem getItemByUPC(int UPC)
 	{
-		Iterator<InventoryItem> iter = items.iterator();
-		InventoryItem temp;
-		
-		while (iter.hasNext())
-		{
-			temp = iter.next();
-			if (temp.getUPC() == UPC)
-			{
-				return temp;
-			}
-		}
+//		Iterator<InventoryItem> iter = items.iterator();
+//		InventoryItem temp;
+//		
+//		while (iter.hasNext())
+//		{
+//			temp = iter.next();
+//			if (temp.getUPC() == UPC)
+//			{
+//				return temp;
+//			}
+//		}
 		return null;
 	}
 	
@@ -114,7 +120,7 @@ public class ShoppingList implements Serializable
 	 * 
 	 * @return The list of items
 	 */
-	public List<InventoryItem> getAllItems()
+	public HashMap<String, List<InventoryItem>> getAllItems()
 	{
 		return items;
 	}

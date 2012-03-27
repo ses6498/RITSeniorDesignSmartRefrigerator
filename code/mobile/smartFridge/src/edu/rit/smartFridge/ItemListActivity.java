@@ -1,8 +1,7 @@
 package edu.rit.smartFridge;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
+import java.util.HashMap;
 import java.util.List;
 
 import android.app.ListActivity;
@@ -15,7 +14,6 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import edu.rit.smartFridge.model.InventoryItem;
-import edu.rit.smartFridge.model.ItemComparator;
 import edu.rit.smartFridge.model.ShoppingList;
 import edu.rit.smartFridge.util.DataConnect;
 
@@ -25,7 +23,7 @@ public class ItemListActivity extends ListActivity
     {
         super.onCreate(savedInstanceState);
         final Context context = this;
-        List<InventoryItem> inventory = null;
+        HashMap<String, List<InventoryItem>> inventory = null;
         ShoppingList list = null;
         
         // get the inventory and the dataConnecter
@@ -52,20 +50,25 @@ public class ItemListActivity extends ListActivity
         }
         
         // sort the item list by expiration date
-        ItemComparator comparator = new ItemComparator();
-        Collections.sort(inventory, comparator);
+        //ItemComparator comparator = new ItemComparator();
+        //Collections.sort(inventory, comparator);
+        
+        // copy the inventory into a final variable, to be accessed in the listener
+        final HashMap<String, List<InventoryItem>> finalInventory = inventory;
+        final List<String> finalNames = new ArrayList<String>();
         
         // copy the item names into a list for display
-		Iterator<InventoryItem> iter = inventory.iterator();
-        List<String> inventoryNames = new ArrayList<String>();
-		while (iter.hasNext()) inventoryNames.add(iter.next().getName());
+		List<String> inventoryNames = new ArrayList<String>();
+		for (String s : inventory.keySet())
+		{
+			finalNames.add(s);
+			int count = inventory.get(s).size();
+			inventoryNames.add(count + "x | " + s);
+		}
 		
 		// display the names in a list
 		String []a = new String[inventoryNames.size()];
         setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, inventoryNames.toArray(a)));
-        
-        // copy the inventory into a final variable, to be accessed in the listener
-        final List<InventoryItem> finalInventory = inventory;
         
         // event listeners
         ListView lv = getListView();
@@ -74,8 +77,11 @@ public class ItemListActivity extends ListActivity
         {
         	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
         	{
-			  Intent i = new Intent().setClass(context, ItemDetailActivity.class)
-					  					.putExtra(getString(R.string.current_item), finalInventory.get(position));
+        		String key = finalNames.get(position);
+        		ArrayList<InventoryItem> itemList = (ArrayList<InventoryItem>) finalInventory.get(key);
+				Intent i = new Intent().setClass(context, ItemDetailActivity.class)
+					  					.putExtra(getString(R.string.current_item), itemList)
+					  					.putExtra("itemIndex", position);
 			  context.startActivity(i);
       		  //Toast.makeText(getApplicationContext(),
 			  //				((TextView) view).getText(), 

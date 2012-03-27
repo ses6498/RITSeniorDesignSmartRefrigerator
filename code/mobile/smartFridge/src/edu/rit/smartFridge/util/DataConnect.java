@@ -1,9 +1,11 @@
 package edu.rit.smartFridge.util;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 
-import edu.rit.smartFridge.model.*;
+import edu.rit.smartFridge.model.InventoryItem;
+import edu.rit.smartFridge.model.ShoppingList;
 
 public interface DataConnect extends Serializable
 {
@@ -13,5 +15,5 @@ public interface DataConnect extends Serializable
 	
 	ShoppingList populateItems(ShoppingList list);
 	
-	List<InventoryItem> getInventory();
+	HashMap<String, List<InventoryItem>> getInventory();
 }
