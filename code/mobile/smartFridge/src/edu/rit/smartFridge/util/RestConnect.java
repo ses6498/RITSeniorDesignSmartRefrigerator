@@ -1,5 +1,6 @@
 package edu.rit.smartFridge.util;
 
+import java.util.HashMap;
 import java.util.List;
 
 import edu.rit.smartFridge.model.InventoryItem;
@@ -27,7 +28,7 @@ public class RestConnect implements DataConnect
 		return null;
 	}
 
-	public List<InventoryItem> getInventory() {
+	public HashMap<String, List<InventoryItem>> getInventory() {
 		// TODO Auto-generated method stub
 		return null;
 	}

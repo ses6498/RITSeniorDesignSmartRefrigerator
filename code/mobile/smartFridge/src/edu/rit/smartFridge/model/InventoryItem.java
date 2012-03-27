@@ -3,6 +3,9 @@ package edu.rit.smartFridge.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.j256.ormlite.table.DatabaseTable;
+
+@DatabaseTable(tableName = "Item")
 public class InventoryItem implements Serializable
 {
 	/**
@@ -10,26 +13,26 @@ public class InventoryItem implements Serializable
 	 */
 	private static final long serialVersionUID = 2421444388805545429L;
 	
+	/**
+	 * The Item's UPC Code
+	 */
 	private int UPC;
+	
+	/**
+	 * The name of the item
+	 */
 	private String itemName;
-	private String description;
+	
+	/**
+	 * The date which the item will probably be expired
+	 */
 	private Date expiration;
 	
 	/**
-	 * Item Constructor
-	 * 
-	 * @param name The name of the Item 
-	 * @param UPC The item's UPC code
-	 * @param description A description of the Item
-	 * @param expiration When the item will expire
+	 * The date the item was purchased
 	 */
-	public InventoryItem(String name, int UPC, String description, Date expiration)
-	{
-		this.itemName = name;
-		this.UPC = UPC;
-		this.description = description;
-		this.expiration = expiration;
-	}
+	private Date purchased;
+	
 	/**
 	 * Gets the item's UPC code
 	 * 
@@ -51,13 +54,24 @@ public class InventoryItem implements Serializable
 	}
 	
 	/**
-	 * Gets the item's description
-	 * 
-	 * @return The item's name
+	 * No-argument constructor used by ormlite
 	 */
-	public String Description()
+	public InventoryItem() {}
+	
+	/**
+	 * Item Constructor
+	 * 
+	 * @param name The name of the Item 
+	 * @param UPC The item's UPC code
+	 * @param description A description of the Item
+	 * @param expiration When the item will expire
+	 */
+	public InventoryItem(String name, int UPC, Date expiration, Date purchased)
 	{
-		return description;
+		this.itemName = name;
+		this.UPC = UPC;
+		this.expiration = expiration;
+		this.purchased = purchased;
 	}
 	
 	/**
@@ -68,6 +82,16 @@ public class InventoryItem implements Serializable
 	public Date getExpiration()
 	{
 		return expiration;
+	}
+	
+	/**
+	 * Gets the date the item was purchased
+	 * 
+	 * @return The purchased date
+	 */
+	public Date getPurchased()
+	{
+		return purchased;
 	}
 }
 
