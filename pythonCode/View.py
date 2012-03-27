@@ -43,26 +43,29 @@ class View ():
         self.upcLabel.config(text="Product UPC: " + upc)
 
     def addInventoryItem (self, item):
-        identifier = 'item' + str(self.inventoryIdentifier)
-        self.inventoryTree.insert('', 0, identifier, text=item.name, \
-                                  values=item.expirationDate)
-        self.inventoryIdentifier = self.inventoryIdentifier+1
+        self.inventoryTree.insert('', 0, str(item.upc), text=item.description, \
+                                  values=['','',''], tag=str(item.upc))
+        self.addDuplicateInventoryItem (item, 1)
         
-        return identifier
+    def addDuplicateInventoryItem (self, item, quantity):
+        self.inventoryTree.insert(str(item.upc), 'end', str(item.upc) + str(item.purchaseDate), \
+                                  text=item.description, values=['',item.purchaseDate.strftime('%H:%M %a, %d %b'), \
+                                                                 item.expirationDate.strftime('%H:%M %a, %d %b')])
         
-    def removeInventoryItem (self, item, identifier):
-        self.inventoryTree.delete(identifier)
+        self.inventoryTree.item(str(item.upc), values=[str(quantity), '', ''])
+        
+    def removeInventoryItem (self, item):
+        self.inventoryTree.delete(str(item.upc))
+        
+    def removeDuplicateInventoryItem (self, item, quantity):
+        self.inventoryTree.delete(str(item.upc) + str(item.purchaseDate))
+        self.inventoryTree.item(str(item.upc), values=[str(quantity), '', ''])
         
     def removeExpirationWarning (self, upc):
         self.expTable.delete(upc)
         
     def expirationWarning (self, upc, severity, update):
         
-#        self.expTable.insert('', 0, 'w1', text="Third Item Near Exp", values=("3Days"), tag='w1')
-#        self.expTable.tag_configure('w1', foreground='green')
-#        self.expTable.insert('', 0, 'w2', text="Second Item Near Exp ", values=("1Day"), tag='w2')
-#        self.expTable.insert('', 0, 'w3', text="Third Item Near Exp", values=("1Day"), tag='w2')
-#        self.expTable.tag_configure('w2', foreground='red')
         color = 'gray'
         if severity < 1:
             color = 'red'
@@ -119,7 +122,7 @@ class View ():
                     positioned = True
             
     def showItemInfo (self, item):
-        self.nameEn.set(item.name)
+        self.nameEn.set(item.description)
         self.purEn.set(item.purchaseDate.strftime('%a, %d %b'))
         self.expEn.set(item.expirationDate.strftime('%a, %d %b'))
 
@@ -207,6 +210,47 @@ class View ():
         else:
             self.markCon.config(state='disabled')
             self.markExp.config(state='disabled')
+            
+    def duplicateSelected (self, event):
+        index = self.selectionTree.index(self.selectionTree.selection()[0])
+        self.controlObj.duplicateSelected(self.items[index])
+        
+        self.prompt.destroy()
+        self.root.focus_set()
+        
+    def duplicateCancelled (self):
+        self.clearLastItem()
+        self.prompt.destroy()
+        
+    def duplicatePrompt (self, items):
+        self.prompt = tkinter.Toplevel()
+        self.prompt.title("Select Item")
+        self.prompt.geometry("+%d+%d" % (self.root.winfo_rootx()+180,
+                                  self.root.winfo_rooty()+150))
+        self.prompt.protocol("WM_DELETE_WINDOW", self.duplicateCancelled)
+        self.prompt.grab_set()
+        self.prompt.focus_set()
+        
+        self.items = items
+        self.selectionTree = ttk.Treeview(self.prompt, height=5, \
+                                          columns=('purchase', 'expiration'))
+        self.selectionTree.column('#0', width=190, anchor='e')
+        self.selectionTree.column('purchase', width=105, anchor='e')
+        self.selectionTree.column('expiration', width=105, anchor='e')
+        self.selectionTree.heading('#0', text='Matching Items')
+        self.selectionTree.heading('purchase',text='Purchase Date')
+        self.selectionTree.heading('expiration',text='Expiration Date')
+        self.selectionTree.grid(column=0,row=0,padx=10,pady=(10,2), sticky=('N','S','E'))    
+        selectionScroll = ttk.Scrollbar(self.prompt, orient=tkinter.VERTICAL, command=self.selectionTree.yview)
+        selectionScroll.grid(column=1, row=0, sticky=('W','N','S'))
+        self.selectionTree.configure(yscrollcommand=selectionScroll.set)
+        self.selectionTree.configure(selectmode='browse')
+        self.selectionTree.bind('<<TreeviewSelect>>', self.duplicateSelected)
+        
+        for item in items:
+            self.selectionTree.insert('', 'end', str(item.upc) + str(item.purchaseDate), \
+                                 text=item.description, values=[item.purchaseDate.strftime('%H:%M %a, %d %b'), \
+                                 item.expirationDate.strftime('%H:%M %a, %d %b')], tag=str(item.upc) + str(item.purchaseDate))
     
     def ConstructProductEntry (self, productEntry):
         productEntry.grid(column=0, row=0)
@@ -310,14 +354,6 @@ class View ():
         tree.heading('#0', text='Shopping Lists')
         tree.grid(column=0,row=0)
         
-#        tree.insert('', 0, 'test1', text='Shopping List 1', values=('03/18/12'))
-#        tree.insert('', 1, 'test2', text='Shopping List 2', values=('03/14/12'))
-        
-#        tree.insert('test1',0,text='Shopping List 1 Item 2')
-#        tree.insert('test1',0,text='Shopping List 1 Item 1')
-#        tree.insert('test2',0,text='Shopping List 2 Item 2')
-#        tree.insert('test2',0,text='Shopping List 2 Item 1')
-        
         newList = ttk.Button(rightFrame, text="New List", width=20)
         newList.grid(column=0, row=0, sticky=('E','N','S'), pady=(10,5))
         sugList = ttk.Button(rightFrame, text="Suggested List", width=20)
@@ -333,17 +369,17 @@ class View ():
         CIframe = ttk.Frame(currentInventory, relief="sunken", width=800, height=600)
         CIframe.grid(column=0, row=0, columnspan=1, rowspan=2)
         
-        self.inventoryTree = ttk.Treeview(CIframe, height=16, columns=('expiration'))
-        self.inventoryTree.column('expiration', width=100, anchor='e')
-        self.inventoryTree.column('#0', width=500, anchor='e')
-        self.inventoryTree.heading('expiration',text='Expiration Date')
+        self.inventoryTree = ttk.Treeview(CIframe, height=16, \
+                                          columns=('quantity', 'purchase', 'expiration'))
+        self.inventoryTree.column('#0', width=300, anchor='e')
+        self.inventoryTree.column('quantity', width=90, anchor='e')
+        self.inventoryTree.column('purchase', width=105, anchor='e')
+        self.inventoryTree.column('expiration', width=105, anchor='e')
         self.inventoryTree.heading('#0', text='Items')
+        self.inventoryTree.heading('quantity',text='Item Quantity')
+        self.inventoryTree.heading('purchase',text='Purchase Date')
+        self.inventoryTree.heading('expiration',text='Expiration Date')
         self.inventoryTree.grid(column=0,row=0,padx=10,pady=(10,2))
-        
-#        self.inventoryTree.insert('', 0, 'item1', text='Inventory Item One', values=('03/18/12'))
-#        self.inventoryTree.insert('', 0, 'item2', text='Inventory Item Two', values=('05/02/12'))
-        
-        self.inventoryIdentifier=0
         
         clear = ttk.Button(CIframe, text="Clear Inventory", width=50, command=self.clearHandler)
         clear.grid(column=0, row=1, sticky=('E','S','W'), padx=10, pady=(0,10))

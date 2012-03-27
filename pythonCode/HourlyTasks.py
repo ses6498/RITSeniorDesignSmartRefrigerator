@@ -46,5 +46,5 @@ class HourlyTasks (threading.Thread):
     def registerItemTask (self, hour, upc):
         self.expHourChecks[hour].append(upc)
         
-    def removeItemTask (self, hour, upc):
-        self.expHourChecks[hour].remove(upc)
+#    def removeItemTask (self, hour, upc):
+#        self.expHourChecks[hour].remove(upc)

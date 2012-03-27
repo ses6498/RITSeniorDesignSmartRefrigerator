@@ -76,12 +76,24 @@ class Controller ():
     def updateItemInfo (self, item):
         self.viewObj.showItemInfo(item)
             
-    def inventoryAddition (self, item):
-        return self.viewObj.addInventoryItem(item)
+    def addInventoryItem (self, item):
+        self.viewObj.addInventoryItem(item)
         
-    def inventoryDeletion (self, item, identifier):
-        self.viewObj.removeInventoryItem(item, identifier)
+    def removeInventoryItem (self, item):
+        self.viewObj.removeInventoryItem(item)
+    
+    def removeDuplicateInventoryItem (self, item, quantity):
+        self.viewObj.removeDuplicateInventoryItem(item, quantity)
+    
+    def addDuplicateInventoryItem (self, item, quantity):
+        self.viewObj.addDuplicateInventoryItem(item, quantity)
         
+    def duplicatePrompt (self, items):
+        self.viewObj.duplicatePrompt(items)
+        
+    def duplicateSelected (self, item):
+        self.modelObj.recallDuplicateSelected(item)
+    
     def clearInventory (self):
         self.modelObj.clearInventory()
         self.viewObj.clearInventory()
