@@ -11,8 +11,11 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 import edu.rit.smartFridge.model.InventoryItem;
 import edu.rit.smartFridge.model.ShoppingList;
 import edu.rit.smartFridge.util.DataConnect;
@@ -25,6 +28,10 @@ public class ItemListActivity extends ListActivity
         final Context context = this;
         HashMap<String, List<InventoryItem>> inventory = null;
         ShoppingList list = null;
+        
+        // Set true if we got here from a grocery list, 
+        // false if it's just the inventory screen
+        final boolean fromList;
         
         // get the inventory and the dataConnecter
         DataConnect connecter = null;
@@ -39,19 +46,19 @@ public class ItemListActivity extends ListActivity
         if (list == null)
         {
 	        inventory = connecter.getInventory();
+	        
+	        fromList = false;
         }
-        else
+        else // we got here from a grocery list
         {
         	list = connecter.populateItems(list);
         	inventory = list.getAllItems();
         	
 	        // set the list title, if there is one
 	        setTitle(list.getName());
+	        
+	        fromList = true;
         }
-        
-        // sort the item list by expiration date
-        //ItemComparator comparator = new ItemComparator();
-        //Collections.sort(inventory, comparator);
         
         // copy the inventory into a final variable, to be accessed in the listener
         final HashMap<String, List<InventoryItem>> finalInventory = inventory;
@@ -83,10 +90,26 @@ public class ItemListActivity extends ListActivity
 					  					.putExtra(getString(R.string.current_item), itemList)
 					  					.putExtra("itemIndex", position);
 			  context.startActivity(i);
-      		  //Toast.makeText(getApplicationContext(),
-			  //				((TextView) view).getText(), 
-			  //				Toast.LENGTH_SHORT).show();
         	}
+        });
+        
+        lv.setLongClickable(true);
+        lv.setOnItemLongClickListener(new OnItemLongClickListener()
+        {
+			public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
+				String toastLabel;
+				if (fromList)
+				{
+					toastLabel = "From List: " + ((TextView) v).getText();
+				}
+				else
+				{
+					toastLabel = "From Inventory: " + ((TextView) v).getText();
+				}
+				
+      		    Toast.makeText(getApplicationContext(), toastLabel, Toast.LENGTH_SHORT).show();
+				return false;
+			}
         });
     }
 }

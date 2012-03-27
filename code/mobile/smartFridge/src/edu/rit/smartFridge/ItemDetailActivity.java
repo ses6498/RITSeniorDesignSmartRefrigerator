@@ -2,12 +2,10 @@ package edu.rit.smartFridge;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.text.format.DateFormat;
 import android.widget.Button;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -41,16 +39,19 @@ public class ItemDetailActivity extends Activity {
 	        this.setTitle(test.size() + " : " + test.get(0).getName());
         }
         TextView t = (TextView) findViewById(R.id.text);
-        t.setText("Description: \t" + test.get(0).Description());
+        t.setText("Description: \t");
         
         // user friendly date formatting
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
-        Date date = new Date();
         
         // get the table and create some reusable row and button variables
         TableLayout table = (TableLayout) findViewById(R.id.tableLayout);
         TableRow tr = null;
         Button b = null;
+        
+        // for building the label on each button
+        StringBuilder builder = new StringBuilder();
+        String label;
         
         for (InventoryItem i : test)
         {
@@ -59,17 +60,25 @@ public class ItemDetailActivity extends Activity {
 	                LayoutParams.FILL_PARENT,
 	                LayoutParams.WRAP_CONTENT));
 	        
-		    /* Create a Button to be the row-content. */
+	        // Build the button text
+	        builder.append("Purchased ");
+	        builder.append(dateFormat.format(i.getPurchased()));
+	        builder.append(";\t Expires ");
+	        builder.append(dateFormat.format(i.getExpiration()));
+	        label = builder.toString();
+	        builder.delete(0, builder.length()); // clear the builder
+	        
+		    // Create a Button to be the row-content.
 		    b = new Button(this);
-		    b.setText(i.getName() + ": \t" + dateFormat.format(i.getExpiration()));
+		    b.setText(label);
 		    b.setLayoutParams(new LayoutParams(
 		              LayoutParams.FILL_PARENT,
 		              LayoutParams.WRAP_CONTENT));
 		    
-		    /* Add Button to row. */
+		    // Add Button to row.
 		    tr.addView(b);
 		    
-			/* Add row to TableLayout. */
+			// Add row to TableLayout.
 			table.addView(tr, new TableLayout.LayoutParams(
 			      LayoutParams.FILL_PARENT,
 			      LayoutParams.WRAP_CONTENT));

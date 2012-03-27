@@ -1,7 +1,6 @@
 package edu.rit.smartFridge;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import android.app.ListActivity;
@@ -37,12 +36,21 @@ public class ShoppingListActivity extends ListActivity {
         
         // copy the list names into another list for display
         List<String> listNames = new ArrayList<String>();
-		Iterator<ShoppingList> iter = lists.iterator();
-		while (iter.hasNext())
-		{
-			listNames.add(iter.next().getName());
-		}
-		
+        String label;
+        for (ShoppingList l : lists)
+        {
+        	if (l.isAutoGen()) 
+    		{
+        		label = "[A]\t" + l.getName();
+    		}
+        	else
+        	{
+        		label = "\t" + l.getName();
+        	}
+        	
+			listNames.add(label);
+        }
+        
 		// display the list
 		String []a = new String[listNames.size()];
         setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, listNames.toArray(a)));
