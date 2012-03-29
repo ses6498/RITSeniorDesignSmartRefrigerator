@@ -48,9 +48,10 @@ class View ():
         self.addDuplicateInventoryItem (item, 1)
         
     def addDuplicateInventoryItem (self, item, quantity):
-        self.inventoryTree.insert(str(item.upc), 'end', str(item.upc) + str(item.purchaseDate), \
+        epoch = time.mktime(item.purchaseDate.timetuple())
+        self.inventoryTree.insert(str(item.upc), 'end', str(item.upc)+str(epoch), \
                                   text=item.description, values=['',item.purchaseDate.strftime('%H:%M %a, %d %b'), \
-                                                                 item.expirationDate.strftime('%H:%M %a, %d %b')])
+                                  item.expirationDate.strftime('%H:%M %a, %d %b')], tag=str(item.upc)+str(epoch))
         
         self.inventoryTree.item(str(item.upc), values=[str(quantity), '', ''])
         
@@ -58,69 +59,35 @@ class View ():
         self.inventoryTree.delete(str(item.upc))
         
     def removeDuplicateInventoryItem (self, item, quantity):
-        self.inventoryTree.delete(str(item.upc) + str(item.purchaseDate))
+        epoch = time.mktime(item.purchaseDate.timetuple())
+        self.inventoryTree.delete(str(item.upc) + str(epoch))
         self.inventoryTree.item(str(item.upc), values=[str(quantity), '', ''])
         
-    def removeExpirationWarning (self, upc):
-        self.expTable.delete(upc)
+    def removeExpirationWarning (self, item):
+        epoch = time.mktime(item.purchaseDate.timetuple())
+        self.expTable.delete(str(item.upc)+str(epoch))
         
-    def expirationWarning (self, upc, severity, update):
+    def updateExpirationWarning (self, item, severity):
+        color = self.colors[severity] if severity in self.colors else 'gray'
+        day = ' Days' if severity != 1 and severity != -1 else ' Day'
+        epoch = time.mktime(item.purchaseDate.timetuple())
         
-        color = 'gray'
-        if severity < 1:
-            color = 'red'
-        elif severity < 2:
-            color = 'orange'
-        elif severity < 3:
-            color = 'yellow'
-        elif severity < 5:
-            color = 'green'
+        self.expTable.tag_configure(str(item.upc)+str(epoch), foreground=color)
+        self.expTable.item(str(item.upc)+str(epoch), values=[str(severity)+day])
+       
+    def clearExpirationWarnings (self):
+        for child in self.expTable.get_children():
+            self.expTable.delete(child)
             
-        if not update:
-            if severity != 1 and severity != -1:
-                self.expTable.insert('', 0, str(upc), text=str(upc), values=[str(severity)+' Days'], tag=str(upc))
-            else:
-                self.expTable.insert('', 0, str(upc), text=str(upc), values=[str(severity)+' Day'], tag=str(upc))
-                
-            self.expTable.tag_configure(str(upc), foreground=color)
+    def addExpirationWarning (self, item, severity):
+        color = self.colors[severity] if severity in self.colors else 'gray'
+        day = ' Days' if severity != 1 and severity != -1 else ' Day'
+        epoch = time.mktime(item.purchaseDate.timetuple())
             
-            positioned = False
-            index = 0
-            while not positioned:
-                nextItem = self.expTable.next(str(upc))
-                if nextItem and len(self.expTable.item(str(nextItem))['values']):
-                    expComp = int(self.expTable.item(str(nextItem))['values'][0].split(' ')[0])
-                    
-                    if expComp < severity:
-                        index += 1
-                        self.expTable.move(str(upc), '', index)
-                    else:
-                        positioned = True
-                else:
-                    positioned = True
-                
-        else:
-            self.expTable.tag_configure(str(upc), foreground=color)
-            if severity != 1 and severity != -1:
-                self.expTable.item(str(upc), values=[str(severity)+' Days'])
-            else:
-                self.expTable.item(str(upc), values=[str(severity)+' Day'])
-            
-            positioned = False
-            index = self.expTable.index(str(upc))
-            while not positioned:
-                prevItem = self.expTable.prev(str(upc))
-                if prevItem and len(self.expTable.item(str(prevItem))['values']):
-                    expComp = int(self.expTable.item(str(prevItem))['values'][0].split(' ')[0])
-                    
-                    if expComp > severity:
-                        index -= 1
-                        self.expTable.move(str(upc), '', index)
-                    else:
-                        positioned = True
-                else:
-                    positioned = True
-            
+        self.expTable.insert('', 'end', str(item.upc)+str(epoch), text=str(item.description),\
+                                 values=[str(severity)+day], tag=str(item.upc)+str(epoch))
+        self.expTable.tag_configure(str(item.upc)+str(epoch),foreground=color)
+    
     def showItemInfo (self, item):
         self.nameEn.set(item.description)
         self.purEn.set(item.purchaseDate.strftime('%a, %d %b'))
@@ -411,6 +378,12 @@ class View ():
         self.ConstructCurrentInventory(currentInventory)
         
         self.TimeHandlers()
+        self.colors = dict()
+        self.colors[1] = 'red'
+        self.colors[2] = 'orange'
+        self.colors[3] = 'yellow'
+        self.colors[4] = 'green'
+        self.colors[5] = 'green'
         
         notebook.add(productEntry, text="Product Entry", state="normal")
         notebook.add(shoppingLists, text="Shopping Lists")

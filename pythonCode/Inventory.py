@@ -104,3 +104,10 @@ class Inventory ():
     def size (self):
         return self.session.quert(InventoryItem).count()
     
+    def expiringItems (self, thresholdTime):
+        return self.session.query(InventoryItem).filter(InventoryItem.expirationDate > thresholdTime)\
+            .order_by(InventoryItem.expirationDate).all()
+        
+        
+    
+    

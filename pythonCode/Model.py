@@ -44,11 +44,15 @@ class Model (threading.Thread):
         self.databaseConnectionInitialization()
         self.initializeUPCLUT()
         self.initializeExpirationWarningLUT()
-        self.currentInventory = Inventory.Inventory(self)
         self.timeWrapper = TimeWrapper.TimeWrapper()
+        self.currentInventory = Inventory.Inventory(self)
         self.expirationDatePredictor = ExpirationDatePrediction.ExpirationDatePrediction(self)
         
         self.currentItem = None
+        self.currentExpiringSet = []
+        
+        # Initial Expiration Table
+        self.checkItemExpiration()
         
         self.mode = self.controllerObj.CHECK_IN_MODE
         
@@ -77,7 +81,7 @@ class Model (threading.Thread):
         flatfile = []
         flatfile.append([36600814815, 'Chap Stick', 'GS1Cde01'])
         flatfile.append([38000299377, 'Pop Tart - Apple', 'GS1Cde02'])
-        flatfile.append([38000318405, 'Pop Tart- Cherry', 'GS1Cde01'])
+        flatfile.append([38000318405, 'Pop Tart - Cherry', 'GS1Cde01'])
         
         for item in flatfile:
             if self.session.query(UpcLutItem).filter(UpcLutItem.upc==item[0]).count() == 0:
@@ -118,7 +122,6 @@ class Model (threading.Thread):
             purDate = self.timeWrapper.returnTime()
             item = Inventory.InventoryItem(upc=long(upc), upcString=upc, description=upcInfo.description, purchaseDate=purDate, \
                                                expirationDate=expDate)
-            self.hourlyTasks.registerItemTask(purDate.hour, upc)
             
             self.currentItem = item
             self.controllerObj.setLastItem(self.mode)
@@ -133,7 +136,7 @@ class Model (threading.Thread):
                     len(self.currentInventory.returnItem(upc))+1)
                 
             self.currentInventory.addItem(item)
-            self.checkItemExpiration([upc])
+            self.checkItemExpiration()
             
     def recallItem (self, upc):
         if self.currentInventory.searchItem(upc):
@@ -166,14 +169,9 @@ class Model (threading.Thread):
                 self.controllerObj.removeInventoryItem(self.currentItem)
             
             self.currentInventory.removeItem(self.currentItem)
-#            self.hourlyTasks.removeItemTask(self.currentItem)
-                
-#            if self.currentItem in self.expirationWarningLUT:
-#                del self.expirationWarningLUT[self.currentItem]
-#                self.controllerObj.removeExpirationWarning(self.currentItem)
+            self.checkItemExpiration()
             
     def expiredItem (self):
-#        self.expirationDatePredictor.earlyExpiration(self.currentItem, expirationDate)
         self.genericRemoveTasks()
         
     def consumedItem (self):
@@ -209,27 +207,26 @@ class Model (threading.Thread):
         self.mode = self.controllerObj.CHECK_OUT_MODE
         return self.currentItem
     
-    def checkItemExpiration (self, upcs):
+    def checkItemExpiration (self):
         time = self.timeWrapper.returnTime()
         
-        for upc in upcs:
-            if self.currentInventory.searchItem(upc):
-                info = self.currentInventory.returnItem(upc)
-                
-                # THIS IS A HACK TODO TODO TODO FIX ME
-                info = info[0]
-                delta = info.expirationDate - time
-                update = upc in self.expirationWarningLUT
-                
-                if delta.days < 5:
-                    if update:
-                        if self.expirationWarningLUT[upc] != delta.days:
-                            self.expirationWarningLUT[upc] = delta.days
-                            self.controllerObj.expirationWarning(upc, delta.days, update)
-                    else:
-                        self.controllerObj.expirationWarning(upc, delta.days, update)
-                        self.expirationWarningLUT[upc] = delta.days
+        threshold = time - datetime.timedelta(days=5)
+        expiringItems = self.currentInventory.expiringItems(threshold)
         
+        update = [x for x in expiringItems if x in self.currentExpiringSet]
+        for x in update:
+            self.controllerObj.updateExpirationWarning(x, (x.expirationDate-time).days)
+            
+        add = [x for x in expiringItems if x not in self.currentExpiringSet]
+        for x in add:
+            self.controllerObj.addExpirationWarning(x, (x.expirationDate-time).days)
+            self.currentExpiringSet.append(x)
+            
+        remove = [x for x in self.currentExpiringSet if x not in expiringItems]
+        for x in remove:
+            self.controllerObj.removeExpirationWarning(x)
+            self.currentExpiringSet.remove(x)
+                                                 
     def clearInventory (self):
         self.currentInventory.clear()
         

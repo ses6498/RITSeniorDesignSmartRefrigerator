@@ -50,11 +50,17 @@ class Controller ():
     def itemConsumed (self):
         self.modelObj.consumedItem()
         
-    def expirationWarning (self, upc, severity, update=False):
-        self.viewObj.expirationWarning(upc, severity, update)
-    
-    def removeExpirationWarning (self, upc):
-        self.viewObj.removeExpirationWarning(upc)
+    def addExpirationWarning (self, item, severity):
+        self.viewObj.addExpirationWarning(item, severity)
+        
+    def updateExpirationWarning (self, item, severity):
+        self.viewObj.updateExpirationWarning(item, severity)
+        
+    def removeExpirationWarning (self, item):
+        self.viewObj.removeExpirationWarning(item)
+        
+    def clearExpirationWarnings (self):
+        self.viewObj.clearExpirationWarnings()
         
     def removeLastItem (self):
         self.modelObj.removeLastItem()
