@@ -18,15 +18,23 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity 
+        <activity
             android:name=".ItemListActivity"
-            android:label="@string/inventory_name"></activity>
-        <activity 
+            android:label="@string/inventory_name" >
+        </activity>
+        <activity
             android:name=".ShoppingListActivity"
-            android:label="@string/shoppingList_name"></activity>
-        <activity 
+            android:label="@string/shoppingList_name" >
+        </activity>
+        <activity
             android:name=".ItemDetailActivity"
-            android:label="Test"></activity>
+            android:label="Test" >
+        </activity>
+        <activity
+            android:name=".ListAddActivity"
+            android:label="@string/list_add_message"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
     </application>
 
 </manifest>

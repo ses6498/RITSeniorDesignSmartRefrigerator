@@ -9,5 +9,7 @@
     <string name="current_item">current_item</string>
     <string name="dataConnecter">DATA_CONNECTER</string>
     <string name="current_list">current_list</string>
+    <string name="list_add_message">Add item to which Shopping List?</string>
+    <string name="current_upc">CURRENT_UPC</string>
 
 </resources>

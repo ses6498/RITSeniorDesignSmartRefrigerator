@@ -22,21 +22,21 @@ public class ItemDetailActivity extends Activity {
         
         Bundle extras = getIntent().getExtras();
         //InventoryItem item = null;
-        List<InventoryItem> test = null;
+        List<InventoryItem> itemList = null;
         String itemName = "default"; 
         if (extras != null)
         {
-        	test = (ArrayList<InventoryItem>) extras.getSerializable(getString(R.string.current_item));
+        	itemList = (ArrayList<InventoryItem>) extras.getSerializable(getString(R.string.current_item));
         }
         //this.setTitle(item.getName());
         
-        if (test == null)
+        if (itemList == null)
         {
         	this.setTitle(itemName);
         }
         else
         {
-	        this.setTitle(test.size() + " : " + test.get(0).getName());
+	        this.setTitle(itemList.size() + " : " + itemList.get(0).getName());
         }
         TextView t = (TextView) findViewById(R.id.text);
         t.setText("Description: \t");
@@ -53,7 +53,7 @@ public class ItemDetailActivity extends Activity {
         StringBuilder builder = new StringBuilder();
         String label;
         
-        for (InventoryItem i : test)
+        for (InventoryItem i : itemList)
         {
 	        tr = new TableRow(this);
 	        tr.setLayoutParams(new LayoutParams(
@@ -63,7 +63,7 @@ public class ItemDetailActivity extends Activity {
 	        // Build the button text
 	        builder.append("Purchased ");
 	        builder.append(dateFormat.format(i.getPurchased()));
-	        builder.append(";\t Expires ");
+	        builder.append("    -    Expires ");
 	        builder.append(dateFormat.format(i.getExpiration()));
 	        label = builder.toString();
 	        builder.delete(0, builder.length()); // clear the builder

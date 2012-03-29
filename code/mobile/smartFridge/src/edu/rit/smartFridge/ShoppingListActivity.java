@@ -16,6 +16,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 import edu.rit.smartFridge.model.ShoppingList;
+import edu.rit.smartFridge.util.Connector;
 import edu.rit.smartFridge.util.DataConnect;
 
 public class ShoppingListActivity extends ListActivity {
@@ -24,12 +25,10 @@ public class ShoppingListActivity extends ListActivity {
         final Context context = this;
         
         // get the connecter
-        DataConnect connecter = null;
-        Bundle extras = getIntent().getExtras();
-        if (extras != null)
-        {
-        	connecter = (DataConnect) extras.getSerializable(getString(R.string.dataConnecter));
-        }
+        DataConnect connecter = new Connector().getInstance();
+        
+        // copy the connector somewhere that the listener can use it
+        final DataConnect finalConnecter = connecter;
         
         // get the shopping lists
         final List<ShoppingList> lists = connecter.getLists();
@@ -56,9 +55,6 @@ public class ShoppingListActivity extends ListActivity {
         setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, listNames.toArray(a)));
         ListView lv = getListView();
         lv.setTextFilterEnabled(true);
-        
-        // copy the connector somewhere that the listener can use it
-        final DataConnect finalConnecter = connecter;
         
         // make a listener
         lv.setOnItemClickListener(new OnItemClickListener()

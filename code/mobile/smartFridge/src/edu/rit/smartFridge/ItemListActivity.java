@@ -14,13 +14,12 @@ import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
 import edu.rit.smartFridge.model.InventoryItem;
 import edu.rit.smartFridge.model.ShoppingList;
+import edu.rit.smartFridge.util.Connector;
 import edu.rit.smartFridge.util.DataConnect;
 
-public class ItemListActivity extends ListActivity 
+public class ItemListActivity extends ListActivity
 {
     public void onCreate(Bundle savedInstanceState) 
     {
@@ -29,24 +28,24 @@ public class ItemListActivity extends ListActivity
         HashMap<String, List<InventoryItem>> inventory = null;
         ShoppingList list = null;
         
+        // Get the instance of the connecter
+        DataConnect connecter = new Connector().getInstance();
+        
         // Set true if we got here from a grocery list, 
         // false if it's just the inventory screen
         final boolean fromList;
         
-        // get the inventory and the dataConnecter
-        DataConnect connecter = null;
+        // get the current list
         Bundle extras = getIntent().getExtras();
         if (extras != null)
         {
         	list = (ShoppingList) extras.getSerializable(getString(R.string.current_list));
-        	connecter = (DataConnect) extras.getSerializable(getString(R.string.dataConnecter));
         }
         
         // if no list was passed in, we need to get the inventory ourselves
         if (list == null)
         {
 	        inventory = connecter.getInventory();
-	        
 	        fromList = false;
         }
         else // we got here from a grocery list
@@ -97,17 +96,28 @@ public class ItemListActivity extends ListActivity
         lv.setOnItemLongClickListener(new OnItemLongClickListener()
         {
 			public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
-				String toastLabel;
+				// get the corresponding inventory item
+				InventoryItem item = finalInventory.get(finalNames.get(position)).get(0);
+				
 				if (fromList)
 				{
-					toastLabel = "From List: " + ((TextView) v).getText();
+//					Intent i = new Intent();
+//					context.startActivity(i);
+					Intent i = new Intent().setClass(context, ListAddActivity.class)
+											.putExtra(getString(R.string.current_item), item.getName())
+											.putExtra(getString(R.string.current_upc), item.getUPC());
+					
+					context.startActivity(i);
 				}
 				else
 				{
-					toastLabel = "From Inventory: " + ((TextView) v).getText();
+					Intent i = new Intent().setClass(context, ListAddActivity.class)
+											.putExtra(getString(R.string.current_item), item.getName())
+											.putExtra(getString(R.string.current_upc), item.getUPC());
+					
+					context.startActivity(i);
 				}
 				
-      		    Toast.makeText(getApplicationContext(), toastLabel, Toast.LENGTH_SHORT).show();
 				return false;
 			}
         });
