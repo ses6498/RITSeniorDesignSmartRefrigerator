@@ -1,8 +1,5 @@
 package edu.rit.smartFridge;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -16,15 +13,16 @@ import edu.rit.smartFridge.model.ShoppingList;
 import edu.rit.smartFridge.util.Connector;
 import edu.rit.smartFridge.util.DataConnect;
 
-public class ListAddActivity extends ListActivity {
+public class ListRemoveActivity extends ListActivity {
 
 	/** Called when the activity is first created. */
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    
-        // get the extras and the connector
+	
+	    // get the extras and the connector
         Bundle extras = getIntent().getExtras();
-        DataConnect connector = new Connector().getInstance();
+        final DataConnect connector = new Connector().getInstance();
+        ShoppingList list;
         
         final String itemName;
         final int UPC;
@@ -34,26 +32,21 @@ public class ListAddActivity extends ListActivity {
         {
         	itemName = (String) extras.getString(getString(R.string.current_item));
         	UPC = (int) extras.getInt(getString(R.string.current_upc));
+        	list = (ShoppingList) extras.get(getString(R.string.current_list));
         }
         else
         {
         	itemName = "";
         	UPC = -1;
+        	list = null;
         }
         
-        // get the shopping lists; final so it can be accessed by the event handler
-        final List<ShoppingList> lists = connector.getLists();
+        // copy the list somewhere final so the listener can use it
+        final ShoppingList finalList = connector.populateItems(list);
         
-        // copy the names somewhere they can be displayed
-        List<String> listNames = new ArrayList<String>();
-        for (ShoppingList l : lists)
-        {
-        	listNames.add(l.getName());
-        }
+        String[] yesNo = {"Yes", "No"};
+        setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, yesNo));
         
-        // display the list
-		String []a = new String[listNames.size()];
-        setListAdapter(new ArrayAdapter<String>(this, R.layout.list_item, listNames.toArray(a)));
         ListView lv = getListView();
         lv.setTextFilterEnabled(true);
         
@@ -62,12 +55,13 @@ public class ListAddActivity extends ListActivity {
         {
         	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
         	{
-        		ShoppingList list = lists.get(position);
-        		list.addItem(new InventoryItem(itemName, UPC), 1);
+        		if (position == 0)
+        		{
+	        		finalList.removeItem(new InventoryItem(itemName, UPC));
+        		}
         		
-        		Intent i = new Intent(parent.getContext(), SmartFridgeActivity.class)
-        							.putExtra(getString(R.string.curr_tab), 0);
-        		
+				Intent i = new Intent().setClass(parent.getContext(), ItemListActivity.class)
+					  					.putExtra(getString(R.string.current_list), finalList);
         		parent.getContext().startActivity(i);
         	}
         });

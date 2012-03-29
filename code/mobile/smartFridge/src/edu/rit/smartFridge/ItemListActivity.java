@@ -42,6 +42,9 @@ public class ItemListActivity extends ListActivity
         	list = (ShoppingList) extras.getSerializable(getString(R.string.current_list));
         }
         
+        // copy somewhere final for the listener to use
+    	final ShoppingList finalList = list;
+        
         // if no list was passed in, we need to get the inventory ourselves
         if (list == null)
         {
@@ -101,9 +104,8 @@ public class ItemListActivity extends ListActivity
 				
 				if (fromList)
 				{
-//					Intent i = new Intent();
-//					context.startActivity(i);
-					Intent i = new Intent().setClass(context, ListAddActivity.class)
+					Intent i = new Intent().setClass(context, ListRemoveActivity.class)
+											.putExtra(getString(R.string.current_list), finalList)
 											.putExtra(getString(R.string.current_item), item.getName())
 											.putExtra(getString(R.string.current_upc), item.getUPC());
 					
