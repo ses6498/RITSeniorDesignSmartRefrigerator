@@ -48,7 +48,6 @@ class Model (threading.Thread):
         
         self.databaseConnectionInitialization()
         self.initializeUPCLUT()
-        self.initializeExpirationWarningLUT()
         self.timeWrapper = TimeWrapper.TimeWrapper()
         self.currentInventory = Inventory.Inventory(self)
         self.expirationDatePredictor = ExpirationDatePrediction.ExpirationDatePrediction(self)
@@ -83,6 +82,7 @@ class Model (threading.Thread):
         Session = sqlalchemy.orm.sessionmaker(bind=self.engine)
         self.session = Session()
         
+    def populateUpcLut (self): 
         # This will really be read from config file
         flatfile = []
         flatfile.append([36600814815, 'Chap Stick', 'GS1Cde01'])
@@ -97,15 +97,11 @@ class Model (threading.Thread):
                 
         self.session.commit()
     
+    def populateGs1Lut (self):
+        self.expirationDatePredictor.populateGs1Lut()
+        
     def upcLookup (self, upc):
         return self.session.query(UpcLutItem).filter(UpcLutItem.upc==upc).count() > 0
-    
-    def initializeExpirationWarningLUT (self):
-        self.expirationWarningLUT = dict()
-    
-    def expirationDateLookup (self, gs1Catagory):
-        found = gs1Catagory in self.gs1LUT
-        return found
     
     def advanceHour (self):
         self.hourlyTasks.trigger()
@@ -338,6 +334,9 @@ class Model (threading.Thread):
     
     def pollHumidity (self):
         return random.normalvariate(50, 15)
+    
+    def clearHistory (self):
+        self.currentInventory.clearHistory()
         
     def run(self):
         a = 5

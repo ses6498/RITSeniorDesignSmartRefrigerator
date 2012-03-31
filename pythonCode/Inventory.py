@@ -106,6 +106,11 @@ class Inventory ():
         for item in self.session.query(InventoryItem):
             self.session.delete(item)
         self.session.commit()
+        
+    def clearHistory (self):
+        for item in self.session.query(PurchaseHistoryItem):
+            self.session.delete(item)
+        self.session.commit()
     
     def size (self):
         return self.session.quert(InventoryItem).count()

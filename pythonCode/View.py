@@ -43,11 +43,9 @@ class View ():
         self.upcLabel.config(text="Product UPC: " + upc)
         
     def updateTemperature (self, temperature):
-        print temperature
         self.temperature.configure(text='Current Temperature: ' + '{:.2F}'.format(temperature) + 'F')
         
     def updateHumidity (self, humidity):
-        print humidity
         self.humidity.configure(text='Current Humidity: ' + '{:.2F}'.format(humidity) + '%')
         
     def inventoryContextMenu (self, e, arg):
@@ -585,6 +583,7 @@ class View ():
         self.ConstructCurrentInventory(currentInventory)
         
         self.TimeHandlers()
+        self.root.bind('<Shift-A>', self.adminKey)
         self.colors = dict()
         self.colors[1] = 'red'
         self.colors[2] = 'orange'
@@ -603,6 +602,32 @@ class View ():
         
     def mainLoop (self):
         self.root.mainloop()
+        
+    def adminClearHistory (self):
+        self.controlObj.clearHistory()
+        
+    def adminInitializeUpcLut (self):
+        self.controlObj.populateUpcLut()
+        
+    def adminInitializeGs1Lut (self):
+        self.controlObj.populateGs1Lut()
+        
+    def adminKey (self, event):
+        self.admin = tkinter.Toplevel()
+        self.admin.title('Administrator Panel')
+        self.admin.geometry("+%d+%d" % (self.root.winfo_rootx()+210,
+                                  self.root.winfo_rooty()+180))
+        self.admin.grab_set()
+        self.admin.focus_set()
+        self.historyButton = ttk.Button(self.admin, text='Clear History Table', width=50,
+                                        command=self.adminClearHistory)
+        self.historyButton.grid(column=0, row=0, padx=10, pady=5)
+        self.initializeUpcLut = ttk.Button(self.admin, text='Initialize UPC LUT', width=50,
+                                        command=self.adminInitializeUpcLut)
+        self.initializeUpcLut.grid(column=0, row=1, padx=10, pady=5)
+        self.initializeGs1Lut = ttk.Button(self.admin, text='Initialize GS1 LUT', width=50,
+                                        command=self.adminInitializeGs1Lut)
+        self.initializeGs1Lut.grid(column=0, row=2, padx=10, pady=5)
         
     def key1 (self, event):
         self.controlObj.advanceHour()

@@ -41,6 +41,8 @@ class ExpirationDatePrediction (object):
         self.session = Session()
         
         # This will really be read from config file
+        
+    def populateGs1Lut (self):
         flatfile = []
         flatfile.append(['GS1Cde01', 5])
         flatfile.append(['GS1Cde02', 3])

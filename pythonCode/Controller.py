@@ -143,6 +143,15 @@ class Controller ():
         self.modelObj.clearInventory()
         self.viewObj.clearInventory()
         
+    def clearHistory (self):
+        self.modelObj.clearHistory()
+        
+    def populateUpcLut (self):
+        self.modelObj.populateUpcLut()
+        
+    def populateGs1Lut (self):
+        self.modelObj.populateGs1Lut()
+        
     def updateTemperature (self, temperature):
         self.viewObj.updateTemperature(temperature)
         
