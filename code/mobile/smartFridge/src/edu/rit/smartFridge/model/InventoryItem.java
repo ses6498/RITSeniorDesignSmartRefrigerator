@@ -59,6 +59,17 @@ public class InventoryItem implements Serializable
 	public InventoryItem() {}
 	
 	/**
+	 * {@code InventoryItem} constructor
+	 * 
+	 * @param name The name of the {@code InventoryItem}
+	 * @param UPC The UPC of the {@code InventoryItem}
+	 */
+	public InventoryItem(String name, int UPC)
+	{
+		this(name, UPC, null, null);
+	}
+	
+	/**
 	 * Item Constructor
 	 * 
 	 * @param name The name of the Item 

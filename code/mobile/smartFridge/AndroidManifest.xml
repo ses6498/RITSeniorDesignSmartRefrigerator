@@ -35,6 +35,11 @@
             android:label="@string/list_add_message"
             android:theme="@android:style/Theme.Dialog" >
         </activity>
+        <activity
+            android:name=".ListRemoveActivity"
+            android:label="@string/list_remove_message"
+            android:theme="@android:style/Theme.Dialog" >
+        </activity>
     </application>
 
 </manifest>
