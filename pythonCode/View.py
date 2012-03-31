@@ -41,36 +41,45 @@ class View ():
     def knownUPC (self, upc):
         self.productUPC.set("")
         self.upcLabel.config(text="Product UPC: " + upc)
+        
+    def inventoryContextMenu (self, e, arg):
+        self.inventoryTree.focus(arg)
+        self.inventoryTree.selection_set(arg)
+        self.inventoryContext.post(e.x_root, e.y_root)
+        self.contextItem = arg
 
     def addInventoryItem (self, item):
         self.inventoryTree.insert('', 0, str(item.upc), text=item.description, \
                                   values=['','',''], tag=str(item.upc))
         self.addDuplicateInventoryItem (item, 1)
+        self.inventoryTree.tag_bind(str(item.upc), '<3>', lambda event, arg=str(item.upc): self.inventoryContextMenu(event, arg))
         
     def addDuplicateInventoryItem (self, item, quantity):
-        epoch = time.mktime(item.purchaseDate.timetuple())
+        epoch = int(time.mktime(item.purchaseDate.timetuple()))
         self.inventoryTree.insert(str(item.upc), 'end', str(item.upc)+str(epoch), \
                                   text=item.description, values=['',item.purchaseDate.strftime('%H:%M %a, %d %b'), \
                                   item.expirationDate.strftime('%H:%M %a, %d %b')], tag=str(item.upc)+str(epoch))
         
+        item.identifier = str(item.upc)+str(epoch)
         self.inventoryTree.item(str(item.upc), values=[str(quantity), '', ''])
+        self.inventoryTree.tag_bind(str(item.upc)+str(epoch), '<3>', lambda event, arg=str(item.upc)+str(epoch): self.inventoryContextMenu(event, arg))
         
     def removeInventoryItem (self, item):
         self.inventoryTree.delete(str(item.upc))
         
     def removeDuplicateInventoryItem (self, item, quantity):
-        epoch = time.mktime(item.purchaseDate.timetuple())
+        epoch = int(time.mktime(item.purchaseDate.timetuple()))
         self.inventoryTree.delete(str(item.upc) + str(epoch))
         self.inventoryTree.item(str(item.upc), values=[str(quantity), '', ''])
         
     def removeExpirationWarning (self, item):
-        epoch = time.mktime(item.purchaseDate.timetuple())
+        epoch = int(time.mktime(item.purchaseDate.timetuple()))
         self.expTable.delete(str(item.upc)+str(epoch))
         
     def updateExpirationWarning (self, item, severity):
         color = self.colors[severity] if severity in self.colors else 'gray'
         day = ' Days' if severity != 1 and severity != -1 else ' Day'
-        epoch = time.mktime(item.purchaseDate.timetuple())
+        epoch = int(time.mktime(item.purchaseDate.timetuple()))
         
         self.expTable.tag_configure(str(item.upc)+str(epoch), foreground=color)
         self.expTable.item(str(item.upc)+str(epoch), values=[str(severity)+day])
@@ -82,7 +91,7 @@ class View ():
     def addExpirationWarning (self, item, severity):
         color = self.colors[severity] if severity in self.colors else 'gray'
         day = ' Days' if severity != 1 and severity != -1 else ' Day'
-        epoch = time.mktime(item.purchaseDate.timetuple())
+        epoch = int(time.mktime(item.purchaseDate.timetuple()))
             
         self.expTable.insert('', 'end', str(item.upc)+str(epoch), text=str(item.description),\
                                  values=[str(severity)+day], tag=str(item.upc)+str(epoch))
@@ -90,8 +99,8 @@ class View ():
     
     def showItemInfo (self, item):
         self.nameEn.set(item.description)
-        self.purEn.set(item.purchaseDate.strftime('%a, %d %b'))
-        self.expEn.set(item.expirationDate.strftime('%a, %d %b'))
+        self.purEn.set(item.purchaseDate.strftime('%H:%M %a, %d %b'))
+        self.expEn.set(item.expirationDate.strftime('%H:%M %a, %d %b'))
 
     def editEntryHandler (self):
         self.editState = not self.editState
@@ -218,6 +227,53 @@ class View ():
             self.selectionTree.insert('', 'end', str(item.upc) + str(item.purchaseDate), \
                                  text=item.description, values=[item.purchaseDate.strftime('%H:%M %a, %d %b'), \
                                  item.expirationDate.strftime('%H:%M %a, %d %b')], tag=str(item.upc) + str(item.purchaseDate))
+            
+    def addNewShoppingList (self, shoppingList):
+        self.shoppingListTree.insert('', 0, str(shoppingList.listId), text=shoppingList.name,\
+                                     values=['', shoppingList.creationDate.strftime('%H:%M %a, %d %b')])
+        shoppingList.identifier = str(shoppingList.listId)
+        self.shoppingListCascade.add_command(label=shoppingList.name, command = lambda x=shoppingList.listId : self.addToSlContextHandler(x))
+        self.inventoryContext.entryconfigure(self.shoppingListMenuIndex, state='normal')
+        
+    def addNewShoppingListItem (self, linker):
+        self.shoppingListTree.insert(str(linker.listId), 0, str(linker.listId)+str(linker.itemId),\
+                                     text=linker.itemDescription, values=[str(linker.quantity), ''])
+        linker.identifier = str(linker.listId)+str(linker.itemId)
+        
+    def updateShoppingListItem (self, linker):
+        self.shoppingListTree.item(linker.identifier, values=[str(linker.quantity), ''])
+        
+    def createShoppingList (self):
+        self.controlObj.createShoppingList(self.slName.get())
+        self.slPrompt.destroy()
+            
+    def deleteSlHandler (self):
+        print self.shoppingListTree.selection()
+        
+    def expItemContextHandler (self):
+        self.controlObj.itemExpired(identifier=self.contextItem)
+        
+    def conItemContextHandler (self):
+        self.controlObj.itemConsumed(identifier=self.contextItem)
+        
+    def addToSlContextHandler (self, listIdentifier):
+        self.controlObj.createShoppingListItem (listIdentifier, self.contextItem)
+        
+    def shoppingListPrompt (self):
+        self.slPrompt = tkinter.Toplevel()
+        self.slPrompt.title("Enter Shopping List Name")
+        self.slPrompt.geometry("+%d+%d" % (self.root.winfo_rootx()+210,
+                                  self.root.winfo_rooty()+180))
+        self.slPrompt.grab_set()
+        self.slPrompt.focus_set()
+        self.slLabel = ttk.Label(self.slPrompt, text="Enter Shopping List Name")
+        self.slLabel.grid(column=0, row=0, padx=10, pady=(10,0), sticky=('W'))
+        self.slName = tkinter.StringVar("")
+        self.slEntry = ttk.Entry(self.slPrompt, width=50, textvariable=self.slName)
+        self.slEntry.grid(column=0,row=1, padx=10, pady=10)
+        self.slButton = ttk.Button(self.slPrompt, text="Add Shopping List", width=50,\
+                                   command=self.createShoppingList)
+        self.slButton.grid(column=0, row=2, padx=10, pady=(0,10))
     
     def ConstructProductEntry (self, productEntry):
         productEntry.grid(column=0, row=0)
@@ -251,13 +307,19 @@ class View ():
         self.radioOffSty = ttk.Style()
         self.radioOffSty.configure('RadioOff.TButton', background='red', foreground='red')
         
-        self.checkIn = ttk.Button(leftFrame, text="Check In", width=20, state='disabled', \
+        self.checkIn = ttk.Button(leftFrame, text="Check In", width='20', state='disabled', \
                                   command=self.checkInHandler)
         self.checkIn.grid(column=0, row=0, pady=10)
         
-        self.checkOut = ttk.Button(leftFrame, text="Check Out", width=20, state='normal', \
+        self.checkOut = ttk.Button(leftFrame, text="Check Out", width='20', state='normal', \
                                    command=self.checkOutHandler)
+        self.buttonStyle = ttk.Style()
+        print self.buttonStyle.layout('TButton')
+        print self.buttonStyle.element_options('TButton.padding')
         self.checkOut.grid(column=1, row=0, pady=10)
+        print self.checkOut.config('width')
+#        print self.checkOut.config('height')
+#        self.checkOut.config(height=60)
         
         self.nameEn = tkinter.StringVar("")
         self.purEn = tkinter.StringVar("")
@@ -301,6 +363,7 @@ class View ():
         expScroll = ttk.Scrollbar(leftFrame, orient=tkinter.VERTICAL, command=self.expTable.yview)
         expScroll.grid(column=2, row=8, sticky=('W','N','S'))
         self.expTable['yscrollcommand'] = expScroll.set
+        self.expTable.configure(selectmode='browse')
         
     def ConstructShoppingList (self, shoppingLists):
         shoppingLists.grid(column=0, row=0)
@@ -314,14 +377,17 @@ class View ():
         leftFrame = ttk.Frame(SLframe)
         leftFrame.grid(column=0, row=0, columnspan=1, rowspan=4, sticky=('N','S'), padx=10, pady=10)     
         
-        tree = ttk.Treeview(leftFrame, height=18, columns=('modified'))
-        tree.column('modified', width=100, anchor='e')
-        tree.column('#0', width=350, anchor='e')
-        tree.heading('modified', text='Date Modified')
-        tree.heading('#0', text='Shopping Lists')
-        tree.grid(column=0,row=0)
+        self.shoppingListTree = ttk.Treeview(leftFrame, height=18, columns=('quantity', 'modified'))
+        self.shoppingListTree.column('quantity', width=100, anchor='e')
+        self.shoppingListTree.column('modified', width=100, anchor='e')
+        self.shoppingListTree.column('#0', width=250, anchor='w')
+        self.shoppingListTree.heading('quantity', text='Quantity')
+        self.shoppingListTree.heading('modified', text='Date Modified')
+        self.shoppingListTree.heading('#0', text='Shopping Lists')
+        self.shoppingListTree.grid(column=0,row=0)
+        self.shoppingListTree.configure(selectmode='browse')
         
-        newList = ttk.Button(rightFrame, text="New List", width=20)
+        newList = ttk.Button(rightFrame, text="New List", width=20, command=self.shoppingListPrompt)
         newList.grid(column=0, row=0, sticky=('E','N','S'), pady=(10,5))
         sugList = ttk.Button(rightFrame, text="Suggested List", width=20)
         sugList.grid(column=0, row=1, sticky=('E','N','S'), pady=5)
@@ -329,6 +395,15 @@ class View ():
         editList.grid(column=0, row=2, sticky=('E','N','S'), pady=5)
         delList = ttk.Button(rightFrame, text="Delete List", width=20)
         delList.grid(column=0, row=3, sticky=('E','N','S'), pady=5)
+        
+    def ConstructInventoryContextMenu (self, frame):
+        self.inventoryContext = tkinter.Menu(frame)
+        self.shoppingListCascade = tkinter.Menu(self.inventoryContext)
+        self.inventoryContext.add_command(label='Mark Expired', command=self.expItemContextHandler)
+        self.inventoryContext.add_command(label='Mark Consumed', command=self.conItemContextHandler)
+        self.shoppingListMenuIndex = 3
+        self.inventoryContext.add_cascade(menu=self.shoppingListCascade, label='Add to Shopping List')
+        self.inventoryContext.entryconfigure(self.shoppingListMenuIndex, state='disabled')
         
     def ConstructCurrentInventory (self, currentInventory):
         currentInventory.grid(column=0, row=0)
@@ -347,6 +422,10 @@ class View ():
         self.inventoryTree.heading('purchase',text='Purchase Date')
         self.inventoryTree.heading('expiration',text='Expiration Date')
         self.inventoryTree.grid(column=0,row=0,padx=10,pady=(10,2))
+        self.inventoryTree.configure(selectmode='browse')
+        
+        self.root.option_add('*tearOff', False)
+        self.ConstructInventoryContextMenu(CIframe)
         
         clear = ttk.Button(CIframe, text="Clear Inventory", width=50, command=self.clearHandler)
         clear.grid(column=0, row=1, sticky=('E','S','W'), padx=10, pady=(0,10))
