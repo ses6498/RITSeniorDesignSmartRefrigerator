@@ -78,11 +78,18 @@ class ShoppingListTable (object):
         self.session.commit()
         
     def returnListByIdentifier (self, identifier):
-        return self.session.query(ShoppingListItem).filter(ShoppingListItem.identifier==identifier).all()
+        return self.session.query(ShoppingListItem).filter(ShoppingListItem.identifier.startswith(identifier)).all()
+    
+    def returnListItemByIdentifier (self, identifier):
+        return self.session.query(ShoppingListLinkerItem).filter(ShoppingListLinkerItem.identifier==identifier).all()
     
     def returnLinkerItem (self, shoppingList, item):
         return self.session.query(ShoppingListLinkerItem).filter((ShoppingListLinkerItem.listId==shoppingList.listId) & \
             (ShoppingListLinkerItem.itemId==item.upc)).all()
+            
+    def returnCustomLinkerItem (self, shoppingList, description):
+        return self.session.query(ShoppingListLinkerItem).filter((ShoppingListLinkerItem.listId==shoppingList.listId) & \
+            (ShoppingListLinkerItem.itemDescription==description)).all()
             
     def addNewShoppingListItem (self, linker):
         self.session.add(linker)
@@ -91,8 +98,24 @@ class ShoppingListTable (object):
     def updateShoppingListItem (self):
         self.session.commit()
         
+    def removeShoppingList (self, shoppingList):
+        self.session.delete(shoppingList)
+       
+        items = self.session.query(ShoppingListLinkerItem).filter((ShoppingListLinkerItem.listId==shoppingList.listId)).all() 
+        for item in items:
+            self.session.delete(item)
+        
+        self.session.commit()
+        
+    def removeShoppingListItem (self, shoppingListItem):
+        self.session.delete(shoppingListItem)
+        self.session.commit()
+        
     def grantNewListId (self):
         returnValue = self.listId
         self.listId += 1
         
         return returnValue
+    
+    def populateSuggestedShoppingList (self, shoppingList):
+        print 'You are out of luck for now'

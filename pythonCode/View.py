@@ -42,6 +42,14 @@ class View ():
         self.productUPC.set("")
         self.upcLabel.config(text="Product UPC: " + upc)
         
+    def updateTemperature (self, temperature):
+        print temperature
+        self.temperature.configure(text='Current Temperature: ' + '{:.2F}'.format(temperature) + 'F')
+        
+    def updateHumidity (self, humidity):
+        print humidity
+        self.humidity.configure(text='Current Humidity: ' + '{:.2F}'.format(humidity) + '%')
+        
     def inventoryContextMenu (self, e, arg):
         self.inventoryTree.focus(arg)
         self.inventoryTree.selection_set(arg)
@@ -228,27 +236,74 @@ class View ():
                                  text=item.description, values=[item.purchaseDate.strftime('%H:%M %a, %d %b'), \
                                  item.expirationDate.strftime('%H:%M %a, %d %b')], tag=str(item.upc) + str(item.purchaseDate))
             
+    def shoppingListContextMenu (self, e, arg):
+        self.shoppingListTree.focus(arg)
+        self.shoppingListTree.selection_set((arg,))
+        self.shoppingListContext.post(e.x_root, e.y_root)
+            
+    def shoppingListItemContextMenu (self, e, arg):
+        self.shoppingListTree.focus(arg)
+        self.shoppingListTree.selection_set((arg,))
+        self.shoppingListItemContext.post(e.x_root, e.y_root)
+            
     def addNewShoppingList (self, shoppingList):
-        self.shoppingListTree.insert('', 0, str(shoppingList.listId), text=shoppingList.name,\
-                                     values=['', shoppingList.creationDate.strftime('%H:%M %a, %d %b')])
+        self.shoppingListTree.insert('', 'end', str(shoppingList.listId), text=shoppingList.name,\
+                                     values=['', shoppingList.creationDate.strftime('%H:%M %a, %d %b')],\
+                                     tag=[str(shoppingList.listId)])
         shoppingList.identifier = str(shoppingList.listId)
         self.shoppingListCascade.add_command(label=shoppingList.name, command = lambda x=shoppingList.listId : self.addToSlContextHandler(x))
         self.inventoryContext.entryconfigure(self.shoppingListMenuIndex, state='normal')
+        self.shoppingListTree.tag_bind(shoppingList.identifier, '<3>', lambda event, arg=shoppingList.identifier: self.shoppingListContextMenu(event, arg))
         
     def addNewShoppingListItem (self, linker):
-        self.shoppingListTree.insert(str(linker.listId), 0, str(linker.listId)+str(linker.itemId),\
-                                     text=linker.itemDescription, values=[str(linker.quantity), ''])
-        linker.identifier = str(linker.listId)+str(linker.itemId)
+        self.shoppingListTree.insert(str(linker.listId), 0, str(linker.listId)+str(linker.itemDescription),\
+                                     text=linker.itemDescription, values=[str(linker.quantity), ''], \
+                                     tag=[str(linker.listId)+str(linker.itemDescription)])
+        linker.identifier = str(linker.listId)+str(linker.itemDescription)
+        self.shoppingListTree.tag_bind(linker.identifier, '<3>', lambda event, arg=linker.identifier: self.shoppingListItemContextMenu(event, arg))
         
     def updateShoppingListItem (self, linker):
-        self.shoppingListTree.item(linker.identifier, values=[str(linker.quantity), ''])
+        self.shoppingListTree.item(linker.identifier, text=linker.itemDescription, values=[str(linker.quantity), ''])
         
     def createShoppingList (self):
         self.controlObj.createShoppingList(self.slName.get())
         self.slPrompt.destroy()
+    
+    def createSuggestedShoppingList (self):
+        self.controlObj.createSuggestedShoppingList()
+        
+    def createCustomShoppingListItem (self):
+        sel = self.shoppingListTree.selection()[0]
+        if self.shoppingListTree.parent(sel): sel = self.shoppingListTree.parent(sel)
+        
+        self.controlObj.createCustomShoppingListItem (sel,\
+                self.slAddName.get(), int(self.slAddQuan.get()))
+        self.slAddPrompt.destroy()
+        
+    def updateCustomShoppingListItem (self):
+        sel = self.shoppingListTree.selection()[0]
+        name = self.slUpdateName.get()
+        quantity = int(self.slUpdateQuan.get())
+        self.controlObj.updateShoppingListItemHandler(sel, name, quantity)
+        
+        self.slUpdatePrompt.destroy()
             
-    def deleteSlHandler (self):
-        print self.shoppingListTree.selection()
+    def removeShoppingListHandler (self):
+        self.controlObj.removeShoppingListHandler (self.shoppingListTree.selection()[0])
+        
+    def removeShoppingListItemHandler (self):
+        self.controlObj.removeShoppingListItemHandler (self.shoppingListTree.selection()[0])
+        
+    def removeShoppingList (self, shoppingList):
+        self.shoppingListTree.delete(shoppingList.identifier)
+        self.shoppingListCascade.delete(shoppingList.identifier)
+        
+    def removeShoppingListItem (self, shoppingListItem):
+        self.shoppingListTree.delete(shoppingListItem.identifier)
+        
+    def updateShoppingListItemHandler (self):
+        item = self.controlObj.returnItemInfo(self.shoppingListTree.selection()[0])
+        self.shoppingListUpdatePrompt(item.itemDescription, item.quantity)
         
     def expItemContextHandler (self):
         self.controlObj.itemExpired(identifier=self.contextItem)
@@ -258,6 +313,59 @@ class View ():
         
     def addToSlContextHandler (self, listIdentifier):
         self.controlObj.createShoppingListItem (listIdentifier, self.contextItem)
+        
+    def enableDeleteHandler (self, event):
+        self.delList.configure(state='normal')
+        self.addItem.configure(state='normal')
+    
+    def shoppingListAdditionPrompt (self):
+        self.slAddPrompt = tkinter.Toplevel()
+        self.slAddPrompt.title("Enter Item Information")
+        self.slAddPrompt.geometry("+%d+%d" % (self.root.winfo_rootx()+210,
+                                  self.root.winfo_rooty()+180))
+        self.slAddPrompt.grab_set()
+        self.slAddPrompt.focus_set()
+        self.slAddLabel = ttk.Label(self.slAddPrompt, text="Enter Item Description and Quantity")
+        self.slAddLabel.grid(column=0, columnspan=2, row=0, padx=10, pady=(10,0), sticky=('W'))
+        self.slAddNLabel = ttk.Label(self.slAddPrompt, text="Description: ")
+        self.slAddNLabel.grid(column=0, row=1, padx=10, pady=(10,2), sticky=('W'))
+        self.slAddQLabel = ttk.Label(self.slAddPrompt, text="Quantity: ")
+        self.slAddQLabel.grid(column=1, row=1, padx=10, pady=(10,2), sticky=('W'))
+        self.slAddName = tkinter.StringVar("")
+        self.slAddQuan = tkinter.StringVar("")
+        self.slAddQuan.set('1')
+        self.slAddNEntry = ttk.Entry(self.slAddPrompt, width=40, textvariable=self.slAddName)
+        self.slAddNEntry.grid(column=0,row=2, padx=10)
+        self.slAddQEntry = ttk.Entry(self.slAddPrompt, width=20, textvariable=self.slAddQuan)
+        self.slAddQEntry.grid(column=1,row=2, padx=10)
+        self.slAddButton = ttk.Button(self.slAddPrompt, text="Add Item to Shopping List", width=50,\
+                                   command=self.createCustomShoppingListItem)
+        self.slAddButton.grid(column=0, columnspan=2, row=3, padx=10, pady=(10,10))    
+
+    def shoppingListUpdatePrompt (self, name, quantity):
+        self.slUpdatePrompt = tkinter.Toplevel()
+        self.slUpdatePrompt.title("Enter Item Information")
+        self.slUpdatePrompt.geometry("+%d+%d" % (self.root.winfo_rootx()+210,
+                                  self.root.winfo_rooty()+180))
+        self.slUpdatePrompt.grab_set()
+        self.slUpdatePrompt.focus_set()
+        self.slUpdateLabel = ttk.Label(self.slUpdatePrompt, text="Enter Item Description and Quantity")
+        self.slUpdateLabel.grid(column=0, columnspan=2, row=0, padx=10, pady=(10,0), sticky=('W'))
+        self.slUpdateNLabel = ttk.Label(self.slUpdatePrompt, text="Description: ")
+        self.slUpdateNLabel.grid(column=0, row=1, padx=10, pady=(10,2), sticky=('W'))
+        self.slUpdateQLabel = ttk.Label(self.slUpdatePrompt, text="Quantity: ")
+        self.slUpdateQLabel.grid(column=1, row=1, padx=10, pady=(10,2), sticky=('W'))
+        self.slUpdateName = tkinter.StringVar("")
+        self.slUpdateName.set(name)
+        self.slUpdateQuan = tkinter.StringVar("")
+        self.slUpdateQuan.set(quantity)
+        self.slUpdateNEntry = ttk.Entry(self.slUpdatePrompt, width=40, textvariable=self.slUpdateName)
+        self.slUpdateNEntry.grid(column=0,row=2, padx=10)
+        self.slUpdateQEntry = ttk.Entry(self.slUpdatePrompt, width=20, textvariable=self.slUpdateQuan)
+        self.slUpdateQEntry.grid(column=1,row=2, padx=10)
+        self.slUpdateButton = ttk.Button(self.slUpdatePrompt, text="Update Item", width=50,\
+                                   command=self.updateCustomShoppingListItem)
+        self.slUpdateButton.grid(column=0, columnspan=2, row=3, padx=10, pady=(10,10)) 
         
     def shoppingListPrompt (self):
         self.slPrompt = tkinter.Toplevel()
@@ -289,16 +397,20 @@ class View ():
         
         self.editEntry = ttk.Button(rightFrame, text="Edit Entry", width=20, state='disabled',\
                                     command=self.editEntryHandler)
-        self.editEntry.grid(column=0, row=0, rowspan=2, sticky=('E','N','S'), pady=(10,5))
+        self.editEntry.grid(column=0, row=0, sticky=('E','N','S'), pady=(10,5))
         self.delEntry = ttk.Button(rightFrame, text="Delete Entry", width=20, state='disabled',\
                                    command=self.deleteLastHandle)
-        self.delEntry.grid(column=0, row=2, rowspan=2, sticky=('E','N','S'), pady=5)
+        self.delEntry.grid(column=0, row=1, sticky=('E','N','S'), pady=5)
         self.markCon = ttk.Button(rightFrame, text="Mark as Consumed", width=20, state='disabled',\
                                   command=self.markConsumedHandle)
-        self.markCon.grid(column=0, row=4, rowspan=2, sticky=('E','N','S'), pady=5)
+        self.markCon.grid(column=0, row=2, sticky=('E','N','S'), pady=5)
         self.markExp = ttk.Button(rightFrame, text="Mark as Expired", width=20, state='disabled',\
                                   command=self.markExpiredHandle)
-        self.markExp.grid(column=0, row=6, rowspan=2, sticky=('E','N','S'), pady=5)
+        self.markExp.grid(column=0, row=3, sticky=('E','N','S'), pady=5)
+        self.temperature = ttk.Label(rightFrame, text='Current Temperature:')
+        self.temperature.grid(column=0, row=4, sticky=('W'),pady=10)
+        self.humidity = ttk.Label(rightFrame, text='Current Humidity:')
+        self.humidity.grid(column=0, row=5, sticky=('W'),pady=(0,10))
         
         self.editState=False
         
@@ -314,12 +426,7 @@ class View ():
         self.checkOut = ttk.Button(leftFrame, text="Check Out", width='20', state='normal', \
                                    command=self.checkOutHandler)
         self.buttonStyle = ttk.Style()
-        print self.buttonStyle.layout('TButton')
-        print self.buttonStyle.element_options('TButton.padding')
         self.checkOut.grid(column=1, row=0, pady=10)
-        print self.checkOut.config('width')
-#        print self.checkOut.config('height')
-#        self.checkOut.config(height=60)
         
         self.nameEn = tkinter.StringVar("")
         self.purEn = tkinter.StringVar("")
@@ -365,11 +472,25 @@ class View ():
         self.expTable['yscrollcommand'] = expScroll.set
         self.expTable.configure(selectmode='browse')
         
+    def ConstructShoppingListContextMenu (self, frame):
+        self.shoppingListContext = tkinter.Menu(frame)
+        self.shoppingListContext.add_command(label='Delete List', command=self.removeShoppingListHandler)
+        
+    def ConstructShoppingListItemContextMenu (self, frame):
+        self.shoppingListItemContext = tkinter.Menu(frame)
+        self.shoppingListItemContext.add_command(label='Delete Item', command=self.removeShoppingListItemHandler)
+        self.shoppingListItemContext.add_command(label='Edit Item', command=self.updateShoppingListItemHandler)
+        self.shoppingListItemContext.add_command(label='Delete List', command=self.removeShoppingListHandler)
+        
     def ConstructShoppingList (self, shoppingLists):
         shoppingLists.grid(column=0, row=0)
         
         SLframe = ttk.Frame(shoppingLists, relief="sunken", width=800, height=600)
         SLframe.grid(column=0, row=0, columnspan=2, rowspan=1)
+        
+        self.root.option_add('*tearOff', False)
+        self.ConstructShoppingListContextMenu(SLframe)        
+        self.ConstructShoppingListItemContextMenu(SLframe)        
         
         rightFrame = ttk.Frame(SLframe)
         rightFrame.grid(column=2, row=0, columnspan=1, rowspan=4, sticky=('N','S'), padx=10, pady=10)
@@ -386,15 +507,18 @@ class View ():
         self.shoppingListTree.heading('#0', text='Shopping Lists')
         self.shoppingListTree.grid(column=0,row=0)
         self.shoppingListTree.configure(selectmode='browse')
+        self.shoppingListTree.bind('<<TreeviewSelect>>', self.enableDeleteHandler)
         
         newList = ttk.Button(rightFrame, text="New List", width=20, command=self.shoppingListPrompt)
         newList.grid(column=0, row=0, sticky=('E','N','S'), pady=(10,5))
-        sugList = ttk.Button(rightFrame, text="Suggested List", width=20)
+        sugList = ttk.Button(rightFrame, text="Suggest List", width=20, command=self.createSuggestedShoppingList)
         sugList.grid(column=0, row=1, sticky=('E','N','S'), pady=5)
-        editList = ttk.Button(rightFrame, text="Edit List", width=20)
-        editList.grid(column=0, row=2, sticky=('E','N','S'), pady=5)
-        delList = ttk.Button(rightFrame, text="Delete List", width=20)
-        delList.grid(column=0, row=3, sticky=('E','N','S'), pady=5)
+        self.delList = ttk.Button(rightFrame, text="Delete List", width=20, state='disabled',\
+                                  command=self.removeShoppingListHandler)
+        self.delList.grid(column=0, row=2, sticky=('E','N','S'), pady=5)
+        self.addItem = ttk.Button(rightFrame, text="Add Item", width=20, state='disabled',\
+                                  command=self.shoppingListAdditionPrompt)
+        self.addItem.grid(column=0, row=3, sticky=('E','N','S'), pady=5)
         
     def ConstructInventoryContextMenu (self, frame):
         self.inventoryContext = tkinter.Menu(frame)
@@ -441,6 +565,10 @@ class View ():
         self.root.bind('<Key-F8>', self.key8)
         self.root.bind('<Key-F9>', self.key9)
         self.root.bind('<Key-F10>', self.key0)
+      
+    def rootDelete (self):
+        self.controlObj.terminate()
+        self.root.destroy()
         
     def __init__ (self, controller):
         self.root = tkinter.Tk()
@@ -468,6 +596,8 @@ class View ():
         notebook.add(shoppingLists, text="Shopping Lists")
         notebook.add(currentInventory, text="Current Inventory")
         notebook.grid(column=0,row=0)
+        
+        self.root.protocol("WM_DELETE_WINDOW", self.rootDelete)
         
         self.controlObj = controller
         
