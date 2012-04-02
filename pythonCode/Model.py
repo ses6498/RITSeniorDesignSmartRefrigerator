@@ -5,11 +5,14 @@ Created on Mar 13, 2012
 '''
 import threading
 import datetime
+import random
 
 import Inventory
 import HourlyTasks
+import QuickTasks
 import TimeWrapper
 import ExpirationDatePrediction
+import ShoppingListTable
 
 import sqlalchemy
 import sqlalchemy.orm
@@ -37,16 +40,18 @@ class Model (threading.Thread):
         self.controllerObj = controller
         
         self.hourlyTasks = HourlyTasks.HourlyTasks(self)
+        self.quickTasks = QuickTasks.QuickTasks(self)
+        self.quickTasks.trigger()
         
         threading.Thread.__init__(self)
 #        self.start()
         
         self.databaseConnectionInitialization()
         self.initializeUPCLUT()
-        self.initializeExpirationWarningLUT()
         self.timeWrapper = TimeWrapper.TimeWrapper()
         self.currentInventory = Inventory.Inventory(self)
         self.expirationDatePredictor = ExpirationDatePrediction.ExpirationDatePrediction(self)
+        self.shoppingListTable = ShoppingListTable.ShoppingListTable(self)
         
         self.currentItem = None
         self.currentExpiringSet = []
@@ -77,11 +82,13 @@ class Model (threading.Thread):
         Session = sqlalchemy.orm.sessionmaker(bind=self.engine)
         self.session = Session()
         
+    def populateUpcLut (self): 
         # This will really be read from config file
         flatfile = []
         flatfile.append([36600814815, 'Chap Stick', 'GS1Cde01'])
         flatfile.append([38000299377, 'Pop Tart - Apple', 'GS1Cde02'])
         flatfile.append([38000318405, 'Pop Tart - Cherry', 'GS1Cde01'])
+        flatfile.append([99555086119, 'Keurig - French Roast', 'GS1Cde02'])
         
         for item in flatfile:
             if self.session.query(UpcLutItem).filter(UpcLutItem.upc==item[0]).count() == 0:
@@ -90,15 +97,11 @@ class Model (threading.Thread):
                 
         self.session.commit()
     
+    def populateGs1Lut (self):
+        self.expirationDatePredictor.populateGs1Lut()
+        
     def upcLookup (self, upc):
         return self.session.query(UpcLutItem).filter(UpcLutItem.upc==upc).count() > 0
-    
-    def initializeExpirationWarningLUT (self):
-        self.expirationWarningLUT = dict()
-    
-    def expirationDateLookup (self, gs1Catagory):
-        found = gs1Catagory in self.gs1LUT
-        return found
     
     def advanceHour (self):
         self.hourlyTasks.trigger()
@@ -158,24 +161,30 @@ class Model (threading.Thread):
         self.currentItem = item
         self.controllerObj.setLastItem(self.mode)
             
-    def genericRemoveTasks (self):
-        if self.currentItem:
+    def genericRemoveTasks (self, item):
+        numDuplicates = len(self.currentInventory.returnItem(item.upc))
             
-            numDuplicates = len(self.currentInventory.returnItem(self.currentItem.upc))
+        if numDuplicates > 1:
+            self.controllerObj.removeDuplicateInventoryItem(item, numDuplicates-1)
+        else:
+            self.controllerObj.removeInventoryItem(item)
             
-            if numDuplicates > 1:
-                self.controllerObj.removeDuplicateInventoryItem(self.currentItem, numDuplicates-1)
-            else:
-                self.controllerObj.removeInventoryItem(self.currentItem)
+        self.currentInventory.removeItem(item)
+        self.checkItemExpiration()
             
-            self.currentInventory.removeItem(self.currentItem)
-            self.checkItemExpiration()
-            
-    def expiredItem (self):
-        self.genericRemoveTasks()
+    def expiredItem (self, identifier):
+        if identifier == None and self.currentItem:
+            self.genericRemoveTasks(self.currentItem)
+        else:
+            itemList = self.currentInventory.returnItemByIdentifier(identifier)
+            for item in itemList : self.genericRemoveTasks(item)
         
-    def consumedItem (self):
-        self.genericRemoveTasks()
+    def consumedItem (self, identifier):
+        if identifier == None and self.currentItem:
+            self.genericRemoveTasks(self.currentItem)
+        else:
+            itemList = self.currentInventory.returnItemByIdentifier(identifier)
+            for item in itemList : self.genericRemoveTasks(item)
             
     def removeLastItem (self):
         if self.currentItem:
@@ -229,6 +238,105 @@ class Model (threading.Thread):
                                                  
     def clearInventory (self):
         self.currentInventory.clear()
+        
+    def addNewShoppingList (self, name):
+        listId = self.shoppingListTable.grantNewListId()
+        date = self.timeWrapper.returnTime()
+        shoppingList = ShoppingListTable.ShoppingListItem(listId, name, date, False)
+        self.controllerObj.addNewShoppingList(shoppingList)
+        self.shoppingListTable.addNewShoppingList(shoppingList)
+        
+    def addNewSuggestedShoppingList (self):
+        listId = self.shoppingListTable.grantNewListId()
+        date = self.timeWrapper.returnTime()
+        name = 'Suggested Shopping List ' + str(listId)
+        shoppingList = ShoppingListTable.ShoppingListItem(listId, name, date, True)
+        self.controllerObj.addNewShoppingList(shoppingList)
+        self.shoppingListTable.populateSuggestedShoppingList(shoppingList)
+        self.shoppingListTable.addNewShoppingList(shoppingList)
+        
+    def addNewShoppingListItem (self, listIdentifier, itemIdentifier):
+        shoppingList = self.shoppingListTable.returnListByIdentifier(listIdentifier)
+        if len(shoppingList) > 1 : print 'Error Condition'
+        shoppingList = shoppingList[0]
+        item = self.currentInventory.returnItemByIdentifier(itemIdentifier)[0]
+        
+        link = self.shoppingListTable.returnLinkerItem(shoppingList, item)
+        if len(link) > 1 : print 'Error Condition'
+        
+        if not link:
+            linker = ShoppingListTable.ShoppingListLinkerItem(shoppingList.listId, \
+                        item.upc, item.description, 1)
+            self.controllerObj.addNewShoppingListItem(linker)
+            self.shoppingListTable.addNewShoppingListItem(linker)
+        else:
+            linker = link[0]
+            linker.quantity += 1
+            self.controllerObj.updateShoppingListItem(linker)
+            self.shoppingListTable.updateShoppingListItem()
+            
+    def addNewCustomShoppingListItem (self, listIdentifier, description, quantity):
+        shoppingList = self.shoppingListTable.returnListByIdentifier(listIdentifier)
+        if len(shoppingList) > 1: print 'Error Condition'
+        shoppingList = shoppingList[0]
+        
+        link = self.shoppingListTable.returnCustomLinkerItem(shoppingList, description)
+        if len(link) > 1 : print 'Error Condition'
+        
+        if not link:
+            linker = ShoppingListTable.ShoppingListLinkerItem(shoppingList.listId, \
+                        -1, description, quantity)
+            self.controllerObj.addNewShoppingListItem(linker)
+            self.shoppingListTable.addNewShoppingListItem(linker)
+        else:
+            linker = link[0]
+            linker.quantity += quantity
+            self.controllerObj.updateShoppingListItem(linker)
+            self.shoppingListTable.updateShoppingListItem()
+            
+    def updateShoppingListItem (self, identifier, description, quantity):
+        shoppingListItem = self.shoppingListTable.returnListItemByIdentifier(identifier)
+        if len(shoppingListItem) > 1: print 'Error Condition'
+        shoppingListItem = shoppingListItem[0]
+        
+        shoppingListItem.itemDescription = description
+        shoppingListItem.quantity = quantity
+        self.shoppingListTable.updateShoppingListItem()
+        self.controllerObj.updateShoppingListItem (shoppingListItem)
+            
+    def removeShoppingList (self, identifier):
+        shoppingList = self.shoppingListTable.returnListByIdentifier(identifier)
+        if len(shoppingList) > 1 : print 'Error Condition'
+        shoppingList = shoppingList[0]
+        
+        self.controllerObj.removeShoppingList (shoppingList)
+        self.shoppingListTable.removeShoppingList(shoppingList)
+        
+    def removeShoppingListItem (self, identifier):
+        shoppingListItem = self.shoppingListTable.returnListItemByIdentifier(identifier)
+        if len(shoppingListItem) > 1: print 'Error Condition'
+        shoppingListItem = shoppingListItem[0]
+        
+        self.controllerObj.removeShoppingListItem(shoppingListItem)
+        self.shoppingListTable.removeShoppingListItem(shoppingListItem)
+        
+    def returnItemInfo (self, identifier):
+        shoppingListItem = self.shoppingListTable.returnListItemByIdentifier(identifier)
+        if len(shoppingListItem) > 1: print 'Error Condition'
+        return shoppingListItem[0]
+    
+    def terminate (self):
+        self.hourlyTasks.terminate()
+        self.quickTasks.terminate()
+    
+    def pollTemperature(self):
+        return random.normalvariate(30, 5)
+    
+    def pollHumidity (self):
+        return random.normalvariate(50, 15)
+    
+    def clearHistory (self):
+        self.currentInventory.clearHistory()
         
     def run(self):
         a = 5

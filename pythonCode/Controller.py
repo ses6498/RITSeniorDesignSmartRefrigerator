@@ -44,11 +44,11 @@ class Controller ():
         else:
             self.viewObj.invalidUPC(upc)
             
-    def itemExpired (self):
-        self.modelObj.expiredItem()
+    def itemExpired (self, identifier=None):
+        self.modelObj.expiredItem(identifier)
         
-    def itemConsumed (self):
-        self.modelObj.consumedItem()
+    def itemConsumed (self, identifier=None):
+        self.modelObj.consumedItem(identifier)
         
     def addExpirationWarning (self, item, severity):
         self.viewObj.addExpirationWarning(item, severity)
@@ -99,10 +99,67 @@ class Controller ():
         
     def duplicateSelected (self, item):
         self.modelObj.recallDuplicateSelected(item)
+        
+    def createShoppingList (self, name):
+        self.modelObj.addNewShoppingList(name)
+        
+    def createSuggestedShoppingList (self):
+        self.modelObj.addNewSuggestedShoppingList()
+        
+    def createShoppingListItem (self, listIdentifier, itemIdentifier):
+        self.modelObj.addNewShoppingListItem (listIdentifier, itemIdentifier)
+        
+    def createCustomShoppingListItem (self, listIdentifier, description, quantity):
+        self.modelObj.addNewCustomShoppingListItem (listIdentifier, description, quantity)
+    
+    def addNewShoppingList (self, shoppingList):
+        self.viewObj.addNewShoppingList(shoppingList)
+        
+    def addNewShoppingListItem (self, linker):
+        self.viewObj.addNewShoppingListItem(linker)
+        
+    def updateShoppingListItem (self, linker):
+        self.viewObj.updateShoppingListItem(linker)
+        
+    def updateShoppingListItemHandler (self, identifier, description, quantity):
+        self.modelObj.updateShoppingListItem (identifier, description, quantity)
+        
+    def removeShoppingListHandler (self, identifier):
+        self.modelObj.removeShoppingList (identifier)
+        
+    def removeShoppingListItemHandler (self, identifier):
+        self.modelObj.removeShoppingListItem (identifier)
+        
+    def removeShoppingList (self, shoppingList):
+        self.viewObj.removeShoppingList(shoppingList)
+        
+    def removeShoppingListItem (self, shoppingListItem):
+        self.viewObj.removeShoppingListItem(shoppingListItem)
+        
+    def returnItemInfo (self, identifier):
+        return self.modelObj.returnItemInfo (identifier)
     
     def clearInventory (self):
         self.modelObj.clearInventory()
         self.viewObj.clearInventory()
+        
+    def clearHistory (self):
+        self.modelObj.clearHistory()
+        
+    def populateUpcLut (self):
+        self.modelObj.populateUpcLut()
+        
+    def populateGs1Lut (self):
+        self.modelObj.populateGs1Lut()
+        
+    def updateTemperature (self, temperature):
+        self.viewObj.updateTemperature(temperature)
+        
+    def updateHumidity (self, humidity):
+        self.viewObj.updateHumidity(humidity)
+        
+    def terminate (self):
+        self.modelObj.terminate()
         
 if __name__ == '__main__':
     

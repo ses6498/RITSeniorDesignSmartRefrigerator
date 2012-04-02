@@ -21,9 +21,10 @@ class InventoryItem (object):
     
 class PurchaseHistoryItem (object):
     
-    def __init__(self, upc, purchaseDate):
+    def __init__(self, upc, purchaseDate, quantity):
         self.upc = upc
         self.purchaseDate = purchaseDate
+        self.quantity = quantity
     
     def __repr__(self):
         return "<HistoryItem('%d', '%s')>" % (self.upc, self.purchaseDate)
@@ -45,12 +46,13 @@ class Inventory ():
             sqlalchemy.Column('description', sqlalchemy.String(128)), \
             sqlalchemy.Column('purchaseDate', sqlalchemy.DateTime), \
             sqlalchemy.Column('expirationDate', sqlalchemy.DateTime), \
-            sqlalchemy.Column('identifier', sqlalchemy.String(12)))
+            sqlalchemy.Column('identifier', sqlalchemy.String(28)))
         
         purchaseHistoryTable = sqlalchemy.Table('purchaseHistory', self.model.metadata, \
             sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True), \
             sqlalchemy.Column('upc', sqlalchemy.BigInteger, primary_key=True), \
-            sqlalchemy.Column('purchaseDate', sqlalchemy.DateTime))
+            sqlalchemy.Column('purchaseDate', sqlalchemy.DateTime), \
+            sqlalchemy.Column('quantity', sqlalchemy.Integer))
         
         self.model.metadata.create_all (self.model.engine)
         sqlalchemy.orm.mapper(InventoryItem, inventoryTable)
@@ -71,11 +73,12 @@ class Inventory ():
                     self.model.controllerObj.addDuplicateInventoryItem(item, lcv+1)
                 
                 lcv += 1
+        self.session.commit()        
         
     def addItem (self, item):
         self.session.add(item)
         
-        purchaseHistoryItem = PurchaseHistoryItem (item.upc, item.purchaseDate)
+        purchaseHistoryItem = PurchaseHistoryItem (item.upc, item.purchaseDate, 1)
         self.session.add(purchaseHistoryItem)
         
         self.session.commit()
@@ -88,6 +91,9 @@ class Inventory ():
                 .order_by(InventoryItem.purchaseDate).all()
             
         return retval
+    
+    def returnItemByIdentifier (self, identifier):
+        return self.session.query(InventoryItem).filter(InventoryItem.identifier.startswith(identifier)).all()
         
     def removeItem (self, item):
         self.session.delete(item)
@@ -98,6 +104,11 @@ class Inventory ():
     
     def clear (self):
         for item in self.session.query(InventoryItem):
+            self.session.delete(item)
+        self.session.commit()
+        
+    def clearHistory (self):
+        for item in self.session.query(PurchaseHistoryItem):
             self.session.delete(item)
         self.session.commit()
     

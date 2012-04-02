@@ -1,11 +1,11 @@
 '''
-Created on Mar 20, 2012
+Created on Mar 31, 2012
 
 @author: Steven
 '''
 import threading
 
-class HourlyTasks (threading.Thread):
+class QuickTasks(threading.Thread):
     '''
     classdocs
     '''
@@ -28,7 +28,10 @@ class HourlyTasks (threading.Thread):
             self.lock.wait(10.0)
             
             if self.running:
-                self.model.checkItemExpiration()
+                temperature = self.model.pollTemperature()
+                self.model.controllerObj.updateTemperature(temperature)
+                humidity = self.model.pollHumidity()
+                self.model.controllerObj.updateHumidity(humidity)
                 self.lock.clear()
                 self.synch.set()
             
@@ -39,4 +42,4 @@ class HourlyTasks (threading.Thread):
         
     def terminate (self):
         self.running = False
-        self.lock.set()
+        self.lock.set()      

@@ -87,45 +87,22 @@ public class ShoppingList implements Serializable
 	}
 	
 	/**
-	 * Searches the grocery list for an item with the given name
-	 * and returns it.
+	 * Removes the specified item from the list
 	 * 
-	 * @param name The name of the item to return.
-	 * @return The item with the given name.
+	 * @param item The item to remove
+	 * @return True if the item was removed, false otherwise
 	 */
-	public List<InventoryItem> getItemByName(String name)
+	public boolean removeItem(InventoryItem item)
 	{
-		if (items.containsKey(name))
+		if (items.containsKey(item.getName()))
 		{
-			return items.get(name);
+			items.remove(item.getName());
+			return true;
 		}
 		else
 		{
-			return null;
+			return false;
 		}
-	}
-	
-	/**
-	 * Searches the grocery list for an item with the given UPC
-	 * and returns it.
-	 * 
-	 * @param UPC The UPC code of the item to return.
-	 * @return The item with the given UPC code.
-	 */
-	public InventoryItem getItemByUPC(int UPC)
-	{
-//		Iterator<InventoryItem> iter = items.iterator();
-//		InventoryItem temp;
-//		
-//		while (iter.hasNext())
-//		{
-//			temp = iter.next();
-//			if (temp.getUPC() == UPC)
-//			{
-//				return temp;
-//			}
-//		}
-		return null;
 	}
 	
 	/**

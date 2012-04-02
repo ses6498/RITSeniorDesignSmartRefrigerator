@@ -4,8 +4,6 @@ import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TabHost;
-import edu.rit.smartFridge.util.Connector;
-import edu.rit.smartFridge.util.DataConnect;
 
 public class SmartFridgeActivity extends TabActivity {
     /** Called when the activity is first created. */
@@ -13,6 +11,14 @@ public class SmartFridgeActivity extends TabActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        int tabIndex = 0;
+        
+        Bundle extras = getIntent().getExtras();
+        if (extras != null)
+        {
+        	tabIndex = extras.getInt(getString(R.string.curr_tab));
+        }
 
         TabHost tabHost = getTabHost();  // The activity TabHost
         TabHost.TabSpec spec;  // Reusable TabSpec for each tab
@@ -28,6 +34,6 @@ public class SmartFridgeActivity extends TabActivity {
         spec = tabHost.newTabSpec("lists").setIndicator("Shopping Lists").setContent(intent);
         tabHost.addTab(spec);
         
-        tabHost.setCurrentTab(2);
+        tabHost.setCurrentTab(tabIndex);
     }
 }
