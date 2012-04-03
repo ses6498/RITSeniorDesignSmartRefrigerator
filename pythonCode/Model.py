@@ -13,7 +13,7 @@ import QuickTasks
 import TimeWrapper
 import ExpirationDatePrediction
 import ShoppingListTable
-
+import string
 import sqlalchemy
 import sqlalchemy.orm
 import inspect
@@ -27,7 +27,7 @@ class UpcLutItem (object):
     def __init__(self, upc, description, gs1Category):
         self.upc = upc
         self.description = description
-        self.gs1Category = gs1Category
+        self.gs1Category = str(gs1Category)
         
     def __repr__(self):
         return '<UpcLutItem(%d, %s, %s)>' % (self.upc, self.description, self.gs1Category)
@@ -103,10 +103,17 @@ class Model (threading.Thread):
             self.session.delete(item)
         self.session.commit()
         
-        for item in flatfile:
-            if self.session.query(UpcLutItem).filter(UpcLutItem.upc==item[0]).count() == 0:
-                upcLutItem = UpcLutItem(item[0], item[1], item[2])
-                self.session.add(upcLutItem)
+        flatfile = open('upcData.txt', 'r')
+        for line in flatfile:
+            delim = line.split(',')
+            if delim[0] == '' : print line
+            upcLutItem = UpcLutItem(long(delim[0]), delim[1], string.strip(delim[2]))
+            self.session.add(upcLutItem)
+        
+#        for item in flatfile:
+#            if self.session.query(UpcLutItem).filter(UpcLutItem.upc==item[0]).count() == 0:
+#                upcLutItem = UpcLutItem(item[0], item[1], item[2])
+#                self.session.add(upcLutItem)
         self.session.commit()
     
     def populateGs1Lut (self):

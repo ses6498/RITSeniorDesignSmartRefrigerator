@@ -56,10 +56,16 @@ class ExpirationDatePrediction (object):
             self.session.delete(item)
         self.session.commit()
         
-        for item in flatfile:
-            if self.session.query(Gs1LutItem).filter(Gs1LutItem.gs1Category==item[0]).count() == 0:
-                gs1LutItem = Gs1LutItem(item[0], item[1])
-                self.session.add(gs1LutItem)
+        flatfile = open('gs1Data.txt', 'r')
+        for line in flatfile:
+            delim = line.split(',')
+            gs1LutItem = Gs1LutItem (delim[0], float(delim[1]))
+            self.session.add(gs1LutItem)
+        
+#        for item in flatfile:
+#            if self.session.query(Gs1LutItem).filter(Gs1LutItem.gs1Category==item[0]).count() == 0:
+#                gs1LutItem = Gs1LutItem(item[0], item[1])
+#                self.session.add(gs1LutItem)
         self.session.commit()
         
     def expirationDateLookup (self, gs1Category):
