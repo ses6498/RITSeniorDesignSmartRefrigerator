@@ -74,7 +74,7 @@ class Model (threading.Thread):
                 sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True), \
                 sqlalchemy.Column('upc', sqlalchemy.BigInteger), \
                 sqlalchemy.Column('description', sqlalchemy.String(128)), \
-                sqlalchemy.Column('gs1Category', sqlalchemy.String(8)))
+                sqlalchemy.Column('gs1Category', sqlalchemy.String(13)))
         
         self.metadata.create_all (self.engine)
         sqlalchemy.orm.mapper(UpcLutItem, upcLut)
@@ -89,12 +89,18 @@ class Model (threading.Thread):
         flatfile.append([38000299377, 'Pop Tart - Apple', 'GS1Cde02'])
         flatfile.append([38000318405, 'Pop Tart - Cherry', 'GS1Cde01'])
         flatfile.append([99555086119, 'Keurig - French Roast', 'GS1Cde02'])
+        flatfile.append([12000001598, 'Aquafina Purified Drinking Water', 'GS1Cde02'])
+        flatfile.append([82184090442, 'Jack Daniels Tennessee Whiskey', 'GS1Cde02'])
+        
+        items = self.session.query(UpcLutItem).all()
+        for item in items:
+            self.session.delete(item)
+        self.session.commit()
         
         for item in flatfile:
             if self.session.query(UpcLutItem).filter(UpcLutItem.upc==item[0]).count() == 0:
                 upcLutItem = UpcLutItem(item[0], item[1], item[2])
                 self.session.add(upcLutItem)
-                
         self.session.commit()
     
     def populateGs1Lut (self):
@@ -118,9 +124,8 @@ class Model (threading.Thread):
             
             expDate = 'Unknown'
             expData = self.expirationDatePredictor.expirationDateLookup(upcInfo.gs1Category)
-            if expData:
-                expDate = self.timeWrapper.returnTime()
-                expDate = expDate + datetime.timedelta(days=expData[0].expirationEstimate)
+            expDate = self.timeWrapper.returnTime()
+            expDate = expDate + datetime.timedelta(days=expData)
             
             purDate = self.timeWrapper.returnTime()
             item = Inventory.InventoryItem(upc=long(upc), upcString=upc, description=upcInfo.description, purchaseDate=purDate, \
@@ -174,13 +179,18 @@ class Model (threading.Thread):
             
     def expiredItem (self, identifier):
         if identifier == None and self.currentItem:
+            self.expirationDatePredictor.adjustExpirationEstimate(self.currentItem)
             self.genericRemoveTasks(self.currentItem)
         else:
             itemList = self.currentInventory.returnItemByIdentifier(identifier)
-            for item in itemList : self.genericRemoveTasks(item)
+            for item in itemList:
+                self.expirationDatePredictor.adjustExpirationEstimate(item)
+                self.genericRemoveTasks(item)
+            
         
     def consumedItem (self, identifier):
         if identifier == None and self.currentItem:
+            self.expirationDatePredictor.adjustExpirationEstimate(self.currentItem)
             self.genericRemoveTasks(self.currentItem)
         else:
             itemList = self.currentInventory.returnItemByIdentifier(identifier)
@@ -188,7 +198,7 @@ class Model (threading.Thread):
             
     def removeLastItem (self):
         if self.currentItem:
-            self.genericRemoveTasks()
+            self.genericRemoveTasks(self.currentItem)
             self.currentItem = None
             self.controllerObj.clearLastItem()
             

@@ -8,6 +8,14 @@ import Tkinter as tkinter
 import time
 import ttk
 
+# Via Sridhar Ratnakumar Stack Overflow
+def treeview_sort_column (tv, col):
+    l = [(tv.set(k,col), k) for k in tv.get_children('')]
+    l.sort()
+    
+    for index, (val,k) in enumerate(l):
+        tv.move(k, '', index)
+
 class View ():
     
     def UPCEntryHandler(self, event):
@@ -89,6 +97,8 @@ class View ():
         
         self.expTable.tag_configure(str(item.upc)+str(epoch), foreground=color)
         self.expTable.item(str(item.upc)+str(epoch), values=[str(severity)+day])
+        
+        treeview_sort_column(self.expTable, 'severity')
        
     def clearExpirationWarnings (self):
         for child in self.expTable.get_children():
@@ -102,6 +112,8 @@ class View ():
         self.expTable.insert('', 'end', str(item.upc)+str(epoch), text=str(item.description),\
                                  values=[str(severity)+day], tag=str(item.upc)+str(epoch))
         self.expTable.tag_configure(str(item.upc)+str(epoch),foreground=color)
+        
+        treeview_sort_column(self.expTable, 'severity')
     
     def showItemInfo (self, item):
         self.nameEn.set(item.description)
@@ -585,6 +597,9 @@ class View ():
         self.TimeHandlers()
         self.root.bind('<Shift-A>', self.adminKey)
         self.colors = dict()
+        for lcv in range(50):
+            self.colors[-lcv] = 'red'
+        self.colors[0] = 'red'
         self.colors[1] = 'red'
         self.colors[2] = 'orange'
         self.colors[3] = 'yellow'
