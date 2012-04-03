@@ -39,7 +39,7 @@ class Inventory ():
         '''
         self.model = model
                 
-        inventoryTable = sqlalchemy.Table('inventory', self.model.metadata, \
+        self.inventoryTable = sqlalchemy.Table('inventory', self.model.metadata, \
             sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True), \
             sqlalchemy.Column('upc', sqlalchemy.BigInteger, primary_key=True), \
             sqlalchemy.Column('upcString', sqlalchemy.String(12)), \
@@ -48,15 +48,15 @@ class Inventory ():
             sqlalchemy.Column('expirationDate', sqlalchemy.DateTime), \
             sqlalchemy.Column('identifier', sqlalchemy.String(28)))
         
-        purchaseHistoryTable = sqlalchemy.Table('purchaseHistory', self.model.metadata, \
+        self.purchaseHistoryTable = sqlalchemy.Table('purchaseHistory', self.model.metadata, \
             sqlalchemy.Column('id', sqlalchemy.Integer, primary_key=True), \
             sqlalchemy.Column('upc', sqlalchemy.BigInteger, primary_key=True), \
             sqlalchemy.Column('purchaseDate', sqlalchemy.DateTime), \
             sqlalchemy.Column('quantity', sqlalchemy.Integer))
         
         self.model.metadata.create_all (self.model.engine)
-        sqlalchemy.orm.mapper(InventoryItem, inventoryTable)
-        sqlalchemy.orm.mapper(PurchaseHistoryItem, purchaseHistoryTable)
+        sqlalchemy.orm.mapper(InventoryItem, self.inventoryTable)
+        sqlalchemy.orm.mapper(PurchaseHistoryItem, self.purchaseHistoryTable)
         
         Session = sqlalchemy.orm.sessionmaker(bind=self.model.engine)
         self.session = Session()

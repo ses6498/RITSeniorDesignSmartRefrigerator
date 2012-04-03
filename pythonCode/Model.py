@@ -16,6 +16,11 @@ import ShoppingListTable
 
 import sqlalchemy
 import sqlalchemy.orm
+import inspect
+
+def lineno():
+    """Returns the current line number in our program."""
+    return inspect.currentframe().f_back.f_lineno
 
 class UpcLutItem (object):
     
@@ -39,10 +44,6 @@ class Model (threading.Thread):
         self.viewObj = None
         self.controllerObj = controller
         
-        self.hourlyTasks = HourlyTasks.HourlyTasks(self)
-        self.quickTasks = QuickTasks.QuickTasks(self)
-        self.quickTasks.trigger()
-        
         threading.Thread.__init__(self)
 #        self.start()
         
@@ -61,11 +62,16 @@ class Model (threading.Thread):
         
         self.mode = self.controllerObj.CHECK_IN_MODE
         
+        self.hourlyTasks = HourlyTasks.HourlyTasks(self)
+        self.quickTasks = QuickTasks.QuickTasks(self)
+        self.quickTasks.trigger()
+        
+        
     def echoTime (self):
         print self.timeWrapper.returnTime()
         
     def databaseConnectionInitialization (self):
-#        engine = sqlalchemy.create_engine('mysql://ses6498:seNi{}R1)esign@localhost/smartrefrigeratorDb')
+#        self.engine = sqlalchemy.create_engine('mysql://ses6498:seNi{}R1)esign@localhost/smartrefrigeratorDb')
         self.engine = sqlalchemy.create_engine('mysql://ses6498:seNi{}R1)esign@smartfridge.student.rit.edu/smartRefrigeratorDb')
         self.metadata = sqlalchemy.MetaData()        
         
@@ -261,18 +267,26 @@ class Model (threading.Thread):
         date = self.timeWrapper.returnTime()
         name = 'Suggested Shopping List ' + str(listId)
         shoppingList = ShoppingListTable.ShoppingListItem(listId, name, date, True)
+        recommendations = self.shoppingListTable.populateSuggestedShoppingList(shoppingList)
+        
         self.controllerObj.addNewShoppingList(shoppingList)
-        self.shoppingListTable.populateSuggestedShoppingList(shoppingList)
         self.shoppingListTable.addNewShoppingList(shoppingList)
+        
+        for upc in recommendations['items']:
+            description = self.session.query(UpcLutItem).filter(UpcLutItem.upc==upc).all()
+            if len(description) != 1 : print 'Error Condition' + str(lineno())
+            description = description[0]
+            description = description.description
+            self.addNewCustomShoppingListItem (shoppingList.identifier, description, 1)
         
     def addNewShoppingListItem (self, listIdentifier, itemIdentifier):
         shoppingList = self.shoppingListTable.returnListByIdentifier(listIdentifier)
-        if len(shoppingList) > 1 : print 'Error Condition'
+        if len(shoppingList) > 1 : print 'Error Condition ' + str(lineno())
         shoppingList = shoppingList[0]
         item = self.currentInventory.returnItemByIdentifier(itemIdentifier)[0]
         
         link = self.shoppingListTable.returnLinkerItem(shoppingList, item)
-        if len(link) > 1 : print 'Error Condition'
+        if len(link) > 1 : print 'Error Condition' + str(lineno())
         
         if not link:
             linker = ShoppingListTable.ShoppingListLinkerItem(shoppingList.listId, \
@@ -287,11 +301,11 @@ class Model (threading.Thread):
             
     def addNewCustomShoppingListItem (self, listIdentifier, description, quantity):
         shoppingList = self.shoppingListTable.returnListByIdentifier(listIdentifier)
-        if len(shoppingList) > 1: print 'Error Condition'
+        if len(shoppingList) > 1: print 'Error Condition' + str(lineno())
         shoppingList = shoppingList[0]
         
         link = self.shoppingListTable.returnCustomLinkerItem(shoppingList, description)
-        if len(link) > 1 : print 'Error Condition'
+        if len(link) > 1 : print 'Error Condition' + str(lineno())
         
         if not link:
             linker = ShoppingListTable.ShoppingListLinkerItem(shoppingList.listId, \
@@ -306,7 +320,7 @@ class Model (threading.Thread):
             
     def updateShoppingListItem (self, identifier, description, quantity):
         shoppingListItem = self.shoppingListTable.returnListItemByIdentifier(identifier)
-        if len(shoppingListItem) > 1: print 'Error Condition'
+        if len(shoppingListItem) > 1: print 'Error Condition' + str(lineno())
         shoppingListItem = shoppingListItem[0]
         
         shoppingListItem.itemDescription = description
@@ -316,7 +330,7 @@ class Model (threading.Thread):
             
     def removeShoppingList (self, identifier):
         shoppingList = self.shoppingListTable.returnListByIdentifier(identifier)
-        if len(shoppingList) > 1 : print 'Error Condition'
+        if len(shoppingList) > 1 : print 'Error Condition' + str(lineno())
         shoppingList = shoppingList[0]
         
         self.controllerObj.removeShoppingList (shoppingList)
@@ -324,7 +338,7 @@ class Model (threading.Thread):
         
     def removeShoppingListItem (self, identifier):
         shoppingListItem = self.shoppingListTable.returnListItemByIdentifier(identifier)
-        if len(shoppingListItem) > 1: print 'Error Condition'
+        if len(shoppingListItem) > 1: print 'Error Condition' + str(lineno())
         shoppingListItem = shoppingListItem[0]
         
         self.controllerObj.removeShoppingListItem(shoppingListItem)
@@ -332,7 +346,7 @@ class Model (threading.Thread):
         
     def returnItemInfo (self, identifier):
         shoppingListItem = self.shoppingListTable.returnListItemByIdentifier(identifier)
-        if len(shoppingListItem) > 1: print 'Error Condition'
+        if len(shoppingListItem) > 1: print 'Error Condition' + str(lineno())
         return shoppingListItem[0]
     
     def terminate (self):

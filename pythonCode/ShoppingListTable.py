@@ -5,6 +5,11 @@ Created on Mar 29, 2012
 '''
 import sqlalchemy
 import sqlalchemy.orm
+from sqlalchemy.sql import select
+from scipy import stats
+import numpy
+
+import Inventory
 
 class ShoppingListItem (object):
     
@@ -78,7 +83,7 @@ class ShoppingListTable (object):
         self.session.commit()
         
     def returnListByIdentifier (self, identifier):
-        return self.session.query(ShoppingListItem).filter(ShoppingListItem.identifier.startswith(identifier)).all()
+        return self.session.query(ShoppingListItem).filter(ShoppingListItem.identifier==identifier).all()
     
     def returnListItemByIdentifier (self, identifier):
         return self.session.query(ShoppingListLinkerItem).filter(ShoppingListLinkerItem.identifier==identifier).all()
@@ -118,4 +123,39 @@ class ShoppingListTable (object):
         return returnValue
     
     def populateSuggestedShoppingList (self, shoppingList):
-        print 'You are out of luck for now'
+        table = self.model.currentInventory.purchaseHistoryTable
+        recommendationThreshold = 0.10
+        minItems = 5
+        
+        allPurchasedItems = self.session.query(table.c.upc).distinct()
+        allPurchasedItems = [x[0] for x in allPurchasedItems]
+        
+        probabilities = []
+        for upc in allPurchasedItems:
+            purchaseDates = self.session.query(table.c.purchaseDate).filter(Inventory.PurchaseHistoryItem.upc==upc).all()
+            purchaseDates = [x[0] for x in purchaseDates]
+            purchaseDates = sorted(purchaseDates)
+            
+            if len(purchaseDates) > 1:
+                purchaseDiffs = [(purchaseDates[x] - purchaseDates[x-1]).total_seconds() / (60 * 60) for x in range(1,len(purchaseDates))]
+                kde = stats.kde.gaussian_kde(numpy.array(purchaseDiffs))
+                currentTimeDiff = (self.model.timeWrapper.returnTime() - purchaseDates[-1]).total_seconds() / (60 * 60)
+                probabilities.append((upc,kde(currentTimeDiff)))
+                
+        probabilities = sorted(probabilities, key = lambda x:x[1])
+        recommended = dict()
+        recommendedItems = [x for x in probabilities if x[1] > recommendationThreshold]
+        
+        minItems = numpy.min([len(allPurchasedItems), minItems])
+        
+        if len(recommendedItems) > minItems:
+            recommended['suggested'] = True
+            recommended['items'] = [x[0] for x in recommendedItems]
+        else:
+            recommended['suggested'] = False
+            recommended['items'] = [x[0] for x in probabilities[0:minItems]]
+            
+        return recommended 
+#                print 'upc: ' + str(upc) + 'date: ' + str(purchaseDiffs) + ' current: ' + str(currentTimeDiff)
+#                print 'prob: ' + str(kde(currentTimeDiff))
+            

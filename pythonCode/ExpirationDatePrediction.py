@@ -87,6 +87,8 @@ class ExpirationDatePrediction (object):
         newExpEstimate = time - item.purchaseDate
         newExpEstimate = newExpEstimate.total_seconds() / secondsPerDay
         newExpEstimate = 0.5 * oldGs1LutItem.expirationEstimate + 0.5 * newExpEstimate
+        
+        if newExpEstimate < 0: '<0 Error Condition'
             
         gs1LutItem = self.session.query(Gs1LutItem).filter(Gs1LutItem.gs1Category=='C' + str(item.upc)).all()
             
