@@ -1,7 +1,6 @@
 package edu.rit.smartFridge;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import android.app.ListActivity;
@@ -16,6 +15,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import edu.rit.smartFridge.model.InventoryItem;
 import edu.rit.smartFridge.model.ShoppingList;
+import edu.rit.smartFridge.model.ShoppingListItem;
 import edu.rit.smartFridge.util.Connector;
 import edu.rit.smartFridge.util.DataConnect;
 
@@ -25,55 +25,58 @@ public class ItemListActivity extends ListActivity
     {
         super.onCreate(savedInstanceState);
         final Context context = this;
-        HashMap<String, List<InventoryItem>> inventory = null;
-        ShoppingList list = null;
+        List<InventoryItem> inventory = null;
+        ShoppingList shoppingList = null;
         
         // Get the instance of the connecter
-        DataConnect connecter = new Connector().getInstance();
+        DataConnect connecter = Connector.getInstance();
         
         // Set true if we got here from a grocery list, 
         // false if it's just the inventory screen
         final boolean fromList;
         
-        // get the current list
+        // get the current list, if it exists
         Bundle extras = getIntent().getExtras();
         if (extras != null)
         {
-        	list = (ShoppingList) extras.getSerializable(getString(R.string.current_list));
+        	int listId = extras.getInt(getString(R.string.current_list));
+        	shoppingList = connecter.getList(listId);
         }
         
         // copy somewhere final for the listener to use
-    	final ShoppingList finalList = list;
+    	final ShoppingList finalList = shoppingList;
         
+        // copy the item names into a list for display
+		List<String> inventoryNames = new ArrayList<String>();
+		
         // if no list was passed in, we need to get the inventory ourselves
-        if (list == null)
+        if (shoppingList == null)
         {
 	        inventory = connecter.getInventory();
 	        fromList = false;
+	        
+			for (InventoryItem i : inventory)
+			{
+				int count = connecter.getItemCount(i.getUPC());
+				inventoryNames.add(count + "x | " + i.getName());
+			}
         }
         else // we got here from a grocery list
         {
-        	list = connecter.populateItems(list);
-        	inventory = list.getAllItems();
+        	shoppingList = connecter.populateItems(shoppingList);
+        	for (ShoppingListItem i : shoppingList.getAllItems())
+        	{
+        		inventoryNames.add(i.getQuantity() + "x | " + i.getName());
+        	}
         	
 	        // set the list title, if there is one
-	        setTitle(list.getName());
+	        setTitle(shoppingList.getName());
 	        
 	        fromList = true;
         }
         
         // copy the inventory into a final variable, to be accessed in the listener
-        final HashMap<String, List<InventoryItem>> finalInventory = inventory;
-        final List<String> finalNames = new ArrayList<String>();
-        
-        // copy the item names into a list for display
-		List<String> inventoryNames = new ArrayList<String>();
-		for (String s : inventory.keySet())
-		{
-			finalNames.add(s);
-			int count = inventory.get(s).size();
-			inventoryNames.add(count + "x | " + s);
-		}
+        final List<InventoryItem> finalInventory = inventory;
 		
 		// display the names in a list
 		String []a = new String[inventoryNames.size()];
@@ -86,10 +89,10 @@ public class ItemListActivity extends ListActivity
         {
         	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
         	{
-        		String key = finalNames.get(position);
-        		ArrayList<InventoryItem> itemList = (ArrayList<InventoryItem>) finalInventory.get(key);
+        		InventoryItem item = finalInventory.get(position);
 				Intent i = new Intent().setClass(context, ItemDetailActivity.class)
-					  					.putExtra(getString(R.string.current_item), itemList)
+					  					.putExtra(getString(R.string.current_upc), item.getUPC())
+					  					.putExtra(getString(R.string.current_item), item.getName())
 					  					.putExtra("itemIndex", position);
 			  context.startActivity(i);
         	}
@@ -99,27 +102,26 @@ public class ItemListActivity extends ListActivity
         lv.setOnItemLongClickListener(new OnItemLongClickListener()
         {
 			public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
-				// get the corresponding inventory item
-				InventoryItem item = finalInventory.get(finalNames.get(position)).get(0);
+				
+				Intent i;
 				
 				if (fromList)
 				{
-					Intent i = new Intent().setClass(context, ListRemoveActivity.class)
-											.putExtra(getString(R.string.current_list), finalList)
-											.putExtra(getString(R.string.current_item), item.getName())
-											.putExtra(getString(R.string.current_upc), item.getUPC());
-					
-					context.startActivity(i);
+					ShoppingListItem item = finalList.getAllItems().get(position);
+					i = new Intent().setClass(context, ListRemoveActivity.class);
+					i.putExtra(getString(R.string.current_list), finalList.getID());
+					i.putExtra(getString(R.string.current_item), item.getName());
+					i.putExtra(getString(R.string.current_upc), item.getUPC());
 				}
 				else
 				{
-					Intent i = new Intent().setClass(context, ListAddActivity.class)
-											.putExtra(getString(R.string.current_item), item.getName())
-											.putExtra(getString(R.string.current_upc), item.getUPC());
-					
-					context.startActivity(i);
+					InventoryItem item = finalInventory.get(position);
+					i = new Intent().setClass(context, ListAddActivity.class);
+					i.putExtra(getString(R.string.current_item), item.getName());
+					i.putExtra(getString(R.string.current_upc), item.getUPC());
 				}
 				
+				context.startActivity(i);
 				return false;
 			}
         });

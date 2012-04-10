@@ -1,7 +1,7 @@
 package edu.rit.smartFridge;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import android.app.Activity;
@@ -11,7 +11,8 @@ import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TableRow.LayoutParams;
 import android.widget.TextView;
-import edu.rit.smartFridge.model.InventoryItem;
+import edu.rit.smartFridge.util.Connector;
+import edu.rit.smartFridge.util.DataConnect;
 
 public class ItemDetailActivity extends Activity {
     /** Called when the activity is first created. */
@@ -21,23 +22,20 @@ public class ItemDetailActivity extends Activity {
         setContentView(R.layout.item_info);
         
         Bundle extras = getIntent().getExtras();
-        //InventoryItem item = null;
-        List<InventoryItem> itemList = null;
+        DataConnect connecter = Connector.getInstance();
+        List<Date> expDateList = null;
+        List<Date> prcDateList = null;
         String itemName = "default"; 
+        long UPC = 0;
         if (extras != null)
         {
-        	itemList = (ArrayList<InventoryItem>) extras.getSerializable(getString(R.string.current_item));
+        	itemName = extras.getString(getString(R.string.current_item));
+        	UPC = extras.getLong(getString(R.string.current_upc));
         }
-        //this.setTitle(item.getName());
+    	expDateList = connecter.getExpirationDates(UPC);
+    	prcDateList = connecter.getPurchaseDates(UPC);
         
-        if (itemList == null)
-        {
-        	this.setTitle(itemName);
-        }
-        else
-        {
-	        this.setTitle(itemList.size() + " : " + itemList.get(0).getName());
-        }
+        this.setTitle(connecter.getItemCount(UPC) + " : " + itemName);
         TextView t = (TextView) findViewById(R.id.text);
         t.setText("Description: \t");
         
@@ -53,7 +51,7 @@ public class ItemDetailActivity extends Activity {
         StringBuilder builder = new StringBuilder();
         String label;
         
-        for (InventoryItem i : itemList)
+        for (int i = 0; i < expDateList.size(); i++)
         {
 	        tr = new TableRow(this);
 	        tr.setLayoutParams(new LayoutParams(
@@ -62,9 +60,9 @@ public class ItemDetailActivity extends Activity {
 	        
 	        // Build the button text
 	        builder.append("Purchased ");
-	        builder.append(dateFormat.format(i.getPurchased()));
+	        builder.append(dateFormat.format(expDateList.get(i)));
 	        builder.append("    -    Expires ");
-	        builder.append(dateFormat.format(i.getExpiration()));
+	        builder.append(dateFormat.format(prcDateList.get(i)));
 	        label = builder.toString();
 	        builder.delete(0, builder.length()); // clear the builder
 	        

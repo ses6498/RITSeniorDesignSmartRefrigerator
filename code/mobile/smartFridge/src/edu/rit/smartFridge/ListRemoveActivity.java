@@ -21,7 +21,7 @@ public class ListRemoveActivity extends ListActivity {
 	
 	    // get the extras and the connector
         Bundle extras = getIntent().getExtras();
-        final DataConnect connector = new Connector().getInstance();
+        final DataConnect connector = Connector.getInstance();
         ShoppingList list;
         
         final String itemName;
@@ -30,9 +30,10 @@ public class ListRemoveActivity extends ListActivity {
         // get item name and UPC
         if (extras != null)
         {
-        	itemName = (String) extras.getString(getString(R.string.current_item));
-        	UPC = (int) extras.getInt(getString(R.string.current_upc));
-        	list = (ShoppingList) extras.get(getString(R.string.current_list));
+        	itemName = extras.getString(getString(R.string.current_item));
+        	UPC = extras.getInt(getString(R.string.current_upc));
+        	int listId = extras.getInt(getString(R.string.current_list));
+        	list = connector.getList(listId);
         }
         else
         {

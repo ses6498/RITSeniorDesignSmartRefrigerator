@@ -3,6 +3,7 @@ package edu.rit.smartFridge.model;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
 @DatabaseTable(tableName = "Item")
@@ -16,21 +17,25 @@ public class InventoryItem implements Serializable
 	/**
 	 * The Item's UPC Code
 	 */
-	private int UPC;
+	@DatabaseField
+	private long UPC;
 	
 	/**
 	 * The name of the item
 	 */
+	@DatabaseField(columnName="Description")
 	private String itemName;
 	
 	/**
 	 * The date which the item will probably be expired
 	 */
+	@DatabaseField(columnName="expirationDate")
 	private Date expiration;
 	
 	/**
 	 * The date the item was purchased
 	 */
+	@DatabaseField(columnName="purchaseDate")
 	private Date purchased;
 	
 	/**
@@ -38,7 +43,7 @@ public class InventoryItem implements Serializable
 	 * 
 	 * @return The UPC code
 	 */
-	public int getUPC()
+	public long getUPC()
 	{
 		return UPC;
 	}
@@ -62,11 +67,11 @@ public class InventoryItem implements Serializable
 	 * {@code InventoryItem} constructor
 	 * 
 	 * @param name The name of the {@code InventoryItem}
-	 * @param UPC The UPC of the {@code InventoryItem}
+	 * @param l The UPC of the {@code InventoryItem}
 	 */
-	public InventoryItem(String name, int UPC)
+	public InventoryItem(String name, long l)
 	{
-		this(name, UPC, null, null);
+		this(name, l, null, null);
 	}
 	
 	/**
@@ -77,7 +82,7 @@ public class InventoryItem implements Serializable
 	 * @param description A description of the Item
 	 * @param expiration When the item will expire
 	 */
-	public InventoryItem(String name, int UPC, Date expiration, Date purchased)
+	public InventoryItem(String name, long UPC, Date expiration, Date purchased)
 	{
 		this.itemName = name;
 		this.UPC = UPC;

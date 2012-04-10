@@ -1,7 +1,7 @@
 package edu.rit.smartFridge.util;
 
 import java.io.Serializable;
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 
 import edu.rit.smartFridge.model.InventoryItem;
@@ -15,5 +15,13 @@ public interface DataConnect extends Serializable
 	
 	ShoppingList populateItems(ShoppingList list);
 	
-	HashMap<String, List<InventoryItem>> getInventory();
+	List<InventoryItem> getInventory();
+	
+	List<InventoryItem> getItem(long UPC);
+	
+	int getItemCount(long UPC);
+	
+	List<Date> getExpirationDates(long UPC);
+	
+	List<Date> getPurchaseDates(long UPC);
 }
