@@ -608,7 +608,7 @@ class View ():
         self.colors[4] = 'green'
         self.colors[5] = 'green'
         
-        notebook.add(productEntry, text="Product Entry", state="normal")
+        notebook.add(productEntry, text="Product Entry", state="normal", font=('TkDefaultFont',12))
         notebook.add(shoppingLists, text="Shopping Lists")
         notebook.add(currentInventory, text="Current Inventory")
         notebook.grid(column=0,row=0)

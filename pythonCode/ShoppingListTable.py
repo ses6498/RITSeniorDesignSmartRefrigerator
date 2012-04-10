@@ -136,7 +136,7 @@ class ShoppingListTable (object):
             purchaseDates = [x[0] for x in purchaseDates]
             purchaseDates = sorted(purchaseDates)
             
-            if len(purchaseDates) > 1:
+            if len(purchaseDates) > 2:
                 purchaseDiffs = [(purchaseDates[x] - purchaseDates[x-1]).total_seconds() / (60 * 60) for x in range(1,len(purchaseDates))]
                 kde = stats.kde.gaussian_kde(numpy.array(purchaseDiffs))
                 currentTimeDiff = (self.model.timeWrapper.returnTime() - purchaseDates[-1]).total_seconds() / (60 * 60)
