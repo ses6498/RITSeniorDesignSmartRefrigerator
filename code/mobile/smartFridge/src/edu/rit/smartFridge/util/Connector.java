@@ -17,7 +17,7 @@ public class Connector
 	 * 
 	 * @return The Instance of the {@code DataConnect} we're using
 	 */
-	public TestConnect getInstance()
+	public static TestConnect getInstance()
 	{
 		if (instance == null)
 		{

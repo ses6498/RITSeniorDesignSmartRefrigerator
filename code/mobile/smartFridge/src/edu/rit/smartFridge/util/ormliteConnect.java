@@ -1,10 +1,11 @@
 package edu.rit.smartFridge.util;
 
-import java.util.HashMap;
+import java.util.Date;
 import java.util.List;
 
 import edu.rit.smartFridge.model.InventoryItem;
 import edu.rit.smartFridge.model.ShoppingList;
+import edu.rit.smartFridge.model.ShoppingListItem;
 
 
 public class ormliteConnect implements DataConnect
@@ -29,7 +30,27 @@ public class ormliteConnect implements DataConnect
 		return null;
 	}
 
-	public HashMap<String, List<InventoryItem>> getInventory() {
+	public List<InventoryItem> getInventory() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<InventoryItem> getItem(long UPC) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public int getItemCount(long UPC) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	public List<Date> getExpirationDates(long UPC) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<Date> getPurchaseDates(long UPC) {
 		// TODO Auto-generated method stub
 		return null;
 	}

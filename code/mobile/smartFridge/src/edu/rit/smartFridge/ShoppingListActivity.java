@@ -25,14 +25,11 @@ public class ShoppingListActivity extends ListActivity {
         final Context context = this;
         
         // get the connecter
-        DataConnect connecter = new Connector().getInstance();
-        
-        // copy the connector somewhere that the listener can use it
-        final DataConnect finalConnecter = connecter;
+        DataConnect connecter = Connector.getInstance();
         
         // get the shopping lists
         final List<ShoppingList> lists = connecter.getLists();
-        
+      
         // copy the list names into another list for display
         List<String> listNames = new ArrayList<String>();
         String label;
@@ -44,7 +41,7 @@ public class ShoppingListActivity extends ListActivity {
     		}
         	else
         	{
-        		label = "\t" + l.getName();
+        		label = "\t\t" + l.getName();
         	}
         	
 			listNames.add(label);
@@ -62,10 +59,8 @@ public class ShoppingListActivity extends ListActivity {
         	public void onItemClick(AdapterView<?> parent, View view, int position, long id)
         	{
         		// populate the shopping list's items
-        		ShoppingList populatedList = finalConnecter.populateItems(lists.get(position));
 				Intent i = new Intent().setClass(context, ItemListActivity.class)
-					  					.putExtra(getString(R.string.current_list), populatedList)
-					  					.putExtra(getString(R.string.dataConnecter), finalConnecter);
+					  					.putExtra(getString(R.string.current_list), lists.get(position).getID());
 			    context.startActivity(i);
         	}
         });
@@ -73,7 +68,6 @@ public class ShoppingListActivity extends ListActivity {
         lv.setLongClickable(true);
         lv.setOnItemLongClickListener(new OnItemLongClickListener()
         {
-
 			public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id) {
       		    Toast.makeText(getApplicationContext(), ((TextView) v).getText(), Toast.LENGTH_SHORT).show();
 				return false;

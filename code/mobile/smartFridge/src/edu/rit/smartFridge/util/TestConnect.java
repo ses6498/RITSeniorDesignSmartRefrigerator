@@ -1,8 +1,8 @@
 package edu.rit.smartFridge.util;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 
@@ -51,13 +51,13 @@ public class TestConnect implements DataConnect {
 		
 		switch(listId)
 		{
-		case 1: temp = list1;
+		case 0: temp = list1;
 			break;
-		case 2: temp = list2;
+		case 1: temp = list2;
 			break;
-		case 3: temp = list3;
+		case 2: temp = list3;
 			break;
-		case 4: temp = list4;
+		case 3: temp = list4;
 			break;
 		default: temp = null;
 		}
@@ -70,18 +70,67 @@ public class TestConnect implements DataConnect {
 		int size = generator.nextInt(10);
 		for (int i = 0; i < size; i++)
 		{
-			list.addItem(Inventory[generator.nextInt(size)], 1);
+			list.addItem(Inventory[generator.nextInt(size)], generator.nextInt(3));
 		}
 		return list;
 	}
 
-	public HashMap<String, List<InventoryItem>> getInventory() {
-		HashMap<String, List<InventoryItem>> retMap = new HashMap<String, List<InventoryItem>>();
+	public List<InventoryItem> getInventory() {
+		return Arrays.asList(Inventory);
+	}
+	
+	public List<InventoryItem> getItem(long UPC)
+	{
+		List<InventoryItem> retList = new ArrayList<InventoryItem>();
+		
 		for (InventoryItem i : Inventory)
 		{
-			retMap.put(i.getName(), new ArrayList<InventoryItem>());
-			retMap.get(i.getName()).add(i);
+			if (i.getUPC() == UPC)
+			{
+				retList.add(i);
+			}
 		}
-		return retMap;
+		return retList;
+		
+	}
+
+	public int getItemCount(long UPC) 
+	{
+		int count = 0;
+		for (InventoryItem i : Inventory)
+		{
+			if (i.getUPC() == UPC)
+			{
+				count++;
+			}
+		}
+		return count;
+	}
+	
+	public List<Date> getExpirationDates(long UPC)
+	{
+		List<Date> dates= new ArrayList<Date>();
+		for (InventoryItem i : Inventory)
+		{
+			if (i.getUPC() == UPC)
+			{
+				dates.add(i.getExpiration());
+			}
+		}
+				
+		return dates;	
+	}
+	
+	public List<Date> getPurchaseDates(long UPC)
+	{
+		List<Date> dates = new ArrayList<Date>();
+		for (InventoryItem i : Inventory)
+		{
+			if (i.getUPC() == UPC)
+			{
+				dates.add(i.getPurchased());
+			}
+		}
+		return dates;
 	}
 }
