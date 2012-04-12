@@ -62,7 +62,7 @@ public class ListRemoveActivity extends ListActivity {
         		}
         		
 				Intent i = new Intent().setClass(parent.getContext(), ItemListActivity.class)
-					  					.putExtra(getString(R.string.current_list), finalList);
+					  					.putExtra(getString(R.string.current_list), finalList.getID());
         		parent.getContext().startActivity(i);
         	}
         });
