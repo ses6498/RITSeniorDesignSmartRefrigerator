@@ -24,7 +24,7 @@ public class ListAddActivity extends ListActivity {
 	    
         // get the extras and the connector
         Bundle extras = getIntent().getExtras();
-        DataConnect connector = new Connector().getInstance();
+        DataConnect connector = Connector.getInstance();
         
         final String itemName;
         final int UPC;

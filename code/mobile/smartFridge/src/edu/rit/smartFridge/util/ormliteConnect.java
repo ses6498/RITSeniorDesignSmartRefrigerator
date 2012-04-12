@@ -5,7 +5,6 @@ import java.util.List;
 
 import edu.rit.smartFridge.model.InventoryItem;
 import edu.rit.smartFridge.model.ShoppingList;
-import edu.rit.smartFridge.model.ShoppingListItem;
 
 
 public class ormliteConnect implements DataConnect
