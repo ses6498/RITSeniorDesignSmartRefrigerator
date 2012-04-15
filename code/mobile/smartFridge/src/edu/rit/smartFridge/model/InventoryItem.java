@@ -13,31 +13,31 @@ public class InventoryItem implements Serializable
 	 * auto generated serial version UID
 	 */
 	private static final long serialVersionUID = 2421444388805545429L;
-	
+
 	/**
 	 * The Item's UPC Code
 	 */
 	@DatabaseField
 	private long UPC;
-	
+
 	/**
 	 * The name of the item
 	 */
-	@DatabaseField(columnName="Description")
+	@DatabaseField(columnName = "Description")
 	private String itemName;
-	
+
 	/**
 	 * The date which the item will probably be expired
 	 */
-	@DatabaseField(columnName="expirationDate")
+	@DatabaseField(columnName = "expirationDate")
 	private Date expiration;
-	
+
 	/**
 	 * The date the item was purchased
 	 */
-	@DatabaseField(columnName="purchaseDate")
+	@DatabaseField(columnName = "purchaseDate")
 	private Date purchased;
-	
+
 	/**
 	 * Gets the item's UPC code
 	 * 
@@ -47,7 +47,7 @@ public class InventoryItem implements Serializable
 	{
 		return UPC;
 	}
-	
+
 	/**
 	 * Gets the item's name
 	 * 
@@ -57,30 +57,38 @@ public class InventoryItem implements Serializable
 	{
 		return itemName;
 	}
-	
+
 	/**
 	 * No-argument constructor used by ormlite
 	 */
-	public InventoryItem() {}
-	
+	public InventoryItem()
+	{
+	}
+
 	/**
 	 * {@code InventoryItem} constructor
 	 * 
-	 * @param name The name of the {@code InventoryItem}
-	 * @param l The UPC of the {@code InventoryItem}
+	 * @param name
+	 *            The name of the {@code InventoryItem}
+	 * @param l
+	 *            The UPC of the {@code InventoryItem}
 	 */
 	public InventoryItem(String name, long l)
 	{
 		this(name, l, null, null);
 	}
-	
+
 	/**
 	 * Item Constructor
 	 * 
-	 * @param name The name of the Item 
-	 * @param UPC The item's UPC code
-	 * @param description A description of the Item
-	 * @param expiration When the item will expire
+	 * @param name
+	 *            The name of the Item
+	 * @param UPC
+	 *            The item's UPC code
+	 * @param description
+	 *            A description of the Item
+	 * @param expiration
+	 *            When the item will expire
 	 */
 	public InventoryItem(String name, long UPC, Date expiration, Date purchased)
 	{
@@ -89,7 +97,7 @@ public class InventoryItem implements Serializable
 		this.expiration = expiration;
 		this.purchased = purchased;
 	}
-	
+
 	/**
 	 * Gets the item's expiration date
 	 * 
@@ -99,7 +107,7 @@ public class InventoryItem implements Serializable
 	{
 		return expiration;
 	}
-	
+
 	/**
 	 * Gets the date the item was purchased
 	 * 
@@ -110,5 +118,3 @@ public class InventoryItem implements Serializable
 		return purchased;
 	}
 }
-
-

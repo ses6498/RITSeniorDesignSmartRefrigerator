@@ -29,6 +29,7 @@ public final class R {
         public static final int current_list=0x7f040007;
         public static final int current_upc=0x7f040009;
         public static final int dataConnecter=0x7f040006;
+        public static final int db_connection=0x7f04000c;
         public static final int hello=0x7f040000;
         public static final int inet_addr=0x7f040004;
         public static final int inventory_name=0x7f040002;

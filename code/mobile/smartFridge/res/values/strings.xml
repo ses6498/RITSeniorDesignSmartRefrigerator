@@ -13,5 +13,6 @@
     <string name="current_upc">CURRENT_UPC</string>
     <string name="curr_tab">TAB</string>
     <string name="list_remove_message">Remove this item?</string>
+    <string name="db_connection">smartfridge.student.rit.edu/smartRefrigeratorDb</string>
 
 </resources>
