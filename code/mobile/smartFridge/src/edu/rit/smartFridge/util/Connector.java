@@ -1,13 +1,11 @@
 package edu.rit.smartFridge.util;
 
-import android.content.Context;
-
 public class Connector
 {
 	/**
 	 * The instance of the {@code DataConnect} we want to use
 	 */
-	private static TestConnect instance = null;
+	private static DataConnect instance = null;
 
 	/**
 	 * Connnector constructor
@@ -21,13 +19,12 @@ public class Connector
 	 * 
 	 * @return The Instance of the {@code DataConnect} we're using
 	 */
-	public static TestConnect getInstance(Context context)
+	public static DataConnect getInstance()
 	{
 		if (instance == null)
 		{
-			instance = new TestConnect();
+			instance = new RestConnect();
 		}
-		instance.setContext(context);
 		return instance;
 	}
 }
