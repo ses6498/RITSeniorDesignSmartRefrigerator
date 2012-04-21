@@ -37,9 +37,7 @@ public class ItemDetailActivity extends Activity
 		expDateList = connecter.getExpirationDates(UPC);
 		prcDateList = connecter.getPurchaseDates(UPC);
 
-		this.setTitle(connecter.getItemCount(UPC) + " : " + itemName);
-		TextView t = (TextView) findViewById(R.id.text);
-		t.setText("Description: \t");
+		this.setTitle(connecter.getItemCount(UPC) + "x | " + itemName);
 
 		// user friendly date formatting
 		SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
@@ -61,9 +59,9 @@ public class ItemDetailActivity extends Activity
 
 			// Build the button text
 			builder.append("Purchased ");
-			builder.append(dateFormat.format(expDateList.get(i)));
-			builder.append("    -    Expires ");
 			builder.append(dateFormat.format(prcDateList.get(i)));
+			builder.append("    -    Expires ");
+			builder.append(dateFormat.format(expDateList.get(i)));
 			label = builder.toString();
 			builder.delete(0, builder.length()); // clear the builder
 

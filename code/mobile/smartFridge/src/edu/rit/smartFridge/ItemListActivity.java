@@ -48,6 +48,7 @@ public class ItemListActivity extends ListActivity
 
 		// copy the item names into a list for display
 		List<String> inventoryNames = new ArrayList<String>();
+		List<String> untaggedNames = new ArrayList<String>();
 
 		// if no list was passed in, we need to get the inventory ourselves
 		if (shoppingList == null)
@@ -65,6 +66,7 @@ public class ItemListActivity extends ListActivity
 				if (!inventoryNames.contains(label))
 				{
 					inventoryNames.add(count + "x | " + i.getName());
+					untaggedNames.add(i.getName());
 				}
 			}
 		}
@@ -80,6 +82,7 @@ public class ItemListActivity extends ListActivity
 				if (!inventoryNames.contains(label))
 				{
 					inventoryNames.add(i.getQuantity() + "x | " + i.getName());
+					untaggedNames.add(i.getName());
 				}
 			}
 
@@ -95,9 +98,9 @@ public class ItemListActivity extends ListActivity
 			inventoryNames.add("No items to display.");
 		}
 
-		// copy the inventory into a final variable, to be accessed in the
-		// listener
+		// copy the inventory into a final variable, to be accessed in the listener
 		final List<InventoryItem> finalInventory = inventory;
+		final List<String> finalNames = untaggedNames;
 
 		// display the names in a list
 		String[] a = new String[inventoryNames.size()];
@@ -108,25 +111,30 @@ public class ItemListActivity extends ListActivity
 		ListView lv = getListView();
 		lv.setTextFilterEnabled(true);
 		lv.setOnItemClickListener(new OnItemClickListener() {
-			public void onItemClick(AdapterView<?> parent, View view,
-					int position, long id)
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 			{
 				// TODO: this doesn't work for the inventory list, only shopping list items.
-				InventoryItem item = finalInventory.get(position);
+				String name = finalNames.get(position);
+				InventoryItem item = null;
+				for (InventoryItem i : finalInventory)
+				{
+					if (i.getName() == name)
+					{
+						item = i;
+						break;
+					}
+				}
 				Intent i = new Intent()
 						.setClass(context, ItemDetailActivity.class)
-						.putExtra(getString(R.string.current_upc),
-								item.getUPC())
-						.putExtra(getString(R.string.current_item),
-								item.getName()).putExtra("itemIndex", position);
+						.putExtra(getString(R.string.current_upc), item.getUPC())
+						.putExtra(getString(R.string.current_item), item.getName());
 				context.startActivity(i);
 			}
 		});
 
-		lv.setLongClickable(true);
+		lv.setLongClickable(false); // item add/delete from shopping lists disabled
 		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
-			public boolean onItemLongClick(AdapterView<?> parent, View v,
-					int position, long id)
+			public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id)
 			{
 
 				Intent i;
@@ -137,8 +145,7 @@ public class ItemListActivity extends ListActivity
 							position);
 					i = new Intent()
 							.setClass(context, ListRemoveActivity.class);
-					i.putExtra(getString(R.string.current_list),
-							finalList.getID());
+					i.putExtra(getString(R.string.current_list), finalList.getID());
 					i.putExtra(getString(R.string.current_item), item.getName());
 					i.putExtra(getString(R.string.current_upc), item.getUPC());
 				}
