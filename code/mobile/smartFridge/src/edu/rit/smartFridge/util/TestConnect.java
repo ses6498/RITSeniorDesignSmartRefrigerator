@@ -6,7 +6,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Random;
 
-import android.content.Context;
 import edu.rit.smartFridge.model.InventoryItem;
 import edu.rit.smartFridge.model.ShoppingList;
 
@@ -62,11 +61,11 @@ public class TestConnect implements DataConnect
 		return retList;
 	}
 
-	public ShoppingList getList(int listId)
+	public ShoppingList getList(long listId)
 	{
 		ShoppingList temp;
 
-		switch (listId)
+		switch ((int) listId)
 		{
 			case 0:
 				temp = list1;

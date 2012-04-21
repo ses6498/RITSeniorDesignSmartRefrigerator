@@ -3,12 +3,8 @@ package edu.rit.smartFridge.util;
 import java.util.Date;
 import java.util.List;
 
-import com.j256.ormlite.android.apptools.OpenHelperManager;
 import com.j256.ormlite.dao.Dao;
-import com.j256.ormlite.dao.DaoManager;
-import com.j256.ormlite.support.ConnectionSource;
 
-import edu.rit.smartFridge.R;
 import edu.rit.smartFridge.model.InventoryItem;
 import edu.rit.smartFridge.model.ShoppingList;
 import edu.rit.smartFridge.model.ShoppingListItem;
@@ -28,9 +24,9 @@ public class ormliteConnect implements DataConnect
 	
 	public ormliteConnect()
 	{
-		ConnectionSource c = new com.j256.ormlite.jdbc.JdbcConnectionSource();
-		ConnectionSource connectionSource = new JdbcConnectionSource(getString(R.string.db_connection));
-		inventoryItemDao = DaoManager.createDao(arg0, arg1)
+//		ConnectionSource c = new com.j256.ormlite.jdbc.JdbcConnectionSource();
+//		ConnectionSource connectionSource = new JdbcConnectionSource(getString(R.string.db_connection));
+//		inventoryItemDao = DaoManager.createDao(arg0, arg1)
 	}
 
 	/**
@@ -41,8 +37,8 @@ public class ormliteConnect implements DataConnect
 	{
 		if (databaseHelper == null)
 		{
-			databaseHelper = OpenHelperManager.getHelper(context,
-					DatabaseHelper.class);
+//			databaseHelper = OpenHelperManager.getHelper(context,
+//					DatabaseHelper.class);
 		}
 		return databaseHelper;
 	}
@@ -70,14 +66,14 @@ public class ormliteConnect implements DataConnect
 	 * 
 	 * @param listId the ID of the list to return
 	 */
-	public ShoppingList getList(int listId)
+	public ShoppingList getList(long listId)
 	{
 		ShoppingList list = null;
 		try
 		{
 			shoppingListDao = getHelper().getShoppingListDao();
 			// query for the list in the database with the specified ID
-			list = shoppingListDao.queryForId(listId);
+			list = shoppingListDao.queryForId((int) listId);
 		} catch (java.sql.SQLException e)
 		{
 			// TODO Auto-generated catch block

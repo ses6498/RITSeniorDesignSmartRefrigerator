@@ -117,4 +117,27 @@ public class InventoryItem implements Serializable
 	{
 		return purchased;
 	}
+	
+	/**
+	 * Determines whether this object equals another
+	 * 
+	 * @param other The object to compare to
+	 * @return True if the objects are equal, false otherwise
+	 */
+	public boolean equals(Object other)
+	{
+		if (other instanceof InventoryItem)
+		{
+			// if other is an inventory item, cast it to one
+			InventoryItem o = (InventoryItem) other;
+			
+			if (o.getUPC() == this.UPC){
+				// two inventoryItems are equal if their UPC's are the same
+				return true;
+			}
+		}
+		
+		// if we get here, the objects are not equal
+		return false;
+	}
 }
