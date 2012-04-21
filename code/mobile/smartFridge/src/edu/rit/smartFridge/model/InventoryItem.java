@@ -68,10 +68,8 @@ public class InventoryItem implements Serializable
 	/**
 	 * {@code InventoryItem} constructor
 	 * 
-	 * @param name
-	 *            The name of the {@code InventoryItem}
-	 * @param l
-	 *            The UPC of the {@code InventoryItem}
+	 * @param name The name of the {@code InventoryItem}
+	 * @param l The UPC of the {@code InventoryItem}
 	 */
 	public InventoryItem(String name, long l)
 	{
@@ -81,14 +79,10 @@ public class InventoryItem implements Serializable
 	/**
 	 * Item Constructor
 	 * 
-	 * @param name
-	 *            The name of the Item
-	 * @param UPC
-	 *            The item's UPC code
-	 * @param description
-	 *            A description of the Item
-	 * @param expiration
-	 *            When the item will expire
+	 * @param name The name of the Item
+	 * @param UPC The item's UPC code
+	 * @param description A description of the Item
+	 * @param expiration When the item will expire
 	 */
 	public InventoryItem(String name, long UPC, Date expiration, Date purchased)
 	{
@@ -117,7 +111,7 @@ public class InventoryItem implements Serializable
 	{
 		return purchased;
 	}
-	
+
 	/**
 	 * Determines whether this object equals another
 	 * 
@@ -130,13 +124,14 @@ public class InventoryItem implements Serializable
 		{
 			// if other is an inventory item, cast it to one
 			InventoryItem o = (InventoryItem) other;
-			
-			if (o.getUPC() == this.UPC){
+
+			if (o.getUPC() == this.UPC)
+			{
 				// two inventoryItems are equal if their UPC's are the same
 				return true;
 			}
 		}
-		
+
 		// if we get here, the objects are not equal
 		return false;
 	}

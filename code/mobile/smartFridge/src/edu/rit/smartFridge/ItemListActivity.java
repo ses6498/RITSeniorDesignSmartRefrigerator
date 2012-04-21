@@ -60,19 +60,20 @@ public class ItemListActivity extends ListActivity
 			{
 				int count = connecter.getItemCount(i.getUPC());
 				label = count + "x | " + i.getName();
-				
+
 				// don't add if list contains label
 				if (!inventoryNames.contains(label))
 				{
 					inventoryNames.add(count + "x | " + i.getName());
 				}
 			}
-		} else
-		// we got here from a grocery list
+		}
+		else
 		{
+			// we got here from a grocery list
 			shoppingList = connecter.populateItems(shoppingList);
 			String label; // temp storage
-			
+
 			for (ShoppingListItem i : shoppingList.getAllItems())
 			{
 				label = i.getQuantity() + "x | " + i.getName();
@@ -86,6 +87,12 @@ public class ItemListActivity extends ListActivity
 			setTitle(shoppingList.getName());
 
 			fromList = true;
+		}
+		
+		if (inventoryNames.size() == 0)
+		{
+			// there are no items to display.
+			inventoryNames.add("No items to display.");
 		}
 
 		// copy the inventory into a final variable, to be accessed in the
@@ -104,6 +111,7 @@ public class ItemListActivity extends ListActivity
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id)
 			{
+				// TODO: this doesn't work for the inventory list, only shopping list items.
 				InventoryItem item = finalInventory.get(position);
 				Intent i = new Intent()
 						.setClass(context, ItemDetailActivity.class)
@@ -133,7 +141,8 @@ public class ItemListActivity extends ListActivity
 							finalList.getID());
 					i.putExtra(getString(R.string.current_item), item.getName());
 					i.putExtra(getString(R.string.current_upc), item.getUPC());
-				} else
+				}
+				else
 				{
 					InventoryItem item = finalInventory.get(position);
 					i = new Intent().setClass(context, ListAddActivity.class);

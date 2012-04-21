@@ -34,12 +34,9 @@ public class ShoppingListItem
 	/**
 	 * {@code ShoppingListItem} constructor.
 	 * 
-	 * @param ID
-	 *            The ID of the Item.
-	 * @param name
-	 *            The name of the item.
-	 * @param quantity
-	 *            How many of the item exist in the list
+	 * @param ID The ID of the Item.
+	 * @param name The name of the item.
+	 * @param quantity How many of the item exist in the list
 	 */
 	public ShoppingListItem(long UPC, String name, int quantity)
 	{

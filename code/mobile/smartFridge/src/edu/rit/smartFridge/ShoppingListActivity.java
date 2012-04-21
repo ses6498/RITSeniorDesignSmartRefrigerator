@@ -40,12 +40,19 @@ public class ShoppingListActivity extends ListActivity
 			if (l.isAutoGen())
 			{
 				label = "[A]\t" + l.getName();
-			} else
+			}
+			else
 			{
 				label = "\t\t" + l.getName();
 			}
 
 			listNames.add(label);
+		}
+		
+		if (listNames.size() == 0)
+		{
+			// no lists to display
+			listNames.add("No shopping lists to display");
 		}
 
 		// display the list

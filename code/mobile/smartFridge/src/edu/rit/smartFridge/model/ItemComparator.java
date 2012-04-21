@@ -8,10 +8,8 @@ public class ItemComparator implements Comparator<InventoryItem>
 	/**
 	 * Compares two {@code InventoryItem}s.
 	 * 
-	 * @param item1
-	 *            One of the {@code InventoryItem}s to compare
-	 * @param item2
-	 *            The other {@code InventoryItem}s to compare
+	 * @param item1 One of the {@code InventoryItem}s to compare
+	 * @param item2 The other {@code InventoryItem}s to compare
 	 * 
 	 * @return +1 if item1 expires before item2, -1 if item2 expires first, 0
 	 *         otherwise.
@@ -24,10 +22,12 @@ public class ItemComparator implements Comparator<InventoryItem>
 		if (expiration1.before(expiration2))
 		{
 			return +1;
-		} else if (expiration1.after(expiration2))
+		}
+		else if (expiration1.after(expiration2))
 		{
 			return -1;
-		} else
+		}
+		else
 		{
 			return 0;
 		}

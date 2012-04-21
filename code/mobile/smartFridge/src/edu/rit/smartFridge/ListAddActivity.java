@@ -37,7 +37,8 @@ public class ListAddActivity extends ListActivity
 			itemName = (String) extras
 					.getString(getString(R.string.current_item));
 			UPC = (int) extras.getInt(getString(R.string.current_upc));
-		} else
+		}
+		else
 		{
 			itemName = "";
 			UPC = -1;

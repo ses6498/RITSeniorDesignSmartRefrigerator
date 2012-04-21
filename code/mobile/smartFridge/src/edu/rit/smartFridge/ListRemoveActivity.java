@@ -36,7 +36,8 @@ public class ListRemoveActivity extends ListActivity
 			UPC = extras.getInt(getString(R.string.current_upc));
 			int listId = extras.getInt(getString(R.string.current_list));
 			list = connector.getList(listId);
-		} else
+		}
+		else
 		{
 			itemName = "";
 			UPC = -1;
