@@ -19,9 +19,14 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import android.util.Log;
 
 import edu.rit.smartFridge.model.InventoryItem;
 import edu.rit.smartFridge.model.ShoppingList;
@@ -48,6 +53,58 @@ public class RestConnect implements DataConnect
 	{
 		shoppingLists = new ArrayList<ShoppingList>();
 		inventory = new ArrayList<InventoryItem>();
+		
+		// set the connection timeout time
+		int connectionTimeout = 30000; // 30 seconds
+		HttpParams params = new BasicHttpParams();
+		HttpConnectionParams.setConnectionTimeout(params, connectionTimeout);
+	}
+	
+	/**
+	 * Executes an HTTPRequst against the BeagleBoard to retrieve database items
+	 * @param nvpList Parameter list for the call
+	 * @return A JSONArray of returned values
+	 */
+	private JSONArray getJSON(List<NameValuePair> nvpList)
+	{
+		JSONArray jArray = null;
+		try
+		{
+			HttpClient h = new DefaultHttpClient();
+			HttpPost httppost = new HttpPost("http://smartfridge.student.rit.edu/mobileServer.php");
+
+			httppost.setEntity(new UrlEncodedFormEntity (nvpList));
+			HttpResponse response = h.execute(httppost);
+			HttpEntity entity = response.getEntity();
+			InputStream is = entity.getContent();
+
+			BufferedReader reader = new BufferedReader (new InputStreamReader (is, "iso-8859-1"), 8);
+			StringBuilder sb = new StringBuilder();
+			String line = null;
+
+			while ((line = reader.readLine()) != null) {
+				sb.append(line + "\n");
+			}
+			is.close();
+			String result = sb.toString();
+			
+			jArray = new JSONArray(result);
+
+		}
+		catch (JSONException j)
+		{
+			System.err.println("INVALID JSON: " + j.getMessage());
+		}
+		catch (IllegalStateException i)
+		{
+			System.err.println("ILLEGAL STATE: " + i.getMessage());
+		}
+		catch (IOException e)
+		{
+			System.err.println("IO EXCEPTION: " + e.getMessage());
+		}
+		
+		return jArray;
 	}
 	
 	/* (non-Javadoc)
@@ -55,36 +112,24 @@ public class RestConnect implements DataConnect
 	 */
 	public List<ShoppingList> getLists()
 	{
+		Log.d("RestConnect", "Retrieving lists");
 		if (shoppingLists == null)
 		{
 			shoppingLists = new ArrayList<ShoppingList>();
 			try
 			{
-				HttpClient h = new DefaultHttpClient();
-				String result = "";
-				HttpPost httppost = new HttpPost("http://smartfridge.student.rit.edu/mobileServer.php");
+				// build name value pairs
 				ArrayList<NameValuePair> nameValuePairs = new ArrayList <NameValuePair>();
 				nameValuePairs.add(new BasicNameValuePair ("action", "getShoppingLists"));
-				httppost.setEntity(new UrlEncodedFormEntity (nameValuePairs));
-				HttpResponse response = h.execute(httppost);
-				HttpEntity entity = response.getEntity();
-				InputStream is = entity.getContent();
-
-				BufferedReader reader = new BufferedReader (new InputStreamReader (is, "iso-8859-1"), 8);
-				StringBuilder sb = new StringBuilder();
-				String line = null;
-
-				while ((line = reader.readLine()) != null) {
-					sb.append(line + "\n");
-				}
-				is.close();
-				result = sb.toString();
-
+				
+				// get JSON (execute request)
+				JSONArray jArray = getJSON(nameValuePairs);
+				
+				// temporary storage
 				long listID; 
 				String listName;
 				boolean autoGen;
-
-				JSONArray jArray = new JSONArray(result);
+				
 				for (int i = 0; i < jArray.length(); i++) {
 					JSONObject jsonData = jArray.getJSONObject(i);
 					listID = jsonData.getLong("listId");
@@ -102,10 +147,6 @@ public class RestConnect implements DataConnect
 			{
 				System.err.println("ILLEGAL STATE: " + i.getMessage());
 			}
-			catch (IOException e)
-			{
-				System.err.println("IO EXCEPTION: " + e.getMessage());
-			}
 		}
 		
 		return shoppingLists;
@@ -116,6 +157,8 @@ public class RestConnect implements DataConnect
 	 */
 	public ShoppingList getList(long listId)
 	{
+		Log.d("RestConnect", "Retrieving list" + listId);
+		
 		List<ShoppingList> list = this.getLists();
 		for (ShoppingList l : list)
 		{
@@ -132,41 +175,28 @@ public class RestConnect implements DataConnect
 	 */
 	public ShoppingList populateItems(ShoppingList list)
 	{
+		Log.d("RestConnect", "Populating list" + list.getID());
+		
 		ShoppingList retList = new ShoppingList(list.getName(), list.isAutoGen(), list.getID());
 		try
 		{
-			HttpClient h = new DefaultHttpClient();
-
-			String result = "";
+			// convert the list ID to a string
 			String input = String.valueOf(list.getID());
 
-			HttpPost httppost = new HttpPost("http://smartfridge.student.rit.edu/mobileServer.php");
+			// construct name value pairs
 			ArrayList<NameValuePair> nameValuePairs = new ArrayList <NameValuePair>();
-
 			nameValuePairs.add(new BasicNameValuePair ("action", "getShoppingListById"));
 			nameValuePairs.add(new BasicNameValuePair ("listId", input));
-			httppost.setEntity(new UrlEncodedFormEntity (nameValuePairs));
-
-			HttpResponse response = h.execute(httppost);
-			HttpEntity entity = response.getEntity();
-			InputStream is = entity.getContent();
-
-			BufferedReader reader = new BufferedReader (new InputStreamReader (is, "iso-8859-1"), 8);
-			StringBuilder sb = new StringBuilder();
-			String line = null;
-
-			while ((line = reader.readLine()) != null) 
-			{
-				sb.append(line + "\n");
-			}
-			is.close();
-			result = sb.toString();
 			
+			// get json (Execute request)
+			JSONArray jArray = getJSON(nameValuePairs);
+
+			// temp storage
 			String itemName;
 			long UPC;
 			int quantity;
 
-			JSONArray jArray = new JSONArray(result);
+			// parse for items
 			for (int i = 0; i < jArray.length(); i++) 
 			{
 				JSONObject jsonData = jArray.getJSONObject(i);
@@ -184,10 +214,6 @@ public class RestConnect implements DataConnect
 		{
 			System.err.println("ILLEGAL STATE: " + i.getMessage());
 		}
-		catch (IOException e)
-		{
-			System.err.println("IO EXCEPTION: " + e.getMessage());
-		}
 		
 		return retList;
 	}
@@ -197,31 +223,16 @@ public class RestConnect implements DataConnect
 	 */
 	public List<InventoryItem> getInventory()
 	{
+		Log.d("RestConnect", "Getting Inventory");
+		
 		try
 		{
-			HttpClient h = new DefaultHttpClient();
-
-			String result = "";
-			HttpPost httppost = new HttpPost("http://smartfridge.student.rit.edu/mobileServer.php");
-
+			// build name value pairs
 			ArrayList<NameValuePair> nameValuePairs = new ArrayList <NameValuePair>();
 			nameValuePairs.add(new BasicNameValuePair ("action", "getInventory"));
-			httppost.setEntity(new UrlEncodedFormEntity (nameValuePairs));
-
-			HttpResponse response = h.execute(httppost);
-			HttpEntity entity = response.getEntity();
-			InputStream is = entity.getContent();
-
-			BufferedReader reader = new BufferedReader (new InputStreamReader (is, "iso-8859-1"), 8);
-			StringBuilder sb = new StringBuilder();
-			String line = null;
-
-			while ((line = reader.readLine()) != null) 
-			{
-				sb.append(line + "\n");
-			}
-			is.close();
-			result = sb.toString();
+			
+			// get JSON (Execute request)
+			JSONArray jArray = getJSON(nameValuePairs);
 			
 			// temp storage
 			String itemName;
@@ -231,7 +242,6 @@ public class RestConnect implements DataConnect
 			InventoryItem temp;
 			
 			DateFormat d = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-			JSONArray jArray = new JSONArray(result);
 			for (int i = 0; i < jArray.length(); i++) 
 			{
 				JSONObject jsonData = jArray.getJSONObject(i);
@@ -255,10 +265,6 @@ public class RestConnect implements DataConnect
 		{
 			System.err.println("ILLEGAL STATE: " + i.getMessage());
 		}
-		catch (IOException e)
-		{
-			System.err.println("IO EXCEPTION: " + e.getMessage());
-		} 
 		catch (ParseException e) {
 			System.err.println("INVALID DATE: " + e.getMessage());
 		}
@@ -271,72 +277,22 @@ public class RestConnect implements DataConnect
 	 */
 	public List<InventoryItem> getItem(long UPC)
 	{
-		//TODO: possibly make this use inventory and just manually search for
-		// all items with the given UPC.
+		Log.d("RestConnect", "Getting Item" + UPC);
+		
 		List<InventoryItem> retList = new ArrayList<InventoryItem>();
-		try
+		
+		if (inventory.size() == 0)
 		{
-			HttpClient h = new DefaultHttpClient();
-			
-			String result = "";
-			String input = String.valueOf(UPC);
-			
-			HttpPost httppost = new HttpPost("http://smartfridge.student.rit.edu/mobileServer.php");
-			ArrayList<NameValuePair> nameValuePairs = new ArrayList <NameValuePair>();
-			
-			nameValuePairs.add(new BasicNameValuePair ("action", "getInventoryItemByUpc"));
-			nameValuePairs.add(new BasicNameValuePair ("upc", input));
-			httppost.setEntity(new UrlEncodedFormEntity (nameValuePairs));
-			
-			HttpResponse response = h.execute(httppost);
-			HttpEntity entity = response.getEntity();
-			InputStream is = entity.getContent();
-
-			BufferedReader reader = new BufferedReader (new InputStreamReader (is, "iso-8859-1"), 8);
-			StringBuilder sb = new StringBuilder();
-			String line = null;
-
-			while ((line = reader.readLine()) != null) 
+			// if the inventory hasn't been retrieved yet, get it.
+			getInventory();
+		}
+		
+		for (InventoryItem i : inventory)
+		{
+			if (i.getUPC() == UPC)
 			{
-				sb.append(line + "\n");
+				retList.add(i);
 			}
-			is.close();
-			result = sb.toString();
-
-			String itemName;
-			long itemUPC;
-			Date expiration;
-			Date purchased;
-			
-			DateFormat d = DateFormat.getDateInstance();
-			JSONArray jArray = new JSONArray(result);
-			for (int i = 0; i < jArray.length(); i++) 
-			{
-				JSONObject jsonData = jArray.getJSONObject(i);
-				
-				itemUPC = jsonData.getLong("upc");
-				itemName = jsonData.getString("description");
-				expiration = d.parse(jsonData.getString("expirationDate"));
-				purchased = d.parse(jsonData.getString("purchaseDate"));
-				
-				retList.add(new InventoryItem(itemName, itemUPC, expiration, purchased));
-			}
-		}
-		catch (JSONException j)
-		{
-			System.err.println("INVALID JSON: " + j.getMessage());
-		}
-		catch (IllegalStateException i)
-		{
-			System.err.println("ILLEGAL STATE: " + i.getMessage());
-		}
-		catch (IOException e)
-		{
-			System.err.println("IO EXCEPTION: " + e.getMessage());
-		} 
-		catch (ParseException e) 
-		{
-			System.err.println("INVALID DATE: " + e.getMessage());
 		}
 		
 		return retList;
@@ -347,6 +303,7 @@ public class RestConnect implements DataConnect
 	 */
 	public int getItemCount(long UPC)
 	{
+		Log.d("RestConnect", "Counting Items: " + UPC);
 		return getItem(UPC).size();
 	}
 
@@ -355,6 +312,8 @@ public class RestConnect implements DataConnect
 	 */
 	public List<Date> getExpirationDates(long UPC)
 	{
+		Log.d("RestConnect", "Getting Expiration Dates" + UPC);
+		
 		List<InventoryItem> list = this.getItem(UPC);
 		List<Date> retList = new ArrayList<Date>();
 		for (InventoryItem i : list)
@@ -372,6 +331,8 @@ public class RestConnect implements DataConnect
 	 */
 	public List<Date> getPurchaseDates(long UPC)
 	{
+		Log.d("RestConnect", "Getting Purchase Dates" + UPC);
+		
 		List<InventoryItem> list = this.getItem(UPC);
 		List<Date> retList = new ArrayList<Date>();
 		for (InventoryItem i : list)

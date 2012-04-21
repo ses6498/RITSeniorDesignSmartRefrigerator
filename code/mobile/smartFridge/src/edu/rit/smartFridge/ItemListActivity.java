@@ -55,18 +55,31 @@ public class ItemListActivity extends ListActivity
 			inventory = connecter.getInventory();
 			fromList = false;
 
+			String label; // temp storage
 			for (InventoryItem i : inventory)
 			{
 				int count = connecter.getItemCount(i.getUPC());
-				inventoryNames.add(count + "x | " + i.getName());
+				label = count + "x | " + i.getName();
+				
+				// don't add if list contains label
+				if (!inventoryNames.contains(label))
+				{
+					inventoryNames.add(count + "x | " + i.getName());
+				}
 			}
 		} else
 		// we got here from a grocery list
 		{
 			shoppingList = connecter.populateItems(shoppingList);
+			String label; // temp storage
+			
 			for (ShoppingListItem i : shoppingList.getAllItems())
 			{
-				inventoryNames.add(i.getQuantity() + "x | " + i.getName());
+				label = i.getQuantity() + "x | " + i.getName();
+				if (!inventoryNames.contains(label))
+				{
+					inventoryNames.add(i.getQuantity() + "x | " + i.getName());
+				}
 			}
 
 			// set the list title, if there is one
