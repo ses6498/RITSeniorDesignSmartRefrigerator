@@ -1,7 +1,5 @@
 package edu.rit.smartFridge;
 
-import org.apache.http.client.HttpClient;
-
 import android.app.TabActivity;
 import android.content.Intent;
 import android.os.Bundle;
@@ -13,7 +11,6 @@ public class SmartFridgeActivity extends TabActivity
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
-		
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
 
