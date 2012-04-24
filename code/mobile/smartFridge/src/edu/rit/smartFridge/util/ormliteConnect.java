@@ -122,4 +122,16 @@ public class ormliteConnect implements DataConnect
 		return null;
 	}
 
+	public List<ShoppingList> refreshLists()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<InventoryItem> refreshInventory()
+	{
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

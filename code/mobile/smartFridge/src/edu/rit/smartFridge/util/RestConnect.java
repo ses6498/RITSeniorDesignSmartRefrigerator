@@ -110,7 +110,7 @@ public class RestConnect implements DataConnect
 
 		return jArray;
 	}
-
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -135,6 +135,14 @@ public class RestConnect implements DataConnect
 				long listID;
 				String listName;
 				boolean autoGen;
+				
+				if (jArray == null)
+				{
+					// set shoppingLists to null, so the next
+					// time we're here, we'll query the DB again.
+					shoppingLists = null;
+					return shoppingLists;
+				}
 
 				for (int i = 0; i < jArray.length(); i++)
 				{
@@ -211,6 +219,12 @@ public class RestConnect implements DataConnect
 			String itemName;
 			long UPC;
 			int quantity;
+			
+			if (jArray == null)
+			{
+				// return the empty list
+				return retList;
+			}
 
 			// parse for items
 			for (int i = 0; i < jArray.length(); i++)
@@ -219,6 +233,7 @@ public class RestConnect implements DataConnect
 				itemName = jsonData.getString("itemDescription");
 				UPC = jsonData.getLong("itemId");
 				quantity = jsonData.getInt("quantity");
+				
 				retList.addItem(new ShoppingListItem(UPC, itemName, quantity));
 			}
 		}
@@ -254,6 +269,14 @@ public class RestConnect implements DataConnect
 
 				// get JSON (Execute request)
 				JSONArray jArray = getJSON(nameValuePairs);
+				
+				if (jArray == null)
+				{
+					// set inventory to null, so the next time
+					// we're in here, we'll query the DB for it again.
+					inventory = null;
+					return inventory;
+				}
 
 				// temp storage
 				String itemName;
@@ -375,6 +398,18 @@ public class RestConnect implements DataConnect
 			}
 		}
 		return retList;
+	}
+
+	public List<ShoppingList> refreshLists()
+	{
+		shoppingLists = new ArrayList<ShoppingList>();
+		return getLists();
+	}
+
+	public List<InventoryItem> refreshInventory()
+	{
+		inventory = new ArrayList<InventoryItem>();
+		return getInventory();
 	}
 
 }

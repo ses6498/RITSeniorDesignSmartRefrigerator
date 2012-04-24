@@ -10,12 +10,16 @@ import edu.rit.smartFridge.model.ShoppingList;
 public interface DataConnect extends Serializable
 {
 	List<ShoppingList> getLists();
+	
+	List<ShoppingList> refreshLists();
 
 	ShoppingList getList(long listId);
 
 	ShoppingList populateItems(ShoppingList list);
 
 	List<InventoryItem> getInventory();
+	
+	List<InventoryItem> refreshInventory();
 
 	List<InventoryItem> getItem(long UPC);
 

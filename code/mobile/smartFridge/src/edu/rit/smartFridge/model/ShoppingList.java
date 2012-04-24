@@ -44,6 +44,8 @@ public class ShoppingList implements Serializable
 		this.name = name;
 		this.autoGen = autoGen;
 		this.ID = ID;
+		
+		items = new ArrayList<ShoppingListItem>();
 	}
 
 	/**
@@ -54,9 +56,7 @@ public class ShoppingList implements Serializable
 	 */
 	public ShoppingList(String name, boolean autoGen)
 	{
-		this.name = name;
-		this.autoGen = autoGen;
-		items = new ArrayList<ShoppingListItem>();
+		this(name, autoGen, -1);
 	}
 
 	/**

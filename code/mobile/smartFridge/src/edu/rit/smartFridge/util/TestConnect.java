@@ -157,4 +157,14 @@ public class TestConnect implements DataConnect
 		}
 		return dates;
 	}
+
+	public List<ShoppingList> refreshLists()
+	{
+		return getLists();
+	}
+
+	public List<InventoryItem> refreshInventory()
+	{
+		return getInventory();
+	}
 }

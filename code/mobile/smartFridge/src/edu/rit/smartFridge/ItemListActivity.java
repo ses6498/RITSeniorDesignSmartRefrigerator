@@ -7,6 +7,9 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -21,6 +24,7 @@ import edu.rit.smartFridge.util.DataConnect;
 
 public class ItemListActivity extends ListActivity
 {
+	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
 		super.onCreate(savedInstanceState);
@@ -55,20 +59,24 @@ public class ItemListActivity extends ListActivity
 		{
 			inventory = connecter.getInventory();
 			fromList = false;
-
-			String label; // temp storage
-			for (InventoryItem i : inventory)
+			
+			if (inventory != null && inventory.size() != 0)
 			{
-				int count = connecter.getItemCount(i.getUPC());
-				label = count + "x | " + i.getName();
-
-				// don't add if list contains label
-				if (!inventoryNames.contains(label))
+				String label; // temp storage
+				for (InventoryItem i : inventory)
 				{
-					inventoryNames.add(count + "x | " + i.getName());
-					untaggedNames.add(i.getName());
+					int count = connecter.getItemCount(i.getUPC());
+					label = count + "x | " + i.getName();
+	
+					// don't add if list contains label
+					if (!inventoryNames.contains(label))
+					{
+						inventoryNames.add(count + "x | " + i.getName());
+						untaggedNames.add(i.getName());
+					}
 				}
 			}
+			
 		}
 		else
 		{
@@ -76,16 +84,19 @@ public class ItemListActivity extends ListActivity
 			shoppingList = connecter.populateItems(shoppingList);
 			String label; // temp storage
 
-			for (ShoppingListItem i : shoppingList.getAllItems())
+			if (shoppingList.getAllItems().size() != 0)
 			{
-				label = i.getQuantity() + "x | " + i.getName();
-				if (!inventoryNames.contains(label))
+				for (ShoppingListItem i : shoppingList.getAllItems())
 				{
-					inventoryNames.add(i.getQuantity() + "x | " + i.getName());
-					untaggedNames.add(i.getName());
+					label = i.getQuantity() + "x | " + i.getName();
+					if (!inventoryNames.contains(label))
+					{
+						inventoryNames.add(i.getQuantity() + "x | " + i.getName());
+						untaggedNames.add(i.getName());
+					}
 				}
 			}
-
+			
 			// set the list title, if there is one
 			setTitle(shoppingList.getName());
 
@@ -161,5 +172,31 @@ public class ItemListActivity extends ListActivity
 				return false;
 			}
 		});
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.layout.menu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		switch (item.getItemId())
+		{
+			case R.id.refresh:
+				refresh();
+				return true;
+		}
+		
+		return false;
+	}
+	
+	public void refresh()
+	{
+		
 	}
 }

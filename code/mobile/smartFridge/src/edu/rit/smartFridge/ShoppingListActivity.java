@@ -7,6 +7,9 @@ import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
@@ -35,19 +38,22 @@ public class ShoppingListActivity extends ListActivity
 		// copy the list names into another list for display
 		List<String> listNames = new ArrayList<String>();
 		String label;
-		for (ShoppingList l : lists)
+		if (lists != null && lists.size() != 0)
 		{
-			if (l.isAutoGen())
+			for (ShoppingList l : lists)
 			{
-				label = "[A]\t" + l.getName();
+				if (l.isAutoGen())
+				{
+					label = "[A]\t" + l.getName();
+				}
+				else
+				{
+					label = "\t\t" + l.getName();
+				}
+	
+				listNames.add(label);
 			}
-			else
-			{
-				label = "\t\t" + l.getName();
-			}
-
-			listNames.add(label);
-		}
+		} 
 		
 		if (listNames.size() == 0)
 		{
@@ -75,8 +81,7 @@ public class ShoppingListActivity extends ListActivity
 				context.startActivity(i);
 			}
 		});
-
-		lv.setLongClickable(true);
+ lv.setLongClickable(true);
 		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 			public boolean onItemLongClick(AdapterView<?> parent, View v,
 					int position, long id)
@@ -86,5 +91,37 @@ public class ShoppingListActivity extends ListActivity
 				return false;
 			}
 		});
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu)
+	{
+		MenuInflater inflater = getMenuInflater();
+		inflater.inflate(R.layout.menu, menu);
+		return true;
+	}
+	
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item)
+	{
+		
+		switch (item.getItemId())
+		{
+			case R.id.refresh:
+				refresh();
+		}
+		
+		Intent i = new Intent().setClass(getBaseContext(), SmartFridgeActivity.class);
+		i.addFlags(268435456); //FLAG_ACTIVITY_NEW_TASK
+		i.getExtras().putInt(getString(R.string.curr_tab), 1); // set the shopping list activity active
+		getBaseContext().startActivity(i);
+		
+		return true;
+	}
+	
+	public void refresh()
+	{
+		DataConnect connecter = Connector.getInstance();
+		connecter.refreshLists();
 	}
 }
