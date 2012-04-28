@@ -7,6 +7,7 @@ Created on Mar 10, 2012
 import Tkinter as tkinter
 import time
 import ttk
+import tkFont
 
 # Via Sridhar Ratnakumar Stack Overflow
 def treeview_sort_column (tv, col):
@@ -149,11 +150,13 @@ class View ():
         self.checkOut.config(state='normal')
         self.markExp.config(state='disabled')
         self.markCon.config(state='disabled')
+        self.upcEntry.focus()
     
     def checkOutHandler (self):
         state = self.controlObj.checkOutMode()
         self.checkIn.config(state='normal')
         self.checkOut.config(state='disabled')
+        self.upcEntry.focus()
         
         if state:
             self.markCon.config(state='normal')
@@ -406,18 +409,18 @@ class View ():
         leftFrame = ttk.Frame(PEframe)
         leftFrame.grid(column=0, row=0, columnspan=2, rowspan=9, sticky=('N','S'), padx=10, pady=10)
         
-        self.editEntry = ttk.Button(rightFrame, text="Edit Entry", width=20, state='disabled',\
+        self.editEntry = ttk.Button(rightFrame, text="Edit Entry", width=25, state='disabled',\
                                     command=self.editEntryHandler)
-        self.editEntry.grid(column=0, row=0, sticky=('E','N','S'), pady=(10,5))
-        self.delEntry = ttk.Button(rightFrame, text="Delete Entry", width=20, state='disabled',\
+        self.editEntry.grid(column=0, row=0, sticky=('E','N','S'), pady=(10,10), ipady=20)
+        self.delEntry = ttk.Button(rightFrame, text="Delete Entry", width=25, state='disabled',\
                                    command=self.deleteLastHandle)
-        self.delEntry.grid(column=0, row=1, sticky=('E','N','S'), pady=5)
-        self.markCon = ttk.Button(rightFrame, text="Mark as Consumed", width=20, state='disabled',\
+        self.delEntry.grid(column=0, row=1, sticky=('E','N','S'), pady=10, ipady=20)
+        self.markCon = ttk.Button(rightFrame, text="Mark as Consumed", width=25, state='disabled',\
                                   command=self.markConsumedHandle)
-        self.markCon.grid(column=0, row=2, sticky=('E','N','S'), pady=5)
-        self.markExp = ttk.Button(rightFrame, text="Mark as Expired", width=20, state='disabled',\
+        self.markCon.grid(column=0, row=2, sticky=('E','N','S'), pady=10, ipady=20)
+        self.markExp = ttk.Button(rightFrame, text="Mark as Expired", width=25, state='disabled',\
                                   command=self.markExpiredHandle)
-        self.markExp.grid(column=0, row=3, sticky=('E','N','S'), pady=5)
+        self.markExp.grid(column=0, row=3, sticky=('E','N','S'), pady=10, ipady=20)
         self.temperature = ttk.Label(rightFrame, text='Current Temperature:')
         self.temperature.grid(column=0, row=4, sticky=('W'),pady=10)
         self.humidity = ttk.Label(rightFrame, text='Current Humidity:')
@@ -430,14 +433,14 @@ class View ():
         self.radioOffSty = ttk.Style()
         self.radioOffSty.configure('RadioOff.TButton', background='red', foreground='red')
         
-        self.checkIn = ttk.Button(leftFrame, text="Check In", width='20', state='disabled', \
+        self.checkIn = ttk.Button(leftFrame, text="Check In", width='30', state='disabled', \
                                   command=self.checkInHandler)
-        self.checkIn.grid(column=0, row=0, pady=10)
+        self.checkIn.grid(column=0, row=0, pady=10, ipady=20)
         
-        self.checkOut = ttk.Button(leftFrame, text="Check Out", width='20', state='normal', \
+        self.checkOut = ttk.Button(leftFrame, text="Check Out", width='30', state='normal', \
                                    command=self.checkOutHandler)
         self.buttonStyle = ttk.Style()
-        self.checkOut.grid(column=1, row=0, pady=10)
+        self.checkOut.grid(column=1, row=0, pady=10, ipady=20)
         
         self.nameEn = tkinter.StringVar("")
         self.purEn = tkinter.StringVar("")
@@ -446,9 +449,9 @@ class View ():
         self.upcLabel = ttk.Label(leftFrame, text="Product UPC:", font=('TkDefaultFont',12))
         self.upcLabel.grid(column=0, row=1, columnspan=2, sticky=('W'), pady=(10,2))
         self.productUPC = tkinter.StringVar()
-        upcEntry = ttk.Entry(leftFrame, textvariable=self.productUPC)
-        upcEntry.grid(column=0, row=2, columnspan=2, sticky=('W','E'), pady=(0,10))
-        upcEntry.bind("<Return>", self.UPCEntryHandler)
+        self.upcEntry = ttk.Entry(leftFrame, textvariable=self.productUPC)
+        self.upcEntry.grid(column=0, row=2, columnspan=2, sticky=('W','E'), pady=(0,10))
+        self.upcEntry.bind("<Return>", self.UPCEntryHandler)
         self.nameLabel = ttk.Label(leftFrame, text="Product Name:", width=50, font=('TkDefaultFont',12))
         self.nameLabel.grid(column=0, row=3, columnspan=2, sticky=('W','E'), pady=(0,2))
         self.nameEntry = ttk.Entry(leftFrame, textvariable=self.nameEn)
@@ -472,9 +475,9 @@ class View ():
         self.expListLabel = ttk.Label(leftFrame, text="Expiration Warnings:",font=('TkDefaultFont',12))
         self.expListLabel.grid(column=0, row=7, pady=(8,2), columnspan=2, sticky=('W','E'))
         
-        self.expTable = ttk.Treeview (leftFrame, height=5, columns=('severity'))
+        self.expTable = ttk.Treeview (leftFrame, height=6, columns=('severity'))
         self.expTable.column('severity', width=100, anchor='w')
-        self.expTable.column('#0',width=350, anchor='e')
+        self.expTable.column('#0',width=470, anchor='e')
         self.expTable.heading('severity', text='Severity')
         self.expTable.heading('#0', text='Item')
         self.expTable.grid(column=0, row=8, pady=(8,2), columnspan=2, sticky=('W','E'))
@@ -482,6 +485,8 @@ class View ():
         expScroll.grid(column=2, row=8, sticky=('W','N','S'))
         self.expTable['yscrollcommand'] = expScroll.set
         self.expTable.configure(selectmode='browse')
+        
+        self.upcEntry.focus()
         
     def ConstructShoppingListContextMenu (self, frame):
         self.shoppingListContext = tkinter.Menu(frame)
@@ -509,10 +514,10 @@ class View ():
         leftFrame = ttk.Frame(SLframe)
         leftFrame.grid(column=0, row=0, columnspan=1, rowspan=4, sticky=('N','S'), padx=10, pady=10)     
         
-        self.shoppingListTree = ttk.Treeview(leftFrame, height=18, columns=('quantity', 'modified'))
+        self.shoppingListTree = ttk.Treeview(leftFrame, height=20, columns=('quantity', 'modified'))
         self.shoppingListTree.column('quantity', width=100, anchor='e')
         self.shoppingListTree.column('modified', width=100, anchor='e')
-        self.shoppingListTree.column('#0', width=250, anchor='w')
+        self.shoppingListTree.column('#0', width=360, anchor='w')
         self.shoppingListTree.heading('quantity', text='Quantity')
         self.shoppingListTree.heading('modified', text='Date Modified')
         self.shoppingListTree.heading('#0', text='Shopping Lists')
@@ -520,16 +525,16 @@ class View ():
         self.shoppingListTree.configure(selectmode='browse')
         self.shoppingListTree.bind('<<TreeviewSelect>>', self.enableDeleteHandler)
         
-        newList = ttk.Button(rightFrame, text="New List", width=20, command=self.shoppingListPrompt)
-        newList.grid(column=0, row=0, sticky=('E','N','S'), pady=(10,5))
-        sugList = ttk.Button(rightFrame, text="Suggest List", width=20, command=self.createSuggestedShoppingList)
-        sugList.grid(column=0, row=1, sticky=('E','N','S'), pady=5)
-        self.delList = ttk.Button(rightFrame, text="Delete List", width=20, state='disabled',\
+        newList = ttk.Button(rightFrame, text="New List", width=30, command=self.shoppingListPrompt)
+        newList.grid(column=0, row=0, sticky=('E','N','S'), pady=(10,5), ipady=20)
+        sugList = ttk.Button(rightFrame, text="Suggest List", width=30, command=self.createSuggestedShoppingList)
+        sugList.grid(column=0, row=1, sticky=('E','N','S'), pady=5, ipady=20)
+        self.delList = ttk.Button(rightFrame, text="Delete List", width=30, state='disabled',\
                                   command=self.removeShoppingListHandler)
-        self.delList.grid(column=0, row=2, sticky=('E','N','S'), pady=5)
-        self.addItem = ttk.Button(rightFrame, text="Add Item", width=20, state='disabled',\
+        self.delList.grid(column=0, row=2, sticky=('E','N','S'), pady=5, ipady=20)
+        self.addItem = ttk.Button(rightFrame, text="Add Item", width=30, state='disabled',\
                                   command=self.shoppingListAdditionPrompt)
-        self.addItem.grid(column=0, row=3, sticky=('E','N','S'), pady=5)
+        self.addItem.grid(column=0, row=3, sticky=('E','N','S'), pady=5, ipady=20)
         
     def ConstructInventoryContextMenu (self, frame):
         self.inventoryContext = tkinter.Menu(frame)
@@ -546,9 +551,9 @@ class View ():
         CIframe = ttk.Frame(currentInventory, relief="sunken", width=800, height=600)
         CIframe.grid(column=0, row=0, columnspan=1, rowspan=2)
         
-        self.inventoryTree = ttk.Treeview(CIframe, height=16, \
+        self.inventoryTree = ttk.Treeview(CIframe, height=18, \
                                           columns=('quantity', 'purchase', 'expiration'))
-        self.inventoryTree.column('#0', width=300, anchor='e')
+        self.inventoryTree.column('#0', width=475, anchor='e')
         self.inventoryTree.column('quantity', width=90, anchor='e')
         self.inventoryTree.column('purchase', width=105, anchor='e')
         self.inventoryTree.column('expiration', width=105, anchor='e')
@@ -562,8 +567,8 @@ class View ():
         self.root.option_add('*tearOff', False)
         self.ConstructInventoryContextMenu(CIframe)
         
-        clear = ttk.Button(CIframe, text="Clear Inventory", width=50, command=self.clearHandler)
-        clear.grid(column=0, row=1, sticky=('E','S','W'), padx=10, pady=(0,10))
+        clear = ttk.Button(CIframe, text="Clear Inventory", width=55, command=self.clearHandler)
+        clear.grid(column=0, row=1, sticky=('E','S','W'), padx=10, pady=(0,10), ipady=8)
         
     def TimeHandlers (self):
         self.root.bind('<Key-F1>', self.key1)
@@ -578,22 +583,21 @@ class View ():
         self.root.bind('<Key-F10>', self.key0)
       
     def rootDelete (self):
-        self.controlObj.terminate()
         self.root.destroy()
         
     def __init__ (self, controller):
         self.root = tkinter.Tk()
         self.root.title('Smart Refrigerator Application')
     
-        notebook = ttk.Notebook(self.root, width=800, height=480)
+        self.notebook = ttk.Notebook(self.root, width=800, height=480)
         
-        productEntry = ttk.Frame(notebook)
-        shoppingLists = ttk.Frame(notebook)
-        currentInventory = ttk.Frame(notebook)
+        self.productEntry = ttk.Frame(self.notebook)
+        self.shoppingLists = ttk.Frame(self.notebook)
+        self.currentInventory = ttk.Frame(self.notebook)
         
-        self.ConstructProductEntry(productEntry)
-        self.ConstructShoppingList(shoppingLists)
-        self.ConstructCurrentInventory(currentInventory)
+        self.ConstructProductEntry(self.productEntry)
+        self.ConstructShoppingList(self.shoppingLists)
+        self.ConstructCurrentInventory(self.currentInventory)
         
         self.TimeHandlers()
         self.root.bind('<Shift-A>', self.adminKey)
@@ -608,17 +612,28 @@ class View ():
         self.colors[4] = 'green'
         self.colors[5] = 'green'
         
-        notebook.add(productEntry, text="Product Entry", state="normal", font=('TkDefaultFont',12))
-        notebook.add(shoppingLists, text="Shopping Lists")
-        notebook.add(currentInventory, text="Current Inventory")
-        notebook.grid(column=0,row=0)
+        self.photoObj = tkinter.PhotoImage(file='spacer80.gif')
+        self.notebook.add(self.productEntry, text="Product Entry", image=self.photoObj, state="normal", compound="center")
+        self.notebook.add(self.shoppingLists, text="Shopping Lists", image=self.photoObj, compound="center")
+        self.notebook.add(self.currentInventory, text="Current Inventory", image=self.photoObj, compound="center")
+        self.notebook.grid(column=0,row=0)
+        self.notebook.bind('<<NotebookTabChanged>>', self.tabChanged)
         
         self.root.protocol("WM_DELETE_WINDOW", self.rootDelete)
         
         self.controlObj = controller
         
+        self.root.after(0, self.tempSensorTask)
+        self.root.after(0, self.expirationTask)
+        
     def mainLoop (self):
         self.root.mainloop()
+        
+    def tabChanged (self, e):
+        if str(self.notebook.select()) == str(self.productEntry):
+            self.upcEntry.focus()
+            self.upcEntry.focus()
+            self.upcEntry.focus()
         
     def adminClearHistory (self):
         self.controlObj.clearHistory()
@@ -645,6 +660,15 @@ class View ():
         self.initializeGs1Lut = ttk.Button(self.admin, text='Initialize GS1 LUT', width=50,
                                         command=self.adminInitializeGs1Lut)
         self.initializeGs1Lut.grid(column=0, row=2, padx=10, pady=5)
+        
+    def tempSensorTask (self):
+        self.controlObj.pollTemperature()
+        self.controlObj.pollHumidity()
+        self.root.after (30000, self.tempSensorTask)
+        
+    def expirationTask (self):
+        self.controlObj.checkItemExpiration()
+        self.root.after (60000, self.expirationTask)
         
     def key1 (self, event):
         self.controlObj.advanceHour()

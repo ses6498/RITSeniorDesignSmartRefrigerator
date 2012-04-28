@@ -8,8 +8,6 @@ import datetime
 import random
 
 import Inventory
-import HourlyTasks
-import QuickTasks
 import TimeWrapper
 import ExpirationDatePrediction
 import ShoppingListTable
@@ -45,7 +43,6 @@ class Model (threading.Thread):
         self.controllerObj = controller
         
         threading.Thread.__init__(self)
-#        self.start()
         
         self.databaseConnectionInitialization()
         self.initializeUPCLUT()
@@ -62,17 +59,11 @@ class Model (threading.Thread):
         
         self.mode = self.controllerObj.CHECK_IN_MODE
         
-        self.hourlyTasks = HourlyTasks.HourlyTasks(self)
-        self.quickTasks = QuickTasks.QuickTasks(self)
-        self.quickTasks.trigger()
-        
-        
     def echoTime (self):
         print self.timeWrapper.returnTime()
         
     def databaseConnectionInitialization (self):
-#        self.engine = sqlalchemy.create_engine('mysql://ses6498:seNi{}R1)esign@localhost/smartrefrigeratorDb')
-        self.engine = sqlalchemy.create_engine('mysql://ses6498:seNi{}R1)esign@smartfridge.student.rit.edu/smartRefrigeratorDb')
+        self.engine = sqlalchemy.create_engine('mysql://srAdmin:s3niorD3sign@smartfridge.student.rit.edu/smartRefrigeratorDb')
         self.metadata = sqlalchemy.MetaData()        
         
     def initializeUPCLUT (self):
@@ -123,7 +114,7 @@ class Model (threading.Thread):
         return self.session.query(UpcLutItem).filter(UpcLutItem.upc==upc).count() > 0
     
     def advanceHour (self):
-        self.hourlyTasks.trigger()
+        self.checkItemExpiration()
         self.timeWrapper.advanceHour()
     
     def addItem (self, upc, params=None):
@@ -356,15 +347,13 @@ class Model (threading.Thread):
         if len(shoppingListItem) > 1: print 'Error Condition' + str(lineno())
         return shoppingListItem[0]
     
-    def terminate (self):
-        self.hourlyTasks.terminate()
-        self.quickTasks.terminate()
-    
     def pollTemperature(self):
-        return random.normalvariate(30, 5)
+        temp = random.normalvariate(30, 5)
+        self.controllerObj.updateTemperature(temp)
     
     def pollHumidity (self):
-        return random.normalvariate(50, 15)
+        hum = random.normalvariate(50, 15)
+        self.controllerObj.updateHumidity(hum)
     
     def clearHistory (self):
         self.currentInventory.clearHistory()

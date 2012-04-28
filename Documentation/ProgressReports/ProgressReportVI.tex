@@ -13,7 +13,7 @@
 \huge
 \textsc{Smart Refrigerator Design Project}\\
 \Large
-\textsc{Progress Report V} \\
+\textsc{Progress Report VI} \\
 \vspace{.20cm}
 \hrule
 \vspace{.40cm}
@@ -34,7 +34,7 @@ BeagleBoard \newline procured & February 10, 2012 & SS & NA & Complete \\
 \hline
 Angstrom operating system running on board & February 24, 2012 & DS & NA & Complete \\
 \hline
-Peripherals properly interfacing with \newline board & March 02, \newline 2012 & DS & March 30, \newline 2012 & Complete aside from temperature sensor. Was not considered in \newline original timeline. \\
+Peripherals properly interfacing with \newline board & March 02, \newline 2012 & DS & April 27, \newline 2012 & Touch control still not working for LCD display. Temperature sensor moved to its own task. \\
 \hline
 Basic mobile UI, \newline suitable for \newline debugging & March 09, \newline 2012 & BR & NA & Complete \\
 \hline
@@ -42,7 +42,7 @@ Basic base station UI, suitable for \newline debugging & March 09, \newline 2012
 \hline
 Database I/O \newline configured & March 16, \newline 2012 & DS &  March 23, \newline 2012 & Complete. MySQL databases configured, can be accessed with Python application. \\
 \hline
-Testing and \newline integration of \newline temperature and \newline humidity sensor & March 16,  \newline 2012 &SS/DS & April 20, \newline 2012 & Partially complete. Tested using Arduino. Beagleboard GPIO \newline interface configured, needs testing. \\
+Testing and \newline integration of \newline temperature and \newline humidity sensor & March 16,  \newline 2012 &SS/DS & April 27, \newline 2012 & May not be able to interact with sensor using Beagleboard GPIO and level shifter. Have obtained a replacement I$^2$C temperature sensor from Dr. Mondragon. \\
 \hline
 Database and web server hosted by\newline Beagleboard & March 16, \newline 2012 & DS & NA & Complete \\
 \hline
@@ -59,7 +59,7 @@ Beagleboard \newline touchscreen display procured & March 16, \newline 2012 & DS
 \hline
 \textbf{Milestone} & \textbf{Scheduled Date} & \textbf{Assigned} & \textbf{Modified Date} & \textbf{Comments} \\
 \hline
-Mobile application integrated with web server & March 30, \newline 2012 &BR & April 20, \newline 2012 & Database integration still required.\\
+Mobile application integrated with web server & March 30, \newline 2012 &BR & April 20, \newline 2012 & Complete\\
 \hline
 User profiling and statistical analysis & March 30,\newline 2012 & SS & April 6, \newline 2012 & Complete\\
 \hline 
@@ -67,7 +67,7 @@ Shopping lists, item modification, basic \newline settings & March 30, \newline2
 \hline
 Updated base station UI & April 6,\newline 2012 & SS & & Complete, awaiting review by team or outside testers.\\
 \hline
-Updated mobile application & April 6, \newline2012 & BR & April 20, \newline 2012& \\
+Updated mobile application & April 6, \newline2012 & BR & April 20, \newline 2012& Complete\\
 \hline
 Improved robustness of mobile interface& April 13,\newline 2012 & DS & & Purpose of this task has become unclear. May remove.\\
 \hline
@@ -96,11 +96,11 @@ System testing and demo preparation & April 20, \newline2012 & SS & April 27, \n
 \hline
 \textbf{Milestone} & \textbf{Scheduled Date} & \textbf{Assigned} & \textbf{Modified Date} & \textbf{Comments} \\
 \hline
-Mobile application integrated with web server & March 30, \newline 2012 &BR & April 20, \newline 2012 & Database integration still required.\\
+Mobile application integrated with web server & March 30, \newline 2012 &BR & April 20, \newline 2012 & Complete\\
 \hline
-Updated mobile application & April 6, \newline2012 & BR & April 20, \newline2012& \\
+Updated mobile application & April 6, \newline2012 & BR & April 20, \newline2012& Complete \\
 \hline
-Testing and \newline integration of \newline temperature and \newline humidity sensor & March 16,  \newline 2012 &DS & April 20, \newline 2012 & Partially complete. Tested using Arduino. Beagleboard GPIO \newline interface configured, needs testing. \\
+Testing and \newline integration of \newline temperature and \newline humidity sensor & March 16,  \newline 2012 &DS & April 27, \newline 2012 &  May not be able to interact with sensor using Beagleboard GPIO and level shifter. Have obtained a replacement I$^2$C temperature sensor from Dr. Mondragon. \\
 \hline
 Web interface \newline development & April 20, \newline 2012 & SS & & Complete. Does not look flashy but is effective and functional. \\
 \hline
@@ -113,11 +113,11 @@ Web interface \newline development & April 20, \newline 2012 & SS & & Complete. 
 \begin{center}
 \begin{tabular}{| p{3.5 cm} | p{2 cm} | p{2 cm}| p{2 cm} | p{6 cm} | }
 \hline
-Mobile application integrated with web server & March 30, \newline 2012 &BR & April 20, \newline 2012 & Database integration still required.\\
+Testing and \newline integration of \newline temperature and \newline humidity sensor & March 16,  \newline 2012 & DS & April 27, \newline 2012 & May not be able to interact with sensor using Beagleboard GPIO and level shifter. Have obtained a replacement I$^2$C temperature sensor from Dr. Mondragon. \\
 \hline
-Updated mobile application & April 6, \newline2012 & BR & April 20, \newline2012& \\
+Peripherals properly interfacing with \newline board & March 02, \newline 2012 & DS & April 27, \newline 2012 & Touch control still not working for LCD display. Temperature sensor moved to its own task. \\
 \hline
-Testing and \newline integration of \newline temperature and \newline humidity sensor & March 16,  \newline 2012 & DS & April 20, \newline 2012 & Partially complete. Tested using Arduino. Beagleboard GPIO \newline interface configured, needs testing. \\
+Integration testing \newline and system \newline verification & April 13, \newline2012 & BR & April 27, \newline2012& \\
 \hline
 System testing and demo preparation & April 20, \newline2012 & SS & April 27, \newline2012& \\
 \hline
@@ -127,13 +127,12 @@ System testing and demo preparation & April 20, \newline2012 & SS & April 27, \n
 
 \section{Status}
 \begin{itemize}
-\item Base station user interface and processing completed; awaiting possible aesthetic revisions following inclusion of the touch screen.
-\item The web interface is complete. It was implemented using a simple HTML front end and PHP queries to MySQL database.
-\item The mobile interface needs to be integrated with the MySQL databases. ORMLite can not interact with MySQL databases and research indicates Android can not interact with remote databases directly. This interface may require additional PHP back end on the server side.
-\item SciPy packages have been installed and Python interface is functioning correctly again.
-\item Temperature sensor needs to be debugged and included. Touchscreen drivers need to be updated; screen orientation has been corrected but touch functionality is not working.
+\item Server-side PHP has been added to allow the mobile interface to query against the Beagleboard's MySQL databases. Http Post Requests are sent to indicate desired query, PHP is used to access the databases and elements are returned as a JSON string.
+\item The mobile interface development is complete, though it still needs to be tested on real phone.
+\item Touchscreen interaction has still not been resolved, and most options appear to be exhausted. As a last resort, we could revert to the test image for the touchscreen and add back in all other modules; this is not a  very desirable option.
+\item Temperature sensor can not be controlled by Beagleboard with code used on Arduino, since very strict timing increments must be provided. Instead, a replacement I$^2$C temperature sensor has been procured from Dr. Mondragon.
+\item The refrigerator must be prepared for demo.
 \end{itemize}
-\pagebreak
 \section{Gantt Chart}
 \begin{figure}[h!]
 \begin{center}

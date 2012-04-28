@@ -6,7 +6,7 @@ Created on Mar 29, 2012
 import sqlalchemy
 import sqlalchemy.orm
 from sqlalchemy.sql import select
-from scipy import stats
+#from scipy import stats
 import numpy
 
 import Inventory
@@ -122,6 +122,21 @@ class ShoppingListTable (object):
         
         return returnValue
     
+    def gaussianKde (self, x0, xs):
+        if len(xs) == 0:
+            return 0.
+        else:
+            bw = 3. / 4. * len(xs) ** (-.2)
+            p = 0.
+            
+            for lcv in xrange(len(xs)):
+                d = x0 - xs[-(lcv+1)]
+                p += .3989 * numpy.exp(-.5 * d * d / bw)
+                
+            wp = p / (len(xs) * bw)
+            
+            return wp
+    
     def populateSuggestedShoppingList (self, shoppingList):
         table = self.model.currentInventory.purchaseHistoryTable
         recommendationThreshold = 0.10
@@ -138,9 +153,10 @@ class ShoppingListTable (object):
             
             if len(purchaseDates) > 2:
                 purchaseDiffs = [(purchaseDates[x] - purchaseDates[x-1]).total_seconds() / (60 * 60) for x in range(1,len(purchaseDates))]
-                kde = stats.kde.gaussian_kde(numpy.array(purchaseDiffs))
+#                kde = stats.kde.gaussian_kde(numpy.array(purchaseDiffs))
                 currentTimeDiff = (self.model.timeWrapper.returnTime() - purchaseDates[-1]).total_seconds() / (60 * 60)
-                probabilities.append((upc,kde(currentTimeDiff)))
+                probabilities.append((upc, self.gaussianKde(currentTimeDiff, purchaseDiffs)))
+#                probabilities.append((upc,kde(currentTimeDiff)))
                 
         probabilities = sorted(probabilities, key = lambda x:x[1])
         recommended = dict()

@@ -152,14 +152,20 @@ class Controller ():
     def populateGs1Lut (self):
         self.modelObj.populateGs1Lut()
         
+    def pollTemperature (self):
+        self.modelObj.pollTemperature()
+        
+    def pollHumidity (self):
+        self.modelObj.pollHumidity()
+        
+    def checkItemExpiration(self):
+        self.modelObj.checkItemExpiration()
+        
     def updateTemperature (self, temperature):
         self.viewObj.updateTemperature(temperature)
         
     def updateHumidity (self, humidity):
         self.viewObj.updateHumidity(humidity)
-        
-    def terminate (self):
-        self.modelObj.terminate()
         
 if __name__ == '__main__':
     
