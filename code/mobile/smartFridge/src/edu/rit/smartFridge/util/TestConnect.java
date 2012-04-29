@@ -17,10 +17,10 @@ public class TestConnect implements DataConnect
 	 */
 	private static final long serialVersionUID = 8958256739421033944L;
 
-	ShoppingList list1 = new ShoppingList("List 1", false);
-	ShoppingList list2 = new ShoppingList("List 2", false);
-	ShoppingList list3 = new ShoppingList("List 3", false);
-	ShoppingList list4 = new ShoppingList("List 4", true);
+	ShoppingList list1 = new ShoppingList("Steve's List", false);
+	ShoppingList list2 = new ShoppingList("Dustin's List", false);
+	ShoppingList list3 = new ShoppingList("Ben's List", false);
+	ShoppingList list4 = new ShoppingList("Suggested Shopping List 1", true);
 
 	InventoryItem milk = new InventoryItem("1% Milk", 10, new Date("10/11/12"),
 			new Date("10/01/12"));
@@ -90,17 +90,26 @@ public class TestConnect implements DataConnect
 	{
 		Random generator = new Random();
 		int size = generator.nextInt(10);
+		int count;
 		for (int i = 0; i < size; i++)
 		{
-			list.addItem(Inventory[generator.nextInt(size)],
-					generator.nextInt(3));
+			count = generator.nextInt(3) + 1;
+			list.addItem(Inventory[generator.nextInt(size)], count);
 		}
 		return list;
 	}
 
 	public List<InventoryItem> getInventory()
 	{
-		return Arrays.asList(Inventory);
+		List<InventoryItem> retList = new ArrayList<InventoryItem>();
+		int index = 0;
+		Random generator = new Random();
+		for (int i = 0; i < 15; i++)
+		{
+			index = generator.nextInt(10);
+			retList.add(Inventory[index]);
+		}
+		return retList;
 	}
 
 	public List<InventoryItem> getItem(long UPC)
@@ -120,15 +129,9 @@ public class TestConnect implements DataConnect
 
 	public int getItemCount(long UPC)
 	{
-		int count = 0;
-		for (InventoryItem i : Inventory)
-		{
-			if (i.getUPC() == UPC)
-			{
-				count++;
-			}
-		}
-		return count;
+		Random generator = new Random();
+		int retVal = generator.nextInt(4);
+		return retVal + 1; // so we don't get zeroes
 	}
 
 	public List<Date> getExpirationDates(long UPC)
