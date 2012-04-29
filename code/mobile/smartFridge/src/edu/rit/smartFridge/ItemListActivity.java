@@ -125,21 +125,24 @@ public class ItemListActivity extends ListActivity
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 			{
 				// TODO: this doesn't work for the inventory list, only shopping list items.
-				String name = finalNames.get(position);
 				InventoryItem item = null;
-				for (InventoryItem i : finalInventory)
+				if (finalNames.size() > 0)
 				{
-					if (i.getName() == name)
+					String name = finalNames.get(position);
+					for (InventoryItem i : finalInventory)
 					{
-						item = i;
-						break;
+						if (i.getName() == name)
+						{
+							item = i;
+							break;
+						}
 					}
+					Intent i = new Intent()
+							.setClass(context, ItemDetailActivity.class)
+							.putExtra(getString(R.string.current_upc), item.getUPC())
+							.putExtra(getString(R.string.current_item), item.getName());
+					context.startActivity(i);
 				}
-				Intent i = new Intent()
-						.setClass(context, ItemDetailActivity.class)
-						.putExtra(getString(R.string.current_upc), item.getUPC())
-						.putExtra(getString(R.string.current_item), item.getName());
-				context.startActivity(i);
 			}
 		});
 
