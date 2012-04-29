@@ -50,15 +50,15 @@ public class ShoppingListActivity extends ListActivity
 				{
 					label = "\t\t" + l.getName();
 				}
-	
+
 				listNames.add(label);
 			}
 		} 
-		
+
 		if (listNames.size() == 0)
 		{
 			// no lists to display
-			listNames.add("No shopping lists to display");
+			listNames.add("No shopping lists to display.");
 		}
 
 		// display the list
@@ -73,15 +73,18 @@ public class ShoppingListActivity extends ListActivity
 			public void onItemClick(AdapterView<?> parent, View view,
 					int position, long id)
 			{
-				// populate the shopping list's items
-				Intent i = new Intent().setClass(context,
-						ItemListActivity.class).putExtra(
-						getString(R.string.current_list),
-						lists.get(position).getID());
-				context.startActivity(i);
+				if (lists != null)
+				{
+					// populate the shopping list's items
+					Intent i = new Intent().setClass(context,
+							ItemListActivity.class).putExtra(
+									getString(R.string.current_list),
+									lists.get(position).getID());
+					context.startActivity(i);
+				}
 			}
 		});
- lv.setLongClickable(true);
+		lv.setLongClickable(true);
 		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 			public boolean onItemLongClick(AdapterView<?> parent, View v,
 					int position, long id)
@@ -92,7 +95,7 @@ public class ShoppingListActivity extends ListActivity
 			}
 		});
 	}
-	
+
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
@@ -100,25 +103,25 @@ public class ShoppingListActivity extends ListActivity
 		inflater.inflate(R.layout.menu, menu);
 		return true;
 	}
-	
+
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		
+
 		switch (item.getItemId())
 		{
 			case R.id.refresh:
 				refresh();
 		}
-		
+
 		Intent i = new Intent().setClass(getBaseContext(), SmartFridgeActivity.class);
 		i.addFlags(268435456); //FLAG_ACTIVITY_NEW_TASK
 		i.getExtras().putInt(getString(R.string.curr_tab), 1); // set the shopping list activity active
 		getBaseContext().startActivity(i);
-		
+
 		return true;
 	}
-	
+
 	public void refresh()
 	{
 		DataConnect connecter = Connector.getInstance();
