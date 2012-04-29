@@ -73,13 +73,13 @@ The New York Times reports that an average American family of four will account 
 \subsection{Objective Statement}
 The objective of this project is to design a prototype that will allow a user to track food items in order to reduce waste and improve shopping efficiency. The system will remind the user about items nearing their expiration date and track the frequency of purchased items. From this frequency calculation the system will suggest typical shopping lists. A mobile phone application will provide an interface to the unit to view or create shopping lists and to query inventory.
 \subsection{Description}
-A UPC scanner will be used to identify items added or removed from the refrigerator's inventory; a database of UPC codes will translate from the scanned code to an item description. Two inventory databases will be maintained, one linking UPC codes to product descriptions and expiration dates and another to store items currently checked into the refrigerator. A central processing platform on the base station will be used to decode UPC information and to store and interact with the databases. This platform will provide a web interface accessible both via a web browser and an Android mobile device. The display on the main unit will allow a user to review the current inventory with expiration dates and will provide additional information when adding or removing items. The base station, web and mobile interfaces can also be used to display the current inventory and suggested shopping lists. The mobile application will interact with the same web interface but will provide a graphical interface optimized for smaller displays. The system will continually estimate the frequency that particular items are purchased and will use this information, combined with the expiration dates and purchase dates, to suggest shopping lists. In addition to shelf life, temperature is also a critical factor for food storage systems. To address this need the system will incorporate a temperature and humidity sensor, and this information will be accessible through the base station application.
+A UPC scanner will be used to identify items added or removed from the refrigerator's inventory, and a database of UPC codes will translate from the scanned code to an item description. Two inventory databases will be maintained: one linking UPC codes to product descriptions and another to store items currently checked into the refrigerator and thier expiration dates. A central processing platform on the base station will be used to decode UPC information and to interact with the databases. This processing platform will provide a web interface accessible via a web browser or an Android mobile device. A display on the main unit will allow users to review the current inventory, with expiration dates, and will provide additional information when adding or removing items. The base station, web and mobile interfaces can also be used to display the current inventory and suggested shopping lists. The mobile application will interact with the same web interface but will provide a graphical interface optimized for smaller displays. The system will continually estimate the purchasing frequency for items and will use this information, combined with the expiration and purchase dates, to suggest shopping lists. In addition to shelf life, temperature is also a critical factor for food storage systems. To address this need, the system will incorporate a temperature sensor and the temperature information will be accessible through the base station application.
 \newline \quad \newline
-A high level system diagram isolating components is shown in Figure \ref{fig:sysdiag}.
+A high level system diagram which partitions major components is shown in Figure \ref{fig:sysdiag}.
 \begin{figure}[h]
 \begin{center}
 \vspace{0.5cm}
-\includegraphics[scale=0.7]{../graphics/HighestLevelDiagram}
+\includegraphics[scale=0.5]{../graphics/HighestLevelDiagram}
 \caption{High Level System Diagram}
 \label{fig:sysdiag}
 \end{center}
@@ -88,7 +88,7 @@ A high level system diagram isolating components is shown in Figure \ref{fig:sys
 \section{Requirements Specification}
 \subsection{Customer Needs}
 \begin{enumerate}
-\item The system should provide an intuitive, easy to use graphical interface.
+\item The system should provide an intuitive and easy to use graphical interface.
 \item The system should require minimal user input.
 \item The system should be able to scan product codes and identify corresponding items quickly.
 \item The system should provide secure remote access.
@@ -97,7 +97,7 @@ A high level system diagram isolating components is shown in Figure \ref{fig:sys
 \item The system should provide a method to create and edit shopping lists.
 \item The system should recommend shopping lists which accurately reflect buying habits.
 \item The system should function as an add-on to an existing refrigerator or pantry.
-\item The system should indicate if food products are stored at an unsafe temperature or humidity.
+\item The system should indicate if food products are stored at an unsafe temperature.
 \end{enumerate}
 \pagebreak
 \subsection{Engineering Specifications}
@@ -109,9 +109,9 @@ Customer Need & Engineering Requirement & Justification \\
 \hline
 2,3 &A. An off-the-shelf UPC scanner should be used to input items. & A UPC scanner can read product codes with a single click.\\
 \hline
-3 &B. An internal UPC code database should be used to associate codes with items.&An internal database will remove delays associated with an internet look-up.\\
+3 &B. An internal UPC code database should be used to associate codes with items.&An internal database will remove delays associated with an Internet look-up.\\
 \hline
-1,4,6&C. The system should be internet enabled and provide a web interface.&By providing a web interface any other internet-connected device can access the system.\\
+1,4,6&C. The system should be Internet enabled and provide a web interface.&By providing a web interface any other Internet-connected device can access the system.\\
 \hline
 4&D. Remote access should be authenticated with user name and password.&User names and passwords are standard for access control.\\
 \hline
@@ -121,7 +121,7 @@ Customer Need & Engineering Requirement & Justification \\
 \hline
 1,5&G. Interface will provide a visual indication to the user which items are closest to expiring.&The goal of the system is to reduce waste due to expiration.\\
 \hline
-1,6&H. From both base station, web and mobile interfaces the user will be able to view an inventory list.&The user needs access to the current inventory in order to use items and shop effectively.\\
+1,6&H. From the base station, web and mobile interfaces the user will be able to view an inventory list.&The user needs access to the current inventory in order to use items and shop effectively.\\
 \hline
 7,8&I. A database will be devoted to storing recommend shopping lists produced by the system.&User may wish to retain generic shopping lists for future use.\\
 \hline
@@ -131,7 +131,7 @@ Customer Need & Engineering Requirement & Justification \\
 \hline
 9&L. The system will be self-contained and no modifications will be required to existing appliances.&Similar systems are commercially available but require costly replacement of existing appliances.\\
 \hline
-10&M. The system should measure temperature and humidity within the refrigerator. & Temperature and humidity measurements will allow the user to determine if food storage conditions are safe. \\
+10&M. The system should measure temperature within the refrigerator. & Temperature measurements will allow the user to quantitatively determine if food storage conditions are safe. \\
 \hline
 \end{tabular}
 \end{center}
@@ -140,7 +140,7 @@ Customer Need & Engineering Requirement & Justification \\
 \section{Concept Selection}
 \subsection{Evaluation of Existing Systems}
 Many refrigerator systems are currently available that offer integrated displays and internet connectivity. LG, Electrolux, and Samsung all offer refrigerators with large LCD displays that provide access to calendar applications, recipes, weather forecasts, and music and photo sharing services. The principle shortcoming of these devices is the elevated price and the need to completely replace existing appliances. As a more affordable alternative, tablet mounts are available for refrigerators as well.
-However, these systems do not offer tracking of the refrigerator's contents and do not attempt to reduce waste or improve efficiency. In April of 2011, LG demonstrated a ``Smart Fridge" with goals closer to the proposed system. The sensors and algorithms used were not disclosed but the product objective is similar, tracking user purchases and providing a mobile interface to the refrigerator's contents while shopping \cite{lg}. Our system will provide a much more inexpensive alternative and will be more flexible; the system proposed will not be strictly limited to refrigerators and can be used as an add-on to an existing system.
+However, these systems do not offer tracking of the refrigerator's contents and do not attempt to reduce waste or improve efficiency. In April of 2011, LG demonstrated a ``Smart Fridge" with goals closer to the proposed system. The sensors and algorithms used were not disclosed but the product objective is similar: tracking user purchases and providing a mobile interface to the refrigerator's contents while shopping \cite{lg}. Our system will provide a much more inexpensive alternative and will be more flexible; the system proposed will not be strictly limited to refrigerators and can be used as an add-on to an existing system.
 \newline \quad \newline
 Many patents exist on inventions related to the smart refrigerator system as a whole and its goal to reduce waste, but do not attempt to reduce user input. Patents 2004/0085225 A1 \emph{Methods and Apparatus to Monitor the Inventory of a Food Storage Unit}, 2010/0148958 A1 \emph{Expiration Warning Device of Refrigerator}, and 2011/0109453 A1 \emph{Apparatus for Warning of an Expiration Date} all treat the goals of the overall system but rely on the user to enter expiration dates manually. More advanced systems, as in Patents 7,861,542 B2 \emph{Refrigerator Including Food Product Management System} and 2011/016555 A1 \emph {Refrigerator and Control Method Thereof}, use radio frequency identification (RFID) tags attached to foods to read expiration dates, with user input as a fallback. The prototype designed will improve the simple user-intensive method of the first group but without the added scope of radio frequency identification used in the second group.
 \subsection{Concepts Considered and Chosen}
@@ -166,9 +166,11 @@ Total &2+ &0&4+&7+\\
 \label{tab:datesys}
 \end{table}
 \newline \quad \newline
-Ease of use is one of the most critical system requirements; a system relying completely on input from the user will not be acceptable to consumers. However, feasibility and limiting processing performance required are important secondary objectives. Accuracy is critical to the goal of reducing waste due to expiration, but there is inherently some variability even in reported expiration dates. Image processing presents too much additional scope and too many additional requirements in exchange for marginal gains. As long as the predictive system learns from user input and anticipates that items will be purchased in different conditions, this scheme should be sufficient. One additional risk posed by the predictive system, the problem of deciphering text descriptions in order to assign an appropriate prediction, has been mitigated by using the ItemMaster UPC database. Many websites, such as the Food and Drug Administration or community based resources like \url{www.stilltasty.com}, provide ``rule of thumb" style predictions for expiration dates. However, the system must associate a product description with a rule of thumb, which, after investigation, appears to be a difficult classification problem. The ItemMaster UPC database provides not only an association between a UPC code and a text description but also provides a GS1 category. There are a modest number of GS1 categories applicable to this system, each of which can be assigned a rule of thumb to initialize the prediction system.
+Ease of use is one of the most critical system requirements; a system relying completely on input from the user will not be acceptable to consumers. However, feasibility and limiting processing performance required are important secondary objectives. Accuracy is critical to the goal of reducing waste due to expiration, but there is inherently some variability even in reported expiration dates. Image processing presents too much additional scope and too many additional requirements in exchange for marginal gains. As long as a predictive system learns from user input and anticipates that items will be purchased in different conditions, this scheme should be sufficient. One additional risk posed by the predictive system is the problem of deciphering text descriptions in order to assign an appropriate prediction. This risk has been mitigated by using the ItemMaster UPC database. Many websites, such as the Food and Drug Administration or community based resources like \url{www.stilltasty.com}, provide ``rule of thumb"  predictions for expiration dates. However, the system must associate a product description with a rule of thumb, which, after investigation, appears to be a difficult classification problem. The ItemMaster UPC database provides not only an association between a UPC code and a text description but also provides a GS1 category. There are a modest number of GS1 categories applicable to this system, each of which can be assigned a rule of thumb to initialize the prediction system.
 \newline \quad \newline
-The problem of predicting shopping habits will be formulated as a problem of predicting the probability that the user will purchase a product again after N days from the last purchase. A product will be added to the shopping suggestions at the peaks in the probability density function, after which the process would reset. To evaluate modeling strategies, receipts were retrieved for a three month interval from a single user. An initial attempt was to assume that the large number of factors influencing shopping habits could be approximated as normally distributed. However, for the data tested, this approximation was very poor; the data considered were either multi-modal or contained a single mode with outliers. In all cases considered, the distribution was shifted to the point where the most likely suggestion time was actually positioned in an interval not supported by any of the samples. A more advanced approach, a non-parametric distribution estimate, was considered next; this method outperformed the simple normal approximation, but appeared to interpolate more than necessary and appeared to be the most computationally complex method considered. However, SciPy, a python scientific computing library provides non-parametric distribution approximation functions which are optimized and implemented in C. Database storage is another area where a non-parametric method excels; all other methods would require some parameter, possibly an unknown amount, be stored in the database or to be recalculated every prediction. A final approach clustered the data points, approximated each cluster with a normal distribution, and summed these distributions. With this strategy, each mode can be captured without the influence of outliers. The accuracy of the methods considered were evaluated both qualitatively, by looking at the resulting probability density functions, and also quantitatively, by considering performance on the example sets. Overall, clustering to produce a sum of Gaussians appeared slightly more accurate but was the most difficult to store in a database. The probability metrics used are tabulated in Table \ref{tab:pugh2}. The two goals of this subsystem, maximizing the probability of accurate recommendations and minimizing the probability of unsupported recommendations, were given equal weight during concept selection.
+The problem of predicting shopping habits will be formulated as a problem of predicting the probability that the user will purchase a product again after $N$ days from the last purchase. A product will be added to the shopping suggestions at the peaks in the probability density function, after which the process would reset. To evaluate modeling strategies, receipts were retrieved for a three month interval from a single user. An initial attempt was to assume that the large number of factors influencing shopping habits could be approximated as normally distributed. However, for the data tested, this approximation was very poor; the data considered were either multi-modal or contained a single mode with outliers. In all cases considered, the distribution was shifted to the point where the most likely suggestion time was actually positioned in an interval not supported by any of the samples. A more advanced approach, a non-parametric distribution estimate, was considered next; this method outperformed the simple normal approximation, but appeared to interpolate more than necessary and appeared to be the most computationally complex method considered. However, SciPy, a Python scientific computing library provides non-parametric distribution approximation functions which are optimized and implemented in C. Database storage is another area where a non-parametric method excels; all other methods would require some parameter, or possibly a variable number of parameters, be stored in the database or be recalculated every prediction. 
+\newline \quad \newline
+A final approach clustered the data points, approximated each cluster with a normal distribution, and summed these distributions. With this strategy, each mode can be captured without the influence of outliers. The accuracy of the methods considered were evaluated both qualitatively, by looking at the resulting probability density functions, and also quantitatively, by considering performance on the example sets. Overall, clustering to produce a sum of Gaussians appeared slightly more accurate but was the most difficult to store in a database. The probability metrics used are tabulated in Table \ref{tab:pugh2}. The goals of this subsystem, maximizing the probability of accurate recommendations and minimizing the probability of unsupported recommendations, ease of computation, and the ability to be stored in a database, were given equal weight during concept selection. Despite its slightly worse performance, the non-parametric distribution estimate was chosen since it required no storage in the database and was provided in the Python scientific computing library.
 
 \begin{table}[h!]
 \vspace{0.5cm}
@@ -210,14 +212,14 @@ The problem of predicting shopping habits will be formulated as a problem of pre
 \end{table}
 
 \quad \newline
-The choice of the base station main display and processing platform are linked but directed mainly by the processing platform. For example, if a personal computer were used a standard LCD monitor may be appropriate, whereas if a tablet were chosen as the main processing engine the interface would be provided automatically. The most strongly considered option was to use a simple micro-controller or BeagleBoard to handle the processing load and to use a large, relative to the micro-controller, LCD display. Comparisons of different processing platform methods and different user interface choices for the base station are shown in Tables \ref{tab:proc} and \ref{tab:disp}, respectively. The evaluation criteria for the processing platform and user interface were given equal weight; though since the processing platform and user interface concepts were related, the criteria of the processing platform were given higher priority than the user interface.
+The choice of the base station main display and processing platform are linked, but dictated mainly by the processing platform. For example, if a personal computer were used a standard LCD monitor may be appropriate, whereas if a tablet were chosen as the main processing engine the interface would be provided automatically. The most strongly considered option was to use a simple micro-controller or BeagleBoard to handle the processing load and to use a modest sized LCD display. Comparisons of different processing platform methods and different user interface choices for the base station are shown in Tables \ref{tab:proc} and \ref{tab:disp}, respectively. The evaluation criteria for the processing platform and user interface were given equal weight; though since the processing platform and user interface concepts were related, the criteria of the processing platform were given higher priority than the user interface.
 \begin{table}[h!]
 \caption{Comparison of Main Processing Platforms}
-\begin{tabular}{| p{1.5in} | p{.75in} | p{1.5in} | p{0.75in} | p{1.15in} | }
+\begin{tabular}{| p{1.5in} | p{.75in} | p{1.3in} | p{0.75in} | p{1.15in} | }
 \cline{2-5}
 \multicolumn{1}{c}{}&\multicolumn{4}{|c|}{Method} \\
 \cline{2-5}
-\multicolumn{1}{c|}{}&Personal \newline Computer&Tablet (Combined UI \newline and Processing)&Micro-controller & Beagleboard-xM\\
+\multicolumn{1}{c|}{}&Personal \newline Computer&Tablet (Combined \newline UI and Processing)&Micro-controller & Beagleboard-xM\\
 \hline
 Processing Resources&+ + + +&+ +&+&+ + +\\
 \hline
@@ -235,11 +237,11 @@ Total &2-&5+&7+& 9+\\
 \begin{table}[h!]
 \vspace{0.5cm}
 \caption{Comparison of Main User Interface Displays}
-\begin{tabular}{| p{2in} | p{1in} | p{1.5in} | p{1.5in} | p{1.5in} |}
+\begin{tabular}{| p{1.6in} | p{1in} | p{1.4in} | p{1.5in} | p{1.5in} |}
 \cline{2-4}
 \multicolumn{1}{c}{}&\multicolumn{3}{|c|}{Method} \\
 \cline{2-4}
-\multicolumn{1}{c|}{}&LCD PC \newline Monitor&Tablet&LCD with \newline BeaglBoard-xM\\
+\multicolumn{1}{c|}{}&LCD PC \newline Monitor&Tablet&LCD with \newline BeagleBoard-xM\\
 \hline
 Integration with Unit&- - -&-&+ + +\\
 \hline
@@ -257,36 +259,39 @@ Total&3+&12+&13+\\
 \end{tabular}
 \label{tab:disp}
 \end{table}
-\noindent Evaluating both the interface choice and the processing platform choice together eliminates the personal computer choice; a personal computer cannot be integrated without significantly increasing the form factor of the system. A personal computer also greatly simplifies the system and strays away from an implementation tailored to this prototype. A tablet based interface was considered a very feasible alternative; however the cost and tailorability of the system are again concerns. A micro-controller based system is more appropriate for a small and specialized solution, with the principle concern being quality of the graphical interface produced compared with the other two methods. However, since the system will provide a general web interface, the mobile application as well as a variety of other possible interfaces can be used to view the display as well. Thus, the weight assigned to a high-quality base station interface is mitigated. Considering both choices together, the Beagleboard-xM with an LCD display to inspect items visually as they are checked in and view inventory appears preferable.
+\noindent Evaluating both the interface choice and the processing platform choice together eliminates the personal computer; a personal computer cannot be integrated without significantly increasing the form factor of the system. A personal computer also greatly simplifies the system and strays away from an implementation tailored to this prototype. A tablet based interface was considered a very feasible alternative; however the cost and tailorability of the system are again concerns. A micro-controller based system is more appropriate for a small and specialized solution, with the principle concern being quality of the graphical interface produced compared with the other two methods. Considering both choices together, the Beagleboard-xM with an LCD display to inspect items visually as they are checked in and view inventory appears preferable. A Beagleboard, running a full Linux environment, will maintain a small form factor while still providing a high quality interface and sufficient processing resources.
+
+
 \section{Design}
-Consideration of the these concepts, as well as the high level system diagram presented in Figure \ref{fig:sysdiag}, clarifies the separation of tasks while implementing the project. One group of tasks will contain the mobile interface and also development of an Interface Control Document (ICD) to enumerate the commands provided over the web interface. A second task group will consist of configuring the internal databases on the Beagleboard, the expiration date warning system, and the shopping list suggestion algorithm. The final group of tasks will consist of interfacing the processing platform with the scanner, Ethernet interface, temprature and humidity sensor, and main user interface. The development of the base station interface will be distributed over the last two task groups. This division of work is also evident in the full system diagram shown in Figure \ref{fig:fullsys}.
+Consideration of the these concepts, as well as the high level system diagram presented in Figure \ref{fig:sysdiag}, clarifies the separation of tasks while implementing the project. One group of tasks will contain the mobile interface and also development of an interface control specification to enumerate the commands provided over the web interface. A second task group will consist of configuring the internal databases on the Beagleboard, the expiration date warning system, and the shopping list suggestion algorithm. The final group of tasks will consist of interfacing the processing platform with the scanner, Ethernet interface, temperature sensor, and main user interface. The development of the base station interface will be distributed over the last two task groups. This division of work is also evident in the full system diagram shown in Figure \ref{fig:fullsys}.
 \begin{figure}[h!]
 \vspace{0.5cm}
 \begin{center}
-\includegraphics[scale=0.5]{../Graphics/FullSystemDiagram}
+\includegraphics[scale=0.4]{../Graphics/FullSystemDiagram}
 \caption{Full System Diagram}
 \label{fig:fullsys}
 \end{center}
 \end{figure}
-The majority of software developed will run on the Beagleboard, which will be the main processing platform for the Smart Refrigerator system. The Beagleboard will run the Angstrom operating system, a lightweight embedded Linux. A full Linux environment will be very conducive for software development and will greatly simplify connection with peripherals; the keypad or keyboard, as well as the UPC scanner, will be able to simply ``plug-and-play." The temperature and humidity sensor will require more effort, particularly to ensure the input and output voltage levels meet the specifications of the sensor and do not damage the Beagleboard. The RHT03 humidity and temperature sensor that will be used requires a 3.3V-6V power supply and will output voltages as high as the supply voltage. The Beagleboard's general purpose input and output (GPIO) pins supply and receive voltages up to 1.8V only; however, the pins also include a built-in level shifter. Since a level shifter is built in this constraint does not imply a need for extra circuitry; though care must be taken to configure the level shifter properly to avoid overvolting the GPIO inputs.
+\newline \quad \newline
+The majority of software developed will run on the Beagleboard, which will be the main processing platform for the Smart Refrigerator system. The Beagleboard will run the Angstrom operating system, a lightweight embedded Linux. A full Linux environment will be very conducive for software development and will greatly simplify connection with peripherals; the keypad or keyboard, as well as the UPC scanner, will be able to simply ``plug-and-play." The temperature sensor will require more effort, particularly to ensure the input and output voltage levels meet the specifications of the sensor and do not damage the Beagleboard. The Digilent Pmod TMP2 temperature sensor that will be used requires a 3.3V or 5V power supply and will output voltages as high as the supply voltage. The Beagleboard's I$^2$C interface supplies and receives voltages up to 1.8V only. To resolve this discrepancy, a BOB08745 Logic Level Converter will also be incorporated to interface between the Beagleboard and the temperature sensor.
 \newline \indent \newline
-A more detailed diagram of the Beagleboard subsystem is shown in Figure \ref{fig:basecode}. The figure shows all external connections to the Beagleboard as well as an internal separation of sub-components. The base station code will be inspired by the Model, View, Controller paradigm. A distinct module of code will create the user interface displayed on the Beagleboard's touchpad and relay user interface events to a separate controller module. The controller sub-component will coordinate the various input events generate by the system. Input from the UPC scanner and keyboard will pass through this module and then be transferred to the view. The controller is a necessary middleman in this process, since scanned UPC codes and user inputs must be shared with the model as well. The controller will also be responsible for handling input from the temperature and humidity sensor; this interaction will occur through a dedicated GPIO driver. The controller must also interact with the database structures and handle events from the network interface. The model itself will be distributed among the remaining modules; the content needed by the model will be sorted within the databases, and the principal modeling task will occur within the expiration date and shopping list prediction sub-module. The two prediction algorithms will be separated as a unique subsystem, since the prediction task is a unique portion of the system and will belong to a different task group than the overall base station software application.
+A more detailed diagram of the Beagleboard subsystem is shown in Figure \ref{fig:basecode}. The figure shows all external connections to the Beagleboard as well as an internal separation of sub-components. The base station code will be inspired by the Model, View, Controller paradigm. A distinct module of code will create the user interface displayed on the Beagleboard's touchpad and will relay user interface events to a separate controller module. The controller sub-component will coordinate the various input events generated by the system. Input from the UPC scanner and keyboard will pass through this module and will then be transferred to the view. The controller is a necessary middleman in this process, since scanned UPC codes and user inputs must be shared with the model as well. The controller will also be responsible for handling input from the temperature and humidity sensor; this interaction will occur through a dedicated I$^2$C driver. The controller must also interact with the database structures and handle events from the network interface. The model itself will be distributed among the remaining modules; the content needed by the model will be stored within the databases, and the principal modeling task will occur within the expiration date and shopping list prediction sub-module.
 \begin{figure}[h!]
 \vspace{0.5cm}
 \begin{center}
-\includegraphics[scale=0.8]{../Graphics/BaseStation}
+\includegraphics[scale=0.6]{../Graphics/BaseStation}
 \caption{Beagleboard Subsystems}
 \label{fig:basecode}
 \end{center}
 \end{figure}
 \newline \quad \newline
 \subsection{Base Station Code Package}
-The base station application will be developed in C++ using the Qt user interface framework. Java was also given consideration as the primary language, since this could potentially increase consistency with the mobile application. However, C++ appeared to be a much more common language across the existing drivers and code examples provided for the Beagleboard. Effort will still be made to maintain consistency between the two user interfaces. To facilitate ease of use and a fluid user experience between the two applications, the interface layout should be preserved exactly, and aesthetic differences should be minimized. Some initial layouts for the graphical user interface have been designed and are shown in Figures \ref{mock1}, \ref{mock2}, \ref{mock3}, and \ref{mock4}. When designing the interface layouts, the constraints of a touch screen interface were considered; all buttons and tabs are intentionally large and easy to click. The product entry tab will be the default, and will provide feedback to the user while scanning items. The check in and check out buttons will function as radio buttons to indicate whether the next scanned item will be interpreted as a new purchase or an item being removed from the current inventory. The shopping list tab will provide a straight-forward view of past shopping lists, organized by ascending creation dates. The suggested list button will produce a new recommended shopping list. The current inventory tab will simply list items currently checked into the refrigerator and provide a reset function to clear the current inventory. As shown in Figure \ref{mock4}, expiration warnings will be presented as pop-up windows. To prevent these warnings from becoming an annoyance to the user, the system will attempt to group together multiple alerts.
+The base station application will be developed in Python using the TkInter user interface framework. Java was also given consideration as the primary language, since this could potentially increase consistency with the mobile application. However, Python is notoriously quick to develop with and was able to prototype the user interface rapidly. Effort will still be made to maintain consistency between the two user interfaces. To facilitate ease of use and a fluid user experience between the two applications, the interface layout should be preserved, and aesthetic differences should be minimized. Screen captures of the base station graphical user interface are shown in Figures \ref{mock1}, \ref{mock2}, \ref{mock3}. When designing the interface layouts, the constraints of a touch screen interface were considered; all buttons and tabs are intentionally large and easy to click. The product entry tab, shown in Figure \ref{mock1}, is the default tab, and provides feedback to the user while scanning items. The check in and check out buttons function as radio buttons to indicate whether the next scanned item will be interpreted as a new purchase or an item being removed from the current inventory. Since this tab is also be the default, a list of items closest to expiring is shown at the bottom to remind the user. The shopping list tab provides a straight-forward view of past shopping lists, organized by descending creation dates. The suggested list button will produce a new recommended shopping list. The current inventory tab simply lists items currently checked into the refrigerator and provides a reset function to clear the current inventory.
 \pagebreak
 \begin{figure}[h!]
 \vspace{0.5cm}
 \begin{center}
-\includegraphics[scale=0.5]{../graphics/MockUp1}
+\includegraphics[scale=0.45]{../graphics/ProductEntry}
 \caption{Product Entry Tab Layout}
 \label{mock1}
 \end{center}
@@ -294,7 +299,7 @@ The base station application will be developed in C++ using the Qt user interfac
 
 \begin{figure}[h!]
 \begin{center}
-\includegraphics[scale=0.5]{../graphics/MockUp2}
+\includegraphics[scale=0.45]{../graphics/ShoppingLists}
 \caption{Shopping List Tab Layout}
 \label{mock2}
 \end{center}
@@ -303,34 +308,18 @@ The base station application will be developed in C++ using the Qt user interfac
 \begin{figure}[h!]
 \vspace{0.5cm}
 \begin{center}
-\includegraphics[scale=0.5]{../graphics/MockUp3}
+\includegraphics[scale=0.45]{../graphics/CurrentInventory}
 \caption{Current Inventory Tab Layout}
 \label{mock3}
 \end{center}
 \end{figure}
 
-\begin{figure}[h!]
-\begin{center}
-\includegraphics[scale=0.5]{../graphics/MockUp4}
-\caption{Expiration Warning Pop-Up Layout}
-\label{mock4}
-\end{center}
-\end{figure}
-\pagebreak
 \quad \newline
 \subsection{Mobile User Interface}
 The mobile interface will be divided into similar tabs, which will limit the amount of data exchanged between the Beagleboard and mobile phone. The mobile application will be updated on a ``need to know" basis only. If additional items have been added to the inventory or new shopping lists have been created, the mobile application will not be notified until the user has opened the application and navigated to the appropriate tab. It is anticipated that the largest data exchanges will need to occur for the shopping lists, since they will require information from multiple items and additional top-level information about the lists. The mobile application will further improve data efficiency by not loading shopping list items until a list has been selected. Navigation to the shopping list tab will generate a query for the top-level information about new or updated shopping lists, but will not delve into the lists themselves to retrieve item information. Only once a list has been selected will complete updated information about its items be retrieved. This implementation will create additional latency while using the application; faster strategies include a single large update of all data upon launching the application or a background fetch of information while running the application. However, given the high costs of mobile data plans and the lack of widespread WiFi at most grocery stores, limiting the amount of data passed across the network interface is an important consideration for usability.
 \newline \quad \newline
 The mobile application should also be tolerant of interrupted connections, since telecommunication networks often have spotty coverage. To mitigate the impact of dropped connections, updates should be transferred from the Beagleboard to the mobile application in a sequence of short communications; a large number of small messages will be more robust than a small number of large messages. This structure will facilitate the ``need to know" distribution of information as well. The processes for handling updates to the current inventory and updates to shopping lists are conceptually similar and are illustrated with a common state machine in Figure \ref{fig:state}. Upon launching the application, the update system will enter a waiting state. The update system will remain waiting until a tab is selected or some other action is performed which requires a check for updates, such as expanding a shopping list to view the items within it. The mobile application will  then request the number of relevant updates from the base station software. The state machine will pend until the number of updates is returned and will then enter a state which evaluates whether there are updates remaining. The system will alternate between pending to receive updates and checking whether additional updates are available. The system will return to the waiting state when all the ``need to know" information has been retrieved.
-\begin{figure}[h!]
-\vspace{0.5cm}
-\begin{center}
-\includegraphics[scale=0.8]{../Graphics/StateMachine}
-\caption{State Machine for Database Updates to Mobile Application}
-\label{fig:state}
-\end{center}
-\end{figure}
-\newline \quad \newline
+
 \subsection{Database Definitions}
 The various databases will be implemented as SQL databases on the Beagleboard. SQL databases will certainly be reliable, and testing will only ensure correct interaction with the databases. Figure \ref{fig:databases} illustrates the partitioning of data into the multiple databases stored on the Beagleboard. The most intuitive database is the Item Database, which will store the total set of UPC codes and corresponding text descriptions. A quantity field will provide not only the quantity information, but also implicitly provide a check for whether an item is in the current inventory or not. The item database will also store the most recent purchase date for each item. However, only the last purchase date will not be sufficient for the shopping list prediction algorithm, so a separate item history table will be created. The history table will be indexed by UPC, and each element will contain a list of purchase dates for that particular item. Also, a shopping list database will be created; in this database each shopping list will be assigned an identification number and name. The shopping lists will also include a flag to indicate whether each shopping list was manually created or generated by the shopping list creation algorithm; the user may find this information useful when evaluating shopping habits. To coordinate between the database of items and the shopping lists themselves, an intermediate linking database will be used to store the actual items included on a shopping list. This database will be indexed by the shopping list identification number, and each element will contain a list of item UPC codes.
 \begin{figure}[h!]
