@@ -14,7 +14,7 @@
 \contentsline {subsection}{\numberline {4.3}Database Definitions}{14}
 \contentsline {section}{\numberline {5}Considerations}{16}
 \contentsline {section}{\numberline {6}Cost Estimates}{16}
-\contentsline {section}{\numberline {7}Testing Strategy}{16}
+\contentsline {section}{\numberline {7}Testing Strategy}{17}
 \contentsline {subsection}{\numberline {7.1}Base Station User Interface Testing}{17}
 \contentsline {subsection}{\numberline {7.2}Mobile User Interface and Network Interface Testing}{18}
 \contentsline {subsection}{\numberline {7.3}Shopping List and Expiration Prediction Test}{22}
