@@ -23,7 +23,7 @@ public class Connector
 	{
 		if (instance == null)
 		{
-			instance = new TestConnect();
+			instance = new RestConnect();
 		}
 		return instance;
 	}

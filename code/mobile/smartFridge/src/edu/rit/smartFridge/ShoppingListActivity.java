@@ -84,6 +84,8 @@ public class ShoppingListActivity extends ListActivity
 				}
 			}
 		});
+		
+		// long click stuff
 		lv.setLongClickable(true);
 		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
 			public boolean onItemLongClick(AdapterView<?> parent, View v,

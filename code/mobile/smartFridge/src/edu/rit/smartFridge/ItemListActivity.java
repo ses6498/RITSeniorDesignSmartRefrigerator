@@ -43,7 +43,7 @@ public class ItemListActivity extends ListActivity
 		Bundle extras = getIntent().getExtras();
 		if (extras != null)
 		{
-			int listId = extras.getInt(getString(R.string.current_list));
+			long listId = extras.getLong(getString(R.string.current_list));
 			shoppingList = connecter.getList(listId);
 		}
 
