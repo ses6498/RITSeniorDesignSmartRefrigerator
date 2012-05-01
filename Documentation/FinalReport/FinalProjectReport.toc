@@ -28,6 +28,5 @@
 \contentsline {subsection}{\numberline {10.1}Base Station Code Package}{30}
 \contentsline {subsection}{\numberline {10.2}Web Interface}{30}
 \contentsline {subsection}{\numberline {10.3}Mobile Interface}{30}
-\contentsline {subsection}{\numberline {10.4}Beagleboard Integration}{31}
-\contentsline {section}{10\hspace {.090in} References}{31}
-\contentsline {section}{References}{31}
+\contentsline {subsection}{\numberline {10.4}BeagleBoard Integration}{31}
+\contentsline {section}{\numberline {11}References}{32}
