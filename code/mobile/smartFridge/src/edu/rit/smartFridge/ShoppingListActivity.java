@@ -113,20 +113,17 @@ public class ShoppingListActivity extends ListActivity
 		switch (item.getItemId())
 		{
 			case R.id.refresh:
-				refresh();
+				DataConnect connecter = Connector.getInstance();
+				connecter.refreshLists();
 		}
+		
+		Context c = getApplicationContext();
 
-		Intent i = new Intent().setClass(getBaseContext(), SmartFridgeActivity.class);
+		Intent i = new Intent().setClass(c, SmartFridgeActivity.class);
 		i.addFlags(268435456); //FLAG_ACTIVITY_NEW_TASK
-		i.getExtras().putInt(getString(R.string.curr_tab), 1); // set the shopping list activity active
-		getBaseContext().startActivity(i);
+		i.putExtra(getString(R.string.curr_tab), 1); // set the shopping list activity active
+		c.startActivity(i);
 
 		return true;
-	}
-
-	public void refresh()
-	{
-		DataConnect connecter = Connector.getInstance();
-		connecter.refreshLists();
 	}
 }

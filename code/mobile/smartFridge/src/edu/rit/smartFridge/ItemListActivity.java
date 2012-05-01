@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import edu.rit.smartFridge.model.InventoryItem;
@@ -24,6 +23,8 @@ import edu.rit.smartFridge.util.DataConnect;
 
 public class ItemListActivity extends ListActivity
 {
+	private boolean fromList;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState)
 	{
@@ -35,10 +36,6 @@ public class ItemListActivity extends ListActivity
 		// Get the instance of the connecter
 		DataConnect connecter = Connector.getInstance();
 
-		// Set true if we got here from a grocery list,
-		// false if it's just the inventory screen
-		final boolean fromList;
-
 		// get the current list, if it exists
 		Bundle extras = getIntent().getExtras();
 		if (extras != null)
@@ -46,9 +43,6 @@ public class ItemListActivity extends ListActivity
 			long listId = extras.getLong(getString(R.string.current_list));
 			shoppingList = connecter.getList(listId);
 		}
-
-		// copy somewhere final for the listener to use
-		final ShoppingList finalList = shoppingList;
 
 		// copy the item names into a list for display
 		List<String> inventoryNames = new ArrayList<String>();
@@ -124,7 +118,6 @@ public class ItemListActivity extends ListActivity
 		lv.setOnItemClickListener(new OnItemClickListener() {
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 			{
-				// TODO: this doesn't work for the inventory list, only shopping list items.
 				InventoryItem item = null;
 				if (finalNames.size() > 0)
 				{
@@ -145,43 +138,16 @@ public class ItemListActivity extends ListActivity
 				}
 			}
 		});
-
-		lv.setLongClickable(false); // item add/delete from shopping lists disabled
-		lv.setOnItemLongClickListener(new OnItemLongClickListener() {
-			public boolean onItemLongClick(AdapterView<?> parent, View v, int position, long id)
-			{
-
-				Intent i;
-
-				if (fromList)
-				{
-					ShoppingListItem item = finalList.getAllItems().get(
-							position);
-					i = new Intent()
-							.setClass(context, ListRemoveActivity.class);
-					i.putExtra(getString(R.string.current_list), finalList.getID());
-					i.putExtra(getString(R.string.current_item), item.getName());
-					i.putExtra(getString(R.string.current_upc), item.getUPC());
-				}
-				else
-				{
-					InventoryItem item = finalInventory.get(position);
-					i = new Intent().setClass(context, ListAddActivity.class);
-					i.putExtra(getString(R.string.current_item), item.getName());
-					i.putExtra(getString(R.string.current_upc), item.getUPC());
-				}
-
-				context.startActivity(i);
-				return false;
-			}
-		});
 	}
 	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
 		MenuInflater inflater = getMenuInflater();
-		inflater.inflate(R.layout.menu, menu);
+		if (!fromList) 
+		{
+			inflater.inflate(R.layout.menu, menu);
+		}
 		return true;
 	}
 	
@@ -191,15 +157,17 @@ public class ItemListActivity extends ListActivity
 		switch (item.getItemId())
 		{
 			case R.id.refresh:
-				refresh();
-				return true;
+				DataConnect connecter = Connector.getInstance();
+				connecter.refreshInventory();
 		}
-		
-		return false;
+		Context c = getApplicationContext();
+
+		Intent i = new Intent().setClass(c, SmartFridgeActivity.class);
+		i.addFlags(268435456); //FLAG_ACTIVITY_NEW_TASK
+		i.putExtra(getString(R.string.curr_tab), 0); // set the shopping list activity active
+		c.startActivity(i);
+
+		return true;
 	}
 	
-	public void refresh()
-	{
-		
-	}
 }
