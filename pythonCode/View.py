@@ -55,9 +55,6 @@ class View ():
     def updateTemperature (self, temperature):
         self.temperature.configure(text='Current Temperature: ' + '{:.2F}'.format(temperature) + 'F')
         
-    def updateHumidity (self, humidity):
-        self.humidity.configure(text='Current Humidity: ' + '{:.2F}'.format(humidity) + '%')
-        
     def inventoryContextMenu (self, e, arg):
         self.inventoryTree.focus(arg)
         self.inventoryTree.selection_set(arg)
@@ -393,6 +390,7 @@ class View ():
         self.slName = tkinter.StringVar("")
         self.slEntry = ttk.Entry(self.slPrompt, width=50, textvariable=self.slName)
         self.slEntry.grid(column=0,row=1, padx=10, pady=10)
+        self.slEntry.focus()
         self.slButton = ttk.Button(self.slPrompt, text="Add Shopping List", width=50,\
                                    command=self.createShoppingList)
         self.slButton.grid(column=0, row=2, padx=10, pady=(0,10))
@@ -423,8 +421,6 @@ class View ():
         self.markExp.grid(column=0, row=3, sticky=('E','N','S'), pady=10, ipady=20)
         self.temperature = ttk.Label(rightFrame, text='Current Temperature:')
         self.temperature.grid(column=0, row=4, sticky=('W'),pady=10)
-        self.humidity = ttk.Label(rightFrame, text='Current Humidity:')
-        self.humidity.grid(column=0, row=5, sticky=('W'),pady=(0,10))
         
         self.editState=False
         
@@ -631,9 +627,8 @@ class View ():
         
     def tabChanged (self, e):
         if str(self.notebook.select()) == str(self.productEntry):
-            self.upcEntry.focus()
-            self.upcEntry.focus()
-            self.upcEntry.focus()
+            self.upcEntry.focus_set()
+            self.root.after(50, self.upcEntry.focus_set)
         
     def adminClearHistory (self):
         self.controlObj.clearHistory()
@@ -663,7 +658,6 @@ class View ():
         
     def tempSensorTask (self):
         self.controlObj.pollTemperature()
-        self.controlObj.pollHumidity()
         self.root.after (30000, self.tempSensorTask)
         
     def expirationTask (self):

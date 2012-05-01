@@ -6,7 +6,7 @@
 
 <?php
 
-   $dbcnx = @mysql_connect("smartfridge.student.rit.edu:3306", "ses6498", "seNi{}R1)esign");
+   $dbcnx = @mysql_connect("smartfridge.student.rit.edu:3306", "srAdmin", "s3niorD3sign");
    
    if (!$dbcnx){
       die('Could not connect to database server: ' . mysql_error());

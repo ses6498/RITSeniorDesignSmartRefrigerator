@@ -155,17 +155,11 @@ class Controller ():
     def pollTemperature (self):
         self.modelObj.pollTemperature()
         
-    def pollHumidity (self):
-        self.modelObj.pollHumidity()
-        
     def checkItemExpiration(self):
         self.modelObj.checkItemExpiration()
         
     def updateTemperature (self, temperature):
         self.viewObj.updateTemperature(temperature)
-        
-    def updateHumidity (self, humidity):
-        self.viewObj.updateHumidity(humidity)
         
 if __name__ == '__main__':
     

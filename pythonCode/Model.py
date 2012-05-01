@@ -6,6 +6,8 @@ Created on Mar 13, 2012
 import threading
 import datetime
 import random
+import os
+import subprocess
 
 import Inventory
 import TimeWrapper
@@ -348,12 +350,15 @@ class Model (threading.Thread):
         return shoppingListItem[0]
     
     def pollTemperature(self):
-        temp = random.normalvariate(30, 5)
+        p = os.popen("i2cget -y 2 0x4b 0x00")
+        x = p.read()[0:4]
+        p = os.popen("i2cget -y 2 0x4b 0x01")
+        x = x + p.read()[2:4]
+        x = int (x, 16) >> 3
+        
+        temp = x / 16.
+        temp = 9./5. * temp + 32.
         self.controllerObj.updateTemperature(temp)
-    
-    def pollHumidity (self):
-        hum = random.normalvariate(50, 15)
-        self.controllerObj.updateHumidity(hum)
     
     def clearHistory (self):
         self.currentInventory.clearHistory()

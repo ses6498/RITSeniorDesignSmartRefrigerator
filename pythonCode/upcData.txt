@@ -696,3 +696,8 @@
 37466053721,Lindt Lindor Milk Chocolate Truffles,10000045
 38000318467,Kellogg's Rice Krispies Cereal,10000319
 38000019128,Kellogg's Product 19 Cereal,10000319
+077890425930,Wegmans Chocolate Low Far Milk - Half Gal,10000025
+813905000613,Hudson Valley Farmers Markey Grade A Eggs,10000025
+894700010168,Chobani Black Cherry Fruit on the Bottom Non-Fat Greek Yogurt,10000025
+894700010120,Chobani Raspberry Fruit on the Bottom Non-Fat Greek Yogurt,10000025
+
