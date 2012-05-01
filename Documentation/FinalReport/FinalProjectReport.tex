@@ -317,13 +317,68 @@ The base station application will be developed in Python using the TkInter user 
 \quad \newline
 \subsection{Mobile User Interface}
 The mobile interface is divided into two similar tabs, one to view the current inventory and another to view shopping lists. Screen captures for the two mobile interface tabs are shown in Figures \ref{mob1}, and \ref{mob2}. Clicking an item in the inventory tab will display a list of all purchase dates for that item, as shown in Figure \ref{mob3}. Similarly, on the shopping list tab clicking an item will display a list of all items on that shopping list, as shown in Figure \ref{mob4}. The mobile application will be updated on a ``need to know" basis only. If additional items have been added to the inventory or new shopping lists have been created, the mobile application will not be notified until the user has opened the application and navigated to the appropriate tab. It is anticipated that the largest data exchanges will need to occur for the shopping lists, since they will require information from multiple items and additional top-level information about the lists. The mobile application will further improve data efficiency by not loading shopping list items until a list has been selected. Navigation to the shopping list tab will generate a query for the top-level information about new or updated shopping lists, but will not delve into the lists themselves to retrieve item information. Only once a list has been selected will complete updated information about its items be retrieved. This implementation will create additional latency while using the application; faster strategies include a single large update of all data upon launching the application or a background fetch of information while running the application. However, given the high costs of mobile data plans and the lack of widespread WiFi at most grocery stores, limiting the amount of data passed across the network interface is an important consideration for usability.
-\newline \quad \newline
+
+\begin{figure}[h!]
+\vspace{0.5cm}
+\begin{center}
+\includegraphics[scale=0.35]{../graphics/mobile_inventory}
+\caption{Mobile Interface Current Inventory Tab}
+\label{mob1}
+\end{center}
+\end{figure}
+
+\begin{figure}[h!]
+\vspace{0.5cm}
+\begin{center}
+\includegraphics[scale=0.35]{../graphics/mobile_shoppingLists}
+\caption{Mobile Interface Shopping List Tab}
+\label{mob2}
+\end{center}
+\end{figure}
+\pagebreak
+\begin{figure}[h!]
+\vspace{0.5cm}
+\begin{center}
+\includegraphics[scale=0.35]{../graphics/mobile_itemDetail}
+\caption{Mobile Interface Showing Item Details}
+\label{mob3}
+\end{center}
+\end{figure}
+
+\begin{figure}[h!]
+\vspace{0.5cm}
+\begin{center}
+\includegraphics[scale=0.35]{../graphics/mobile_listContents}
+\caption{Mobile Interface Showing Shopping List Details}
+\label{mob4}
+\end{center}
+\end{figure}
+\pagebreak
+\quad \newline \quad \newline
 The mobile application should also be tolerant of interrupted connections, since telecommunication networks often have spotty coverage. To mitigate the impact of dropped connections, updates should be transferred from the Beagleboard to the mobile application in a sequence of short communications; a large number of small messages will be more robust than a small number of large messages. This structure will facilitate the ``need to know" distribution of information as well.
 \newline \quad \newline
 To actually communicate with the web interface a combination of HTTP requests, PHP, and JSON was used. The mobile application indicated what type of query to make to the web interface using an HTTP request. A snippet of PHP code on the server side would actually perform the query into the Beagleboard's MySQL databases and the results were formatted as a JSON string. The Android application parsed the JSON string and formatted the results into objects.
 
 \subsection{Web Interface}
 The actually web interface itself was hosted by a Cherokee web server running on the beagleboard. A simple HTML front end was also hosted in addition to the interface code for the mobile application. This interface consisted of two tables, one to show the current inventory and another listing the available shopping lists. The elements in the shopping lists table are links and clicking any shopping list will lead to another page showing a table with the items in that shopping list. Screen captures are shown for the web interface front end in Figures \ref{web1} and \ref{web2}.
+
+\begin{figure}[h!]
+\vspace{0.5cm}
+\begin{center}
+\includegraphics[scale=0.45]{../graphics/webInterfaceMain}
+\caption{Web Interface Front Page}
+\label{web1}
+\end{center}
+\end{figure}
+
+\begin{figure}[h!]
+\vspace{0.5cm}
+\begin{center}
+\includegraphics[scale=0.45]{../graphics/webInterfaceShoppingList}
+\caption{Web Interface Shopping List Page}
+\label{web2}
+\end{center}
+\end{figure}
 
 \subsection{Database Definitions}
 The various databases are implemented as MySQL databases on the Beagleboard. MySQL databases will certainly be reliable, and testing only ensured correct interaction with the databases. Figure \ref{fig:databases} illustrates the partitioning of data into the multiple tables stored on the Beagleboard. The most intuitive database is the Item Inventory Table, which stores the current contents of the refrigerator and their corresponding purchase and expiration dates. However, only the last purchase date is not be sufficient for the shopping list prediction algorithm, so a separate item history table stores all purchase dates indexed by UPC. The purchase dates are not stored as a list but just as separate rows in the table; the number of rows returned by a query indicates the number of purchase dates. A shopping list is included to store the top-level information about a shopping list: the ID,name, and creation date. The shopping lists also include a flag to indicate whether each shopping list was manually created or generated by the shopping list creation algorithm; the user may find this information useful when evaluating shopping habits. To coordinate between the table of items and the shopping lists themselves, an intermediate linking table was included to store the actual items included on a shopping list. This table is indexed by the shopping list identification number, and each row represents an item belonging to a shopping list. The number of rows returned by a query against a specific list ID indicates the number of items on that shopping list.
