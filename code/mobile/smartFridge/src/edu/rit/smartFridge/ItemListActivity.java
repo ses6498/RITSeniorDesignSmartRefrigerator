@@ -115,11 +115,12 @@ public class ItemListActivity extends ListActivity
 		// event listeners
 		ListView lv = getListView();
 		lv.setTextFilterEnabled(true);
-		lv.setOnItemClickListener(new OnItemClickListener() {
+		lv.setOnItemClickListener(new OnItemClickListener() 
+		{
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id)
 			{
 				InventoryItem item = null;
-				if (finalNames.size() > 0)
+				if (finalNames.size() > 0 && !fromList)
 				{
 					String name = finalNames.get(position);
 					for (InventoryItem i : finalInventory)
