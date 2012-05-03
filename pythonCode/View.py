@@ -318,9 +318,11 @@ class View ():
         
     def expItemContextHandler (self):
         self.controlObj.itemExpired(identifier=self.contextItem)
+        self.inventoryContextPosted = False
         
     def conItemContextHandler (self):
         self.controlObj.itemConsumed(identifier=self.contextItem)
+        self.inventoryContextPosted = False
         
     def addToSlContextHandler (self, listIdentifier):
         self.controlObj.createShoppingListItem (listIdentifier, self.contextItem)
@@ -532,9 +534,20 @@ class View ():
                                   command=self.shoppingListAdditionPrompt)
         self.addItem.grid(column=0, row=3, sticky=('E','N','S'), pady=5, ipady=20)
         
+    def Unpost (self, e):
+        if self.inventoryContextPosted:
+            self.inventoryContext.unpost()
+            self.inventoryContextPosted = False
+        
+        if self.shoppingListContextPosted:
+            self.shoppingListContext.unpost()
+            self.shoppingListContextPosted = False
+        
     def ConstructInventoryContextMenu (self, frame):
+        self.inventoryContextPosted = True
         self.inventoryContext = tkinter.Menu(frame)
         self.shoppingListCascade = tkinter.Menu(self.inventoryContext)
+        self.shoppingListContextPosted = True
         self.inventoryContext.add_command(label='Mark Expired', command=self.expItemContextHandler)
         self.inventoryContext.add_command(label='Mark Consumed', command=self.conItemContextHandler)
         self.shoppingListMenuIndex = 3
@@ -559,6 +572,7 @@ class View ():
         self.inventoryTree.heading('expiration',text='Expiration Date')
         self.inventoryTree.grid(column=0,row=0,padx=10,pady=(10,2))
         self.inventoryTree.configure(selectmode='browse')
+        self.inventoryTree.bind('<<TreeviewSelect>>', self.Unpost)
         
         self.root.option_add('*tearOff', False)
         self.ConstructInventoryContextMenu(CIframe)
